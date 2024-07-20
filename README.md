@@ -4,7 +4,7 @@ An ecosystem to orchestrate attended and unattended automations
 
 ## Arquitecture
 
-![Arquitetura do BotMaster]('BotMaster-Architecture-v1.0.0-alpha.drawio.png')
+![Arquitetura do BotMaster](BotMaster Architecture-BotMaster-v1.0.0-alpha.svg)
 
 > See all versions of arquitecture [in the draw.io](https://app.diagrams.net/#G1MT87nEZBAVCNgxFL2uBqCmtgnGHwySEP#%7B%22pageId%22%3A%22oU_Im2ojCvvj2Tw1XYCn%22%7D).
 
