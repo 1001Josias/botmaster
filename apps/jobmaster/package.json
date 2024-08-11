@@ -1,25 +1,42 @@
 {
   "name": "jobmaster",
   "private": true,
+  "main": "src/electron/dist/index.js",
+  "description": "JobMaster is a desktop application designed to execute scripts, workflows, automations, or any JavaScript code simply and efficiently. Ideal for non-technical areas, it increases productivity and reduces errors in repetitive tasks.",
+  "author": {
+    "email": "1001josias@gmail.com",
+    "name": "Josias Junior",
+    "url": "https://github.com/1001Josias"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "pnpm dev:electron:ts-build && concurrently -c \"auto\" \"pnpm:dev:*(!electron:ts-build)\"",
+    "dev:next": "next dev --turbo --port 3002",
+    "dev:electron": "wait-on http://localhost:3002 && electron .",
+    "dev:electron:ts-build": "tsc -p src/electron",
+    "dev:electron:watch": "tsc -p src/electron -w 2>&1 | grep --line-buffered 'error'",
+    "build": "concurrently pnpm:build:*",
+    "build:next": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.5"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "concurrently": "^8.2.2",
+    "electron": "^31.2.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5",
+    "wait-on": "^7.2.0"
   }
 }
