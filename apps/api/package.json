@@ -1,7 +1,7 @@
 {
-  "name": "express-typescript-boilerplate",
+  "name": "api",
   "version": "1.0.14",
-  "description": "An Express boilerplate backend",
+  "description": "The BotMaster API",
   "author": "Edwin Hernandez",
   "repository": "edwinhern/express-typescript-2024",
   "license": "MIT",
@@ -49,10 +49,16 @@
     "vitest": "^2.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": ["biome check --apply --no-errors-on-unmatched"]
+    "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": [
+      "biome check --apply --no-errors-on-unmatched"
+    ]
   },
   "tsup": {
-    "entry": ["src", "!src/**/__tests__/**", "!src/**/*.test.*"],
+    "entry": [
+      "src",
+      "!src/**/__tests__/**",
+      "!src/**/*.test.*"
+    ],
     "splitting": false,
     "sourcemap": true,
     "clean": true
