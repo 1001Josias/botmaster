@@ -3,5 +3,9 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "prettier.enable": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.configPath": "./packages/eslint-config/.prettierrc"
 }
