@@ -28,7 +28,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['*.js?(x)', '*.ts?(x)'],
+      files: ['*.js?(x)', '*.ts?(x)', '.json', '*.eslintrc.js'],
     },
   ],
 }

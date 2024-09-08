@@ -25,4 +25,3 @@
   "include": ["src/**/*", ".next/types/**/*.ts", "electron.ts"],
   "exclude": ["node_modules"]
 }
-
