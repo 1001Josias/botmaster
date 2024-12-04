@@ -16,7 +16,13 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write .",
     "test": "vitest run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "migrations": "chmod +x src/scripts/run-migrations.sh && src/scripts/run-migrations.sh",
+    "migrations:up": "pnpm migrations up",
+    "migrations:down": "pnpm migrations down",
+    "migrations:list": "pnpm migrations:list:up && pnpm migrations:list:down",
+    "migrations:list:up": "echo up: && find src/api -name '*.up.sql' | sort -n",
+    "migrations:list:down": "echo down: && find src/api -name '*.down.sql' | sort -n"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.0.0",
