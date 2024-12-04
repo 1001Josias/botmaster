@@ -2,7 +2,12 @@
 
 # Load variables from the .env file, ignoring comments and empty lines
 set -a
-source <(grep -v '^#' .env | grep -v '^$')
+if [ -f .env ]; then
+    source .env
+else
+    echo ".env file not found!"
+    exit 1
+fi
 set +a
 
 # Directory where the SQL files are located
