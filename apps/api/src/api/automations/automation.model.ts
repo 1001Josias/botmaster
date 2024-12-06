@@ -22,3 +22,9 @@ export const AutomationRouteParamsSchema = z.object({
   params: z.object({ id: automationId }),
 })
 
+export const GetAutomationsRouteQuerySchema = z.object({
+  query: z.object({
+    page: z.number().int().positive().describe('The page number to retrieve'),
+    limit: z.number().int().positive(),
+  }),
+})
