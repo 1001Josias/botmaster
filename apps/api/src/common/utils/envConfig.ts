@@ -13,4 +13,12 @@ export const env = cleanEnv(process.env, {
   CORS_ORIGIN: str({ devDefault: testOnly('http://localhost:3000') }),
   COMMON_RATE_LIMIT_MAX_REQUESTS: num({ devDefault: testOnly(1000) }),
   COMMON_RATE_LIMIT_WINDOW_MS: num({ devDefault: testOnly(1000) }),
+  DB_HOST: str(),
+  DB_PORT: num(),
+  DB_USER: str(),
+  DB_NAME: str(),
+  DB_PASSWORD: str(),
+  DB_MAX_CONNECTIONS: num({ devDefault: testOnly(20) }),
+  DB_IDLE_TIMEOUT: num({ devDefault: testOnly(30000) }),
+  DB_CONNECTION_TIMEOUT: num({ devDefault: testOnly(5000) }),
 })
