@@ -3,8 +3,8 @@ export interface IAutomation {
   key?: string
   name: string
   description: string
-  createdBy: string
-  updatedBy: string
+  createdBy: number
+  updatedBy: number
   createdAt?: Date
   updatedAt?: Date
 }
