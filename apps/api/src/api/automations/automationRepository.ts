@@ -1,10 +1,10 @@
-import { Automation } from './automationModel'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { logger } from '@/server'
 import { getDbConnection, endDbConnection } from '@/common/utils/dbPool'
+import { IAutomation } from '@/api/automations/automation'
 
 export class AutomationRepository {
-  async createAutomation(automation: Automation): Promise<Automation> {
+  async createAutomation(automation: IAutomation): Promise<IAutomation> {
     const sql = readSqlFile('db/insert_automation.sql')
     // prettier-ignore
     const values = [

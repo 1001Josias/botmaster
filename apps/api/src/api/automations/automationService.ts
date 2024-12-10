@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 
-import { Automation } from '@/api/automations/automationModel'
 import { AutomationRepository } from '@/api/automations/automationRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { logger } from '@/server'
+import { IAutomation } from '@/api/automations/automation'
 
 export class AutomationService {
   private automationRepository: AutomationRepository
@@ -12,10 +12,10 @@ export class AutomationService {
     this.automationRepository = repository
   }
 
-  async createAutomation(automation: Automation) {
+  async createAutomation(automation: IAutomation) {
     try {
       const createdAutomation = await this.automationRepository.createAutomation(automation)
-      return ServiceResponse.success<Automation>(
+      return ServiceResponse.success<IAutomation>(
         'Automation created successfully',
         createdAutomation,
         StatusCodes.CREATED,
