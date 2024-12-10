@@ -18,6 +18,8 @@ export const AutomationSchema = z.object({
   updatedAt: timestamp.describe('The timestamp of the last automation update'),
 })
 
+export const AutomationCreateSchema = AutomationSchema.omit({ id: true, key: true, createdAt: true, updatedAt: true })
+
 export const AutomationRouteParamsSchema = z.object({
   params: z.object({ id: automationId }),
 })
