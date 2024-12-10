@@ -5,8 +5,6 @@ const automationId = commonValidations.id.describe('The unique identifier of the
 const userIdSchema = commonValidations.id.describe('The unique identifier of the user')
 const timestamp = commonValidations.timestamp
 
-export type Automation = z.infer<typeof AutomationSchema>
-
 export const AutomationSchema = z.object({
   id: automationId,
   key: z.string().uuid(),
