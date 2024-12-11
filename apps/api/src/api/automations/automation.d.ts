@@ -9,3 +9,6 @@ export interface IAutomation {
   updatedAt?: Date
 }
 
+export interface IAutomationContract<I = any, O> {
+  createAutomation: (...args: I) => O
+}
