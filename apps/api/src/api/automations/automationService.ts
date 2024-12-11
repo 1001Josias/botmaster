@@ -15,11 +15,8 @@ export class AutomationService implements IAutomationContract<any, Promise<Servi
   async createAutomation(automation: IAutomation): Promise<ServiceResponse<IAutomation | null>> {
     try {
       const createdAutomation = await this.automationRepository.createAutomation(automation)
-      return ServiceResponse.success<IAutomation>(
-        'Automation created successfully',
-        createdAutomation,
-        StatusCodes.CREATED,
-      )
+      const message = `Automation created successfully`
+      return ServiceResponse.success(message, createdAutomation, StatusCodes.CREATED)
     } catch (err) {
       const errorMessage = `Error creating automation: ${(err as Error).message}`
       logger.error(errorMessage)
