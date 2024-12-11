@@ -1,10 +1,9 @@
 import { RequestHandler } from 'express'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { AutomationService } from '@/api/automations/automationService'
-import { IAutomation } from '@/api/automations/automation'
-import { AutomationSchema } from '@/api/automations/automationModel'
+import { IAutomation, IAutomationContract } from '@/api/automations/automation'
 
-export class AutomationController {
+export class AutomationController implements IAutomationContract<any, any> {
   private automationService: AutomationService
 
   constructor(service: AutomationService = new AutomationService()) {
