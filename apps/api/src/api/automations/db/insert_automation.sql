@@ -1,6 +1,6 @@
 INSERT INTO automation (
-  automation_name,
-  automation_description,
+  name,
+  description,
   created_by,
   updated_by
 )
