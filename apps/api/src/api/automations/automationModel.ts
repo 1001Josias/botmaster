@@ -9,7 +9,7 @@ export const AutomationSchema = z.object({
   id: automationId.optional(),
   key: z.string().uuid().optional(),
   name: z.string({ description: 'The name of the automation' }),
-  description: z.string({ description: 'The description of the automation' }),
+  description: z.string({ description: 'The description of the automation' }).optional(),
   createdBy: userIdSchema.describe('The user id of the creator of the automation'),
   updatedBy: userIdSchema.describe('The user id of the last user to update the automation'),
   createdAt: timestamp.describe('The timestamp when the automation was created').optional(),
