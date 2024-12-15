@@ -1,1 +1,2 @@
 DROP TABLE IF EXISTS automation;
+DROP EXTENSION IF EXISTS "pgcrypto";
