@@ -2,7 +2,7 @@ import { Pool } from 'pg'
 import { env } from './envConfig'
 import { logger } from '@/server'
 
-const dbPool = new Pool({
+export const dbPool = new Pool({
   host: env.DB_HOST,
   port: env.DB_PORT,
   user: env.DB_USER,
