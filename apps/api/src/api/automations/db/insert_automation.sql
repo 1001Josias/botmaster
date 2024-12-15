@@ -3,10 +3,9 @@ INSERT INTO automation (
   description,
   created_by,
   updated_by
-)
-VALUES (
+) VALUES (
   $1,
   $2,
   $3,
-  $4,
- )
+  $4
+) RETURNING *;
