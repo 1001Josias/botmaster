@@ -1,6 +1,6 @@
 import { logger } from '@/server'
 import { IAutomation } from '@/api/automations/automation'
-import { AutomationBusinessError } from './automationError'
+import { BusinessError } from '@/common/utils/errorHandlers'
 import { executeSqlFile } from '@/common/utils/sqlExecutor'
 
 export class AutomationRepository {
@@ -27,6 +27,7 @@ export class AutomationRepository {
       }
     } catch (err) {
       logger.error(err)
+      throw new BusinessError('Automation', 'Error creating automation')
     }
   }
 }
