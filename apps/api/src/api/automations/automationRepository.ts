@@ -1,11 +1,10 @@
-import { readSqlFile } from '@/common/utils/sqlReader'
 import { logger } from '@/server'
-import { getDbConnection, endDbConnection } from '@/common/utils/dbPool'
 import { IAutomation } from '@/api/automations/automation'
+import { AutomationBusinessError } from './automationError'
+import { executeSqlFile } from '@/common/utils/sqlExecutor'
 
 export class AutomationRepository {
   async createAutomation(automation: IAutomation): Promise<IAutomation> {
-    const sql = readSqlFile('db/insert_automation.sql')
     // prettier-ignore
     const values = [
       automation.name,
@@ -13,26 +12,21 @@ export class AutomationRepository {
       automation.createdBy,
       automation.updatedBy
     ]
-    const db = await getDbConnection()
     try {
-      const result = await db.query(sql, values)
-      const rows = result.rows[0]
+      const { rows } = await executeSqlFile(`${__dirname}/db/insert_automation.sql`, values)
+      const row = rows[0]
       return {
-        id: rows.id,
-        key: rows.automation_key,
-        name: rows.automation_name,
-        description: rows.automation_description,
-        createdBy: rows.created_by,
-        updatedBy: rows.updated_by,
-        createdAt: rows.created_at,
-        updatedAt: rows.updated_at,
+        id: row.id,
+        key: row.key,
+        name: row.name,
+        description: row.description,
+        createdBy: row.created_by,
+        updatedBy: row.updated_by,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
       }
     } catch (err) {
-      logger.error(`Error creating automation: ${err}`)
-      throw new Error(`Error creating automation: ${err}`)
-    } finally {
-      db.release()
-      endDbConnection()
+      logger.error(err)
     }
   }
 }
