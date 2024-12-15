@@ -1,14 +1,26 @@
 import fs from 'fs'
-import path from 'path'
-import { logger } from '@/server'
+
+/**
+ * Read SQL file from the file system
+ * @param {string} filePath - Path to the SQL file
+ * @example
+ * readSqlFile('path/to/file.sql')
+ * @returns {string} - SQL file content
+ */
 
 export function readSqlFile(filePath: string): string {
-  const resolvedPath = path.resolve(__dirname, filePath)
   try {
-    return fs.readFileSync(resolvedPath, 'utf-8')
+    return fs.readFileSync(filePath, 'utf-8')
   } catch (err) {
-    const errorMessage = `Error reading SQL file: ${err}`
-    logger.error(errorMessage)
-    throw new Error(errorMessage)
+    throw new SqlFileReaderError(err as Error)
+  }
+}
+
+class SqlFileReaderError extends Error {
+  constructor(error: Error) {
+    const message = `Error reading SQL file: ${error.message}`
+    super(message)
+    this.name = 'SqlFileReaderError'
+    this.cause = error.cause
   }
 }
