@@ -2,6 +2,8 @@ import { DatabaseError } from 'pg'
 import { logger } from '@/server'
 import { IAutomation } from '@/api/automations/automation'
 import { PostgresError } from '@/common/utils/errorHandlers'
+import { readSqlFile } from '@/common/utils/sqlReader'
+import { dbPool } from '@/common/utils/dbPool'
 
 export class AutomationRepository {
   async createAutomation(automation: IAutomation): Promise<IAutomation> {
@@ -12,9 +14,11 @@ export class AutomationRepository {
       automation.createdBy,
       automation.updatedBy
     ]
+    const querySql = readSqlFile(`${__dirname}/db/insert_automation.sql`)
     try {
-      const { rows } = await executeSqlFile(`${__dirname}/db/insert_automation.sql`, values)
+      const { rows } = await dbPool.query(querySql, values)
       const row = rows[0]
+      logger.info(`Automation ${row.id} created!`)
       return {
         id: row.id,
         key: row.key,
@@ -27,7 +31,6 @@ export class AutomationRepository {
       }
     } catch (err) {
       if (err instanceof DatabaseError) {
-        logger.error(err)
         throw PostgresError.toBusinessError(err)
       }
       throw err
