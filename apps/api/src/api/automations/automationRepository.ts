@@ -1,7 +1,7 @@
+import { DatabaseError } from 'pg'
 import { logger } from '@/server'
 import { IAutomation } from '@/api/automations/automation'
-import { BusinessError } from '@/common/utils/errorHandlers'
-import { executeSqlFile } from '@/common/utils/sqlExecutor'
+import { PostgresError } from '@/common/utils/errorHandlers'
 
 export class AutomationRepository {
   async createAutomation(automation: IAutomation): Promise<IAutomation> {
@@ -26,8 +26,11 @@ export class AutomationRepository {
         updatedAt: row.updated_at,
       }
     } catch (err) {
-      logger.error(err)
-      throw new BusinessError('Automation', 'Error creating automation')
+      if (err instanceof DatabaseError) {
+        logger.error(err)
+        throw PostgresError.toBusinessError(err)
+      }
+      throw err
     }
   }
 }

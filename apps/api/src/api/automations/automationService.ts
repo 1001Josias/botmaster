@@ -4,6 +4,7 @@ import { AutomationRepository } from '@/api/automations/automationRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IAutomation, IAutomationContract } from '@/api/automations/automation'
 import { BusinessError } from '@/common/utils/errorHandlers'
+import { logger } from '@/server'
 
 export class AutomationService implements IAutomationContract<any, Promise<ServiceResponse<IAutomation | null>>> {
   private automationRepository: AutomationRepository
@@ -19,7 +20,8 @@ export class AutomationService implements IAutomationContract<any, Promise<Servi
       return ServiceResponse.success(message, createdAutomation, StatusCodes.CREATED)
     } catch (err) {
       if (err instanceof BusinessError) {
-        return ServiceResponse.failure(err.message, null, StatusCodes.BAD_REQUEST)
+        logger.warn(`${err.name}: ${err.message}`)
+        return ServiceResponse.failure(err.message, null, err.status)
       }
       throw err
     }
