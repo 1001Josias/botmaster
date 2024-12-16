@@ -10,9 +10,12 @@ export class AutomationController implements IAutomationContract<any, any> {
     this.automationService = service
   }
 
-  public createAutomation: RequestHandler<{}, {}, IAutomation> = async (req, res) => {
-    const automation = AutomationSchema.parse(req.body)
-    const automationService = await this.automationService.createAutomation(automation)
-    return handleServiceResponse(automationService, res)
+  public createAutomation: RequestHandler<{}, {}, IAutomation> = async (req, res, next) => {
+    try {
+      const automationService = await this.automationService.createAutomation(req.body)
+      return handleServiceResponse(automationService, res)
+    } catch (err) {
+      next(err)
+    }
   }
 }

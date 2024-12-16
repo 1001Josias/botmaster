@@ -1,3 +1,4 @@
+import { logger } from '@/server'
 import type { ErrorRequestHandler, RequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
 
@@ -10,4 +11,11 @@ const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
   next(err)
 }
 
-export default () => [unexpectedRequest, addErrorToRequestLog]
+const internalServerErrorResponse: ErrorRequestHandler = (err, _req, res, _next) => {
+  logger.error(err)
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+    error: 'INTERNAL_SERVER_ERROR: Please try again later.',
+  })
+}
+
+export default () => [unexpectedRequest, addErrorToRequestLog, internalServerErrorResponse]
