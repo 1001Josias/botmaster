@@ -10,6 +10,7 @@ import errorHandler from '@/common/middleware/errorHandler'
 import rateLimiter from '@/common/middleware/rateLimiter'
 import requestLogger from '@/common/middleware/requestLogger'
 import { env } from '@/common/utils/envConfig'
+import { automationsRouterV1 } from './api/automations/automationRoutes'
 
 const logger = pino({ name: 'server start' })
 const app: Express = express()
@@ -30,6 +31,7 @@ app.use(requestLogger)
 
 // API Routes v1
 apiRouterV1.use('/health-check', healthCheckRouter)
+apiRouterV1.use('/automations', automationsRouterV1)
 apiRouterV1.use('/users', userRouter)
 
 // Routes

@@ -19,3 +19,5 @@ export class AutomationController implements IAutomationContract<any, any> {
     }
   }
 }
+
+export const automationController = new AutomationController()
