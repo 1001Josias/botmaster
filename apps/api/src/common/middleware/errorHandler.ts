@@ -1,9 +1,15 @@
 import { logger } from '@/server'
 import type { ErrorRequestHandler, RequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
+import { ServiceResponse } from '../models/serviceResponse'
 
-const unexpectedRequest: RequestHandler = (_req, res) => {
-  res.sendStatus(StatusCodes.NOT_FOUND)
+const unexpectedRequest: RequestHandler = (req, res) => {
+  const apiDocsUrl = `${req.protocol}://${req.get('host')}/api-docs/v1`
+  const message = `Unexpected request. See our API documentation: ${apiDocsUrl}`
+  const error = `Route not found: ${req.method} ${req.originalUrl}`
+  logger.warn(message)
+  const response = ServiceResponse.failure(message, { error }, StatusCodes.NOT_FOUND)
+  res.status(response.statusCode).send(response)
 }
 
 const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
