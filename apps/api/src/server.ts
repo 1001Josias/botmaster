@@ -13,6 +13,7 @@ import { env } from '@/common/utils/envConfig'
 
 const logger = pino({ name: 'server start' })
 const app: Express = express()
+const apiRouterV1 = express.Router()
 
 // Set the application to trust the reverse proxy
 app.set('trust proxy', true)
@@ -27,9 +28,12 @@ app.use(rateLimiter)
 // Request logging
 app.use(requestLogger)
 
+// API Routes v1
+apiRouterV1.use('/health-check', healthCheckRouter)
+apiRouterV1.use('/users', userRouter)
+
 // Routes
-app.use('/health-check', healthCheckRouter)
-app.use('/users', userRouter)
+app.use('/api/v1', apiRouterV1)
 
 // Swagger UI
 app.use('/api-docs/v1', openAPIRouterV1)
