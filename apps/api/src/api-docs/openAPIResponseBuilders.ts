@@ -4,16 +4,16 @@ import { ServiceResponseSchema } from '@/common/models/serviceResponse'
 import { StatusCodes } from 'http-status-codes'
 import { InternalError } from '@/common/utils/errorHandlers'
 
-export type OpenApiResponseConfig<T> = {
+export type OpenApiResponseConfig<T = null> = {
   success: boolean
   description: string
-  dataSchema: Schema<T>
+  dataSchema: Schema<T> | z.ZodNull
   statusCode: number
 }
 
 const internalError = new InternalError()
 
-const automationResponseInternalError = {
+const openApiResponseInternalError = {
   [StatusCodes.INTERNAL_SERVER_ERROR]: {
     description:
       'Thrown when an unexpected error occurs on the server. If this error persists, please contact support.',
@@ -32,43 +32,57 @@ const automationResponseInternalError = {
   },
 }
 
-export function createOpenApiResponse<T>(config: OpenApiResponseConfig<T>[]) {
-  return config.reduce((acc, { success, description, dataSchema, statusCode }) => {
-    console.log('dataSchema', acc)
-    return {
-      ...acc,
-      [statusCode]: {
-        description,
-        content: {
-          'application/json': {
-            schema: ServiceResponseSchema(success, description, dataSchema, statusCode),
-          },
-        },
+const openApiResponseNotFound = {
+  [StatusCodes.NOT_FOUND]: {
+    description: 'Thrown when the requested resource is not found.',
+    content: {
+      'application/json': {
+        schema: ServiceResponseSchema(
+          false,
+          'Resource not found.',
+          z.object({
+            error: z.string().openapi({ example: 'Resource not found.' }),
+          }),
+          StatusCodes.NOT_FOUND,
+        ),
       },
-    }
-  }, automationResponseInternalError)
+    },
+  },
 }
 
-// Use if you want multiple responses for a single endpoint
+const openApiResponseBadRequest = {
+  [StatusCodes.BAD_REQUEST]: {
+    description: 'Thrown when the request is invalid.',
+    content: {
+      'application/json': {
+        schema: ServiceResponseSchema(
+          false,
+          'Invalid request.',
+          z.object({
+            errors: z.array(z.string()),
+          }),
+          StatusCodes.BAD_REQUEST,
+        ),
+      },
+    },
+  },
+}
 
-// import { ResponseConfig } from '@asteasolutions/zod-to-openapi';
-// import { ApiResponseConfig } from '@common/models/openAPIResponseConfig';
-// export type ApiResponseConfig = {
-//   schema: z.ZodTypeAny;
-//   description: string;
-//   statusCode: StatusCodes;
-// };
-// export function createApiResponses(configs: ApiResponseConfig[]) {
-//   const responses: { [key: string]: ResponseConfig } = {};
-//   configs.forEach(({ schema, description, statusCode }) => {
-//     responses[statusCode] = {
-//       description,
-//       content: {
-//         'application/json': {
-//           schema: ServiceResponseSchema(schema),
-//         },
-//       },
-//     };
-//   });
-//   return responses;
-// }
+export function createOpenApiResponse<T>(config: OpenApiResponseConfig<T>[]) {
+  return config.reduce(
+    (acc, { success, description, dataSchema, statusCode }) => {
+      return {
+        ...acc,
+        [statusCode]: {
+          description,
+          content: {
+            'application/json': {
+              schema: ServiceResponseSchema(success, description, dataSchema, statusCode),
+            },
+          },
+        },
+      }
+    },
+    { ...openApiResponseInternalError, ...openApiResponseNotFound, ...openApiResponseBadRequest },
+  )
+}
