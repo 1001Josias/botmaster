@@ -2,6 +2,7 @@ import { logger } from '@/server'
 import type { ErrorRequestHandler, RequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ServiceResponse } from '../models/serviceResponse'
+import { InternalError } from '../utils/errorHandlers'
 
 const unexpectedRequest: RequestHandler = (req, res) => {
   const apiDocsUrl = `${req.protocol}://${req.get('host')}/api-docs/v1`
@@ -19,9 +20,8 @@ const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
 
 const internalServerErrorResponse: ErrorRequestHandler = (err, _req, res, _next) => {
   logger.error(err)
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-    error: 'INTERNAL_SERVER_ERROR: Please try again later.',
-  })
+  const response = ServiceResponse.failure('Internal error.', new InternalError(), StatusCodes.INTERNAL_SERVER_ERROR)
+  res.status(response.statusCode).send(response)
 }
 
 export default () => [unexpectedRequest, addErrorToRequestLog, internalServerErrorResponse]

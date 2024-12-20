@@ -35,3 +35,8 @@ export class PostgresError {
     return new BusinessError(table, message, StatusCodes.CONFLICT)
   }
 }
+
+export class InternalError {
+  error = 'An unexpected error occurred. If this error persists, please contact support.'
+  constructor() {}
+}
