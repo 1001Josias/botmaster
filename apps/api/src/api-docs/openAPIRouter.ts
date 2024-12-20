@@ -1,14 +1,14 @@
 import express, { type Request, type Response, type Router } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
-import { generateOpenAPIDocument } from '@/api-docs/openAPIDocumentGenerator'
+import { generateOpenAPIDocumentV1 } from '@/api-docs/openAPIDocumentGenerator'
 
 export const openAPIRouterV1: Router = express.Router()
-const openAPIDocument = generateOpenAPIDocument()
+const openAPIDocumentV1 = generateOpenAPIDocumentV1()
 
 openAPIRouterV1.get('/swagger.json', (_req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json')
-  res.send(openAPIDocument)
+  res.send(openAPIDocumentV1)
 })
 
-openAPIRouterV1.use('/', swaggerUi.serve, swaggerUi.setup(openAPIDocument))
+openAPIRouterV1.use('/', swaggerUi.serve, swaggerUi.setup(openAPIDocumentV1))

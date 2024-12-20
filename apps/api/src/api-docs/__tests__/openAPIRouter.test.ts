@@ -3,13 +3,13 @@ import request from 'supertest'
 
 import { app } from '@/server'
 
-import { generateOpenAPIDocument } from '../openAPIDocumentGenerator'
+import { generateOpenAPIDocumentV1 } from '../openAPIDocumentGenerator'
 
 describe('OpenAPI Router', () => {
   describe('Swagger JSON route', () => {
     it('should return Swagger JSON content', async () => {
       // Arrange
-      const expectedResponse = generateOpenAPIDocument()
+      const expectedResponse = generateOpenAPIDocumentV1()
 
       // Act
       const response = await request(app).get('/swagger.json')
