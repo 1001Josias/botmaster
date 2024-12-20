@@ -1,19 +1,52 @@
-import { StatusCodes } from 'http-status-codes'
-import type { z } from 'zod'
+import { Schema, z } from 'zod'
 
 import { ServiceResponseSchema } from '@/common/models/serviceResponse'
+import { StatusCodes } from 'http-status-codes'
+import { InternalError } from '@/common/utils/errorHandlers'
 
-export function createApiResponse(schema: z.ZodTypeAny, description: string, statusCode = StatusCodes.OK) {
-  return {
-    [statusCode]: {
-      description,
-      content: {
-        'application/json': {
-          schema: ServiceResponseSchema(schema),
-        },
+export type OpenApiResponseConfig<T> = {
+  success: boolean
+  description: string
+  dataSchema: Schema<T>
+  statusCode: number
+}
+
+const internalError = new InternalError()
+
+const automationResponseInternalError = {
+  [StatusCodes.INTERNAL_SERVER_ERROR]: {
+    description:
+      'Thrown when an unexpected error occurs on the server. If this error persists, please contact support.',
+    content: {
+      'application/json': {
+        schema: ServiceResponseSchema(
+          false,
+          'Internal error.',
+          z.object({
+            error: z.string().openapi({ example: internalError.error }),
+          }),
+          StatusCodes.INTERNAL_SERVER_ERROR,
+        ),
       },
     },
-  }
+  },
+}
+
+export function createOpenApiResponse<T>(config: OpenApiResponseConfig<T>[]) {
+  return config.reduce((acc, { success, description, dataSchema, statusCode }) => {
+    console.log('dataSchema', acc)
+    return {
+      ...acc,
+      [statusCode]: {
+        description,
+        content: {
+          'application/json': {
+            schema: ServiceResponseSchema(success, description, dataSchema, statusCode),
+          },
+        },
+      },
+    }
+  }, automationResponseInternalError)
 }
 
 // Use if you want multiple responses for a single endpoint
