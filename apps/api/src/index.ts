@@ -1,5 +1,6 @@
 import { env } from '@/common/utils/envConfig'
 import { app, logger } from '@/server'
+import { endDbConnection } from './common/utils/dbPool'
 
 const server = app.listen(env.PORT, () => {
   const { NODE_ENV, HOST, PORT } = env
@@ -8,7 +9,8 @@ const server = app.listen(env.PORT, () => {
 
 const onCloseSignal = () => {
   logger.info('sigint received, shutting down')
-  server.close(() => {
+  server.close(async () => {
+    await endDbConnection()
     logger.info('server closed')
     process.exit()
   })
