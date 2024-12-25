@@ -7,7 +7,7 @@ import { z } from 'zod'
 
 export const automationRegistryV1 = new OpenAPIRegistry()
 
-const automationPath = '/api/v1/automations'
+const automationPath = '/automations'
 
 const automationOpenApiResponseSuccess: OpenApiResponseConfig<IAutomation> = {
   success: true,
