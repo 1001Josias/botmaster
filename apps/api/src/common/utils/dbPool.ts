@@ -7,7 +7,7 @@ export const dbPool = new Pool({
   port: env.DB_PORT,
   user: env.DB_USER,
   database: env.DB_NAME,
-  password: env.DB_PASSWORD,
+  password: env.PGPASSWORD,
   max: env.DB_MAX_CONNECTIONS,
   idleTimeoutMillis: env.DB_IDLE_TIMEOUT,
   connectionTimeoutMillis: env.DB_CONNECTION_TIMEOUT,

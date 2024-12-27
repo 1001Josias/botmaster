@@ -18,7 +18,7 @@ export const env = cleanEnv(process.env, {
   DB_PORT: num(),
   DB_USER: str(),
   DB_NAME: str(),
-  DB_PASSWORD: str(),
+  PGPASSWORD: str(),
   DB_MAX_CONNECTIONS: num({ devDefault: testOnly(20) }),
   DB_IDLE_TIMEOUT: num({ devDefault: testOnly(30000) }),
   DB_CONNECTION_TIMEOUT: num({ devDefault: testOnly(5000) }),
