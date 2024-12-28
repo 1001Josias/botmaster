@@ -13,7 +13,7 @@ const automationOpenApiResponseSuccess: OpenApiResponseConfig<IAutomation> = {
   success: true,
   description: 'Success',
   dataSchema: AutomationSchema,
-  statusCode: StatusCodes.OK,
+  statusCode: StatusCodes.CREATED,
 }
 
 const automationOpenApiResponseConflict: OpenApiResponseConfig<null> = {
