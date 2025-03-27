@@ -22,4 +22,5 @@ export const env = cleanEnv(process.env, {
   DB_MAX_CONNECTIONS: num({ devDefault: testOnly(20) }),
   DB_IDLE_TIMEOUT: num({ devDefault: testOnly(30000) }),
   DB_CONNECTION_TIMEOUT: num({ devDefault: testOnly(5000) }),
+  KEYCLOAK_BASE_URL: str(),
 })
