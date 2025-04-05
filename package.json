@@ -8,12 +8,23 @@
     "format": "prettier --config packages/eslint-config/.prettierrc --write . --inlude '*.js,*.json,*.md,*.ts,*.tsx'"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^2.0.7",
-    "typescript": "^5.4.5"
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=21"
+  },
+  "pnpm": {
+    "overrides": {
+      "next@>=14.0.0 <14.2.10": ">=14.2.10",
+      "next@>=10.0.0 <14.2.7": ">=14.2.7",
+      "@eslint/plugin-kit@<0.2.3": ">=0.2.3",
+      "next@>=9.5.5 <14.2.15": ">=14.2.15",
+      "next@>=14.0.0 <14.2.21": ">=14.2.21",
+      "esbuild@<=0.24.2": ">=0.25.0",
+      "next@>=14.0.0 <14.2.25": ">=14.2.25"
+    }
   }
 }
