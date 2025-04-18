@@ -7,5 +7,6 @@
   "prettier.enable": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": "./packages/eslint-config/.prettierrc"
+  "prettier.configPath": "./packages/eslint-config/.prettierrc",
+  "prettier.ignorePath": "./packages/eslint-config/.prettierignore"
 }
