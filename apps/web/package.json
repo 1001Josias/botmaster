@@ -10,7 +10,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "next lint",
     "lint-staged": "lint-staged",
-    "prettier": "prettier --config node_modules/@repo/eslint-config/.prettierrc --write .",
+    "prettier": "prettier --config node_modules/@repo/eslint-config/.prettierrc --write . --inlude '*.js,*.json,*.md,*.ts,*.tsx'",
     "stylelint-staged": "stylelint"
   },
   "pre-commit": [
