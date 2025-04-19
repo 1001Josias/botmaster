@@ -1,6 +1,6 @@
 import { vi, expect, test, suite } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 suite('Button Component Tests', () => {
   test('renders button with default variant', () => {

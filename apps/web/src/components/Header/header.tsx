@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import { config } from './header.config'
-import Button from '@/components/Button'
+import { Button } from '@/components/Button'
 
 export const Header = ({ children }: React.PropsWithChildren) => {
   return (
