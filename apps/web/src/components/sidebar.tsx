@@ -20,6 +20,7 @@ import {
   PlaySquare,
   ListTodo,
   Zap,
+  Server,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -124,6 +125,16 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <Bot className="h-4 w-4" />
               {!collapsed && <span>Workers</span>}
+            </Link>
+            <Link
+              href="/machines"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname === '/machines' ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <Server className="h-4 w-4" />
+              {!collapsed && <span>Máquinas</span>}
             </Link>
             <Link
               href="/jobs"
