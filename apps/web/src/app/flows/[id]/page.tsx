@@ -10,7 +10,7 @@ export default function FlowDetailPage({ params }: { params: { id: string } }) {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href="/dashboard/flows">
+          <Link href="/flows">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>

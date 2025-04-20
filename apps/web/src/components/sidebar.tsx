@@ -88,7 +88,7 @@ export function Sidebar({ className }: SidebarProps) {
               href="/flows"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname.startsWith('/dashboard/flows') ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname.startsWith('/flows') ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <PlaySquare className="h-4 w-4" />

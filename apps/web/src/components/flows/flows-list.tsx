@@ -210,7 +210,7 @@ export function FlowsList() {
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
                     <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                      <Link href={`/dashboard/flows/${flow.id}`}>
+                      <Link href={`/flows/${flow.id}`}>
                         <ExternalLink className="h-4 w-4" />
                       </Link>
                     </Button>
@@ -232,7 +232,7 @@ export function FlowsList() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/flows/${flow.id}`}>
+                          <Link href={`/flows/${flow.id}`}>
                             <FileText className="mr-2 h-4 w-4" />
                             Ver Detalhes
                           </Link>
