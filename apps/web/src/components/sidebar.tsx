@@ -63,7 +63,7 @@ export function Sidebar({ className }: SidebarProps) {
               {!collapsed && <span>Workflows</span>}
             </Link>
             <Link
-              href="/dashboard/queues"
+              href="/queues"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
                 pathname === '/dashboard/queues' ? 'bg-accent text-accent-foreground' : 'transparent'
