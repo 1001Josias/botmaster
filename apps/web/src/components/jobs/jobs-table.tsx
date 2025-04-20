@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useState } from 'react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
   Pagination,
   PaginationContent,
@@ -14,80 +14,81 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
-import { MoreVertical, FileText, RotateCcw, StopCircle, Bot, ArrowUpRight, Clock } from "lucide-react"
-import { Progress } from "@/components/ui/progress"
+} from '@/components/ui/pagination'
+import { MoreVertical, FileText, RotateCcw, StopCircle, Bot, ArrowUpRight, Clock } from 'lucide-react'
+import { Progress } from '@/components/ui/progress'
+import Link from 'next/link'
 
 // Dados de exemplo
 const jobs = [
   {
-    id: "JOB-001",
-    name: "Processamento de Email #1245",
-    worker: "Email Worker",
-    status: "completed",
-    duration: "1.2s",
-    startedAt: "2023-03-15T14:30:00",
-    completedAt: "2023-03-15T14:30:01",
+    id: 'JOB-001',
+    name: 'Processamento de Email #1245',
+    worker: 'Email Worker',
+    status: 'completed',
+    duration: '1.2s',
+    startedAt: '2023-03-15T14:30:00',
+    completedAt: '2023-03-15T14:30:01',
     progress: 100,
   },
   {
-    id: "JOB-002",
-    name: "Envio de Notificação #458",
-    worker: "Notification Worker",
-    status: "running",
-    duration: "0.8s",
-    startedAt: "2023-03-15T14:31:00",
+    id: 'JOB-002',
+    name: 'Envio de Notificação #458',
+    worker: 'Notification Worker',
+    status: 'running',
+    duration: '0.8s',
+    startedAt: '2023-03-15T14:31:00',
     completedAt: null,
     progress: 65,
   },
   {
-    id: "JOB-003",
-    name: "Geração de Relatório #89",
-    worker: "Report Worker",
-    status: "failed",
-    duration: "3.5s",
-    startedAt: "2023-03-15T14:29:00",
-    completedAt: "2023-03-15T14:29:04",
+    id: 'JOB-003',
+    name: 'Geração de Relatório #89',
+    worker: 'Report Worker',
+    status: 'failed',
+    duration: '3.5s',
+    startedAt: '2023-03-15T14:29:00',
+    completedAt: '2023-03-15T14:29:04',
     progress: 100,
   },
   {
-    id: "JOB-004",
-    name: "Processamento de Pagamento #567",
-    worker: "Payment Worker",
-    status: "pending",
-    duration: "0s",
+    id: 'JOB-004',
+    name: 'Processamento de Pagamento #567',
+    worker: 'Payment Worker',
+    status: 'pending',
+    duration: '0s',
     startedAt: null,
     completedAt: null,
     progress: 0,
   },
   {
-    id: "JOB-005",
-    name: "Sincronização de Dados #234",
-    worker: "Data Worker",
-    status: "completed",
-    duration: "4.2s",
-    startedAt: "2023-03-15T14:25:00",
-    completedAt: "2023-03-15T14:25:04",
+    id: 'JOB-005',
+    name: 'Sincronização de Dados #234',
+    worker: 'Data Worker',
+    status: 'completed',
+    duration: '4.2s',
+    startedAt: '2023-03-15T14:25:00',
+    completedAt: '2023-03-15T14:25:04',
     progress: 100,
   },
   {
-    id: "JOB-006",
-    name: "Processamento de Imagem #789",
-    worker: "Media Worker",
-    status: "running",
-    duration: "5.1s",
-    startedAt: "2023-03-15T14:28:00",
+    id: 'JOB-006',
+    name: 'Processamento de Imagem #789',
+    worker: 'Media Worker',
+    status: 'running',
+    duration: '5.1s',
+    startedAt: '2023-03-15T14:28:00',
     completedAt: null,
     progress: 80,
   },
   {
-    id: "JOB-007",
-    name: "Envio de Email #1246",
-    worker: "Email Worker",
-    status: "completed",
-    duration: "1.0s",
-    startedAt: "2023-03-15T14:27:00",
-    completedAt: "2023-03-15T14:27:01",
+    id: 'JOB-007',
+    name: 'Envio de Email #1246',
+    worker: 'Email Worker',
+    status: 'completed',
+    duration: '1.0s',
+    startedAt: '2023-03-15T14:27:00',
+    completedAt: '2023-03-15T14:27:01',
     progress: 100,
   },
 ]
@@ -97,25 +98,25 @@ export function JobsTable() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "completed":
+      case 'completed':
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Concluído
           </Badge>
         )
-      case "running":
+      case 'running':
         return (
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             Em Execução
           </Badge>
         )
-      case "failed":
+      case 'failed':
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
             Falha
           </Badge>
         )
-      case "pending":
+      case 'pending':
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
             Pendente
@@ -127,15 +128,15 @@ export function JobsTable() {
   }
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
+    if (!dateString) return '-'
     const date = new Date(dateString)
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     }).format(date)
   }
 
@@ -187,15 +188,17 @@ export function JobsTable() {
                 <TableCell>{formatDate(job.completedAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <FileText className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                      <Link href={`/jobs/${job.id}`}>
+                        <FileText className="h-4 w-4" />
+                      </Link>
                     </Button>
-                    {job.status === "running" && (
+                    {job.status === 'running' && (
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <StopCircle className="h-4 w-4" />
                       </Button>
                     )}
-                    {job.status === "failed" && (
+                    {job.status === 'failed' && (
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <RotateCcw className="h-4 w-4" />
                       </Button>
@@ -207,9 +210,11 @@ export function JobsTable() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <FileText className="mr-2 h-4 w-4" />
-                          Ver Detalhes
+                        <DropdownMenuItem asChild>
+                          <Link href={`/jobs/${job.id}`}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            Ver Detalhes
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <ArrowUpRight className="mr-2 h-4 w-4" />
@@ -253,4 +258,3 @@ export function JobsTable() {
     </Card>
   )
 }
-
