@@ -254,7 +254,7 @@ export function TriggersList() {
                       <>
                         <Workflow className="h-4 w-4 text-blue-500" />
                         <Button variant="link" className="p-0 h-auto" asChild>
-                          <Link href={`/dashboard/workflows/${trigger.workflowId}`}>
+                          <Link href={`/workflows/${trigger.workflowId}`}>
                             <span className="flex items-center gap-1">
                               {trigger.workflow}
                               <ArrowUpRight className="h-3 w-3" />
@@ -266,7 +266,7 @@ export function TriggersList() {
                       <>
                         <Bot className="h-4 w-4 text-orange-500" />
                         <Button variant="link" className="p-0 h-auto" asChild>
-                          <Link href={`/dashboard/workers/${trigger.workerId}`}>
+                          <Link href={`/workers/${trigger.workerId}`}>
                             <span className="flex items-center gap-1">
                               {trigger.worker}
                               <ArrowUpRight className="h-3 w-3" />
@@ -335,9 +335,11 @@ export function TriggersList() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Editar
+                        <DropdownMenuItem asChild>
+                          <Link href={`/triggers/${trigger.id}`}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <PlayCircle className="mr-2 h-4 w-4" />

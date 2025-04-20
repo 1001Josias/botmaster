@@ -270,7 +270,12 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Descreva o propósito deste trigger" className="resize-none" {...field} />
+                    <Textarea
+                      placeholder="Descreva o propósito deste trigger"
+                      className="resize-none"
+                      {...field}
+                      value={field.value || ''}
+                    />
                   </FormControl>
                   <FormDescription>
                     Uma descrição opcional para ajudar a entender o propósito deste trigger.
@@ -544,6 +549,7 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
                             placeholder="quantity < threshold, temperature > 30, etc."
                             className="resize-none"
                             {...field}
+                            value={field.value || ''}
                           />
                         </FormControl>
                         <FormDescription>A condição que, quando satisfeita, acionará o workflow.</FormDescription>
