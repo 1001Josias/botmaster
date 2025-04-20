@@ -118,7 +118,7 @@ export function Sidebar({ className }: SidebarProps) {
               href="/jobs"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname === '/dashboard/jobs' ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname === '/jobs' ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <ListTodo className="h-4 w-4" />
