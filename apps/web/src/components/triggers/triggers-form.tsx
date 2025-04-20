@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Calendar, Database, Globe, Workflow, Zap } from 'lucide-react'
+import { Calendar, Database, Globe, Workflow, Zap, Bot } from 'lucide-react'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -15,28 +15,42 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/Button'
 
 // Esquema de validação para o formulário
-const triggerFormSchema = z.object({
-  name: z.string().min(2, {
-    message: 'O nome deve ter pelo menos 2 caracteres.',
-  }),
-  type: z.enum(['schedule', 'webhook', 'event', 'data']),
-  workflowId: z.string().min(1, {
-    message: 'Selecione um workflow.',
-  }),
-  description: z.string().optional(),
-  isActive: z.boolean(),
+const triggerFormSchema = z
+  .object({
+    name: z.string().min(2, {
+      message: 'O nome deve ter pelo menos 2 caracteres.',
+    }),
+    type: z.enum(['schedule', 'webhook', 'event', 'data']),
+    targetType: z.enum(['workflow', 'worker']),
+    workflowId: z.string().optional(),
+    workerId: z.string().optional(),
+    description: z.string().optional(),
+    isActive: z.boolean(),
 
-  // Campos específicos por tipo
-  schedule: z.string().optional(),
-  cronExpression: z.string().optional(),
-  webhookEndpoint: z.string().optional(),
-  webhookMethod: z.enum(['POST', 'GET', 'PUT', 'DELETE']).optional(),
-  webhookSecret: z.string().optional(),
-  eventName: z.string().optional(),
-  eventSource: z.string().optional(),
-  dataSource: z.string().optional(),
-  dataCondition: z.string().optional(),
-})
+    // Campos específicos por tipo
+    schedule: z.string().optional(),
+    cronExpression: z.string().optional(),
+    webhookEndpoint: z.string().optional(),
+    webhookMethod: z.enum(['POST', 'GET', 'PUT', 'DELETE']).optional(),
+    webhookSecret: z.string().optional(),
+    eventName: z.string().optional(),
+    eventSource: z.string().optional(),
+    dataSource: z.string().optional(),
+    dataCondition: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.targetType === 'workflow') {
+        return !!data.workflowId
+      } else {
+        return !!data.workerId
+      }
+    },
+    {
+      message: 'Você deve selecionar um workflow ou worker dependendo do tipo de destino',
+      path: ['workflowId', 'workerId'],
+    }
+  )
 
 type TriggerFormValues = z.infer<typeof triggerFormSchema>
 
@@ -49,6 +63,15 @@ const workflows = [
   { id: 'WF-007', name: 'Backup de Dados' },
   { id: 'WF-008', name: 'Onboarding de Usuário' },
   { id: 'WF-009', name: 'Notificação de Alerta' },
+]
+
+// Adicionar dados de exemplo para workers
+const workers = [
+  { id: 'W-001', name: 'Email Worker' },
+  { id: 'W-002', name: 'Estoque Worker' },
+  { id: 'W-003', name: 'Notificação Worker' },
+  { id: 'W-004', name: 'Relatório Worker' },
+  { id: 'W-005', name: 'Alerta Worker' },
 ]
 
 const eventSources = [
@@ -75,11 +98,15 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
   const router = useRouter()
   const [triggerType, setTriggerType] = useState<string>('schedule')
 
+  // Adicionar estado para controlar o tipo de destino
+  const [targetType, setTargetType] = useState<string>('workflow')
+
   // Valores padrão para edição (simulados)
   const defaultValues: Partial<TriggerFormValues> = isEdit
     ? {
         name: 'Relatório Diário',
         type: 'schedule',
+        targetType: 'workflow',
         workflowId: 'WF-003',
         description: 'Gera relatórios diários às 8:00 de segunda a sexta',
         isActive: true,
@@ -89,6 +116,7 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
     : {
         isActive: true,
         type: 'schedule',
+        targetType: 'workflow',
       }
 
   const form = useForm<TriggerFormValues>({
@@ -108,6 +136,12 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
   const watchType = form.watch('type')
   if (watchType !== triggerType) {
     setTriggerType(watchType)
+  }
+
+  // Atualizar o tipo de destino quando o usuário muda a seleção
+  const watchTargetType = form.watch('targetType')
+  if (watchTargetType !== targetType) {
+    setTargetType(watchTargetType)
   }
 
   return (
@@ -137,6 +171,41 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
 
               <FormField
                 control={form.control}
+                name="targetType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de Destino</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o tipo de destino" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="workflow">
+                          <div className="flex items-center gap-2">
+                            <Workflow className="h-4 w-4 text-blue-500" />
+                            <span>Workflow</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="worker">
+                          <div className="flex items-center gap-2">
+                            <Bot className="h-4 w-4 text-orange-500" />
+                            <span>Worker</span>
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Escolha se este trigger iniciará um workflow ou um worker.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {targetType === 'workflow' ? (
+              <FormField
+                control={form.control}
                 name="workflowId"
                 render={({ field }) => (
                   <FormItem>
@@ -163,7 +232,36 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
                   </FormItem>
                 )}
               />
-            </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="workerId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Worker</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um worker" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {workers.map((worker) => (
+                          <SelectItem key={worker.id} value={worker.id}>
+                            <div className="flex items-center gap-2">
+                              <Bot className="h-4 w-4 text-orange-500" />
+                              <span>{worker.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>O worker que será executado quando este trigger for acionado.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
