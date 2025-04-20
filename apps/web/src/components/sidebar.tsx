@@ -53,10 +53,10 @@ export function Sidebar({ className }: SidebarProps) {
               {!collapsed && <span>Dashboard</span>}
             </Link>
             <Link
-              href="/dashboard/workflows"
+              href="/workflows"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname === '/dashboard/workflows' ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname === '/workflows' ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <Workflow className="h-4 w-4" />
@@ -66,37 +66,37 @@ export function Sidebar({ className }: SidebarProps) {
               href="/queues"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname === '/dashboard/queues' ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname === '/queues' ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <Database className="h-4 w-4" />
               {!collapsed && <span>Queues</span>}
             </Link>
             <Link
-              href="/dashboard/workers"
+              href="/workers"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname === '/dashboard/workers' ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname === '/workers' ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <Bot className="h-4 w-4" />
               {!collapsed && <span>Workers</span>}
             </Link>
             <Link
-              href="/dashboard/users"
+              href="/users"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname === '/dashboard/users' ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname === '/users' ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <Users className="h-4 w-4" />
               {!collapsed && <span>Usuários</span>}
             </Link>
             <Link
-              href="/dashboard/settings"
+              href="/settings"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                pathname === '/dashboard/settings' ? 'bg-accent text-accent-foreground' : 'transparent'
+                pathname === '/settings' ? 'bg-accent text-accent-foreground' : 'transparent'
               )}
             >
               <Settings className="h-4 w-4" />
