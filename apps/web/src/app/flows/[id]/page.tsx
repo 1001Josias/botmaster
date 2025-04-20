@@ -1,13 +1,14 @@
 import { FlowDetails } from '@/components/flows/flow-details'
 import { FlowJobs } from '@/components/flows/flow-jobs'
 import { FlowDiagram } from '@/components/flows/flow-diagram'
-import { Button } from '@/components/ui/button'
+import { FlowLogs } from '@/components/flows/flow-logs'
+import { Button } from '@/components/Button'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function FlowDetailPage({ params }: { params: { id: string } }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-[400px]">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
           <Link href="/flows">
@@ -28,6 +29,7 @@ export default function FlowDetailPage({ params }: { params: { id: string } }) {
           <FlowJobs id={params.id} />
         </div>
       </div>
+      <FlowLogs id={params.id} />
     </div>
   )
 }
