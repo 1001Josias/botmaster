@@ -19,6 +19,7 @@ import {
   FolderTree,
   PlaySquare,
   ListTodo,
+  Zap,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -83,6 +84,16 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <Workflow className="h-4 w-4" />
               {!collapsed && <span>Workflows</span>}
+            </Link>
+            <Link
+              href="/triggers"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname === '/dashboard/triggers' ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <Zap className="h-4 w-4" />
+              {!collapsed && <span>Triggers</span>}
             </Link>
             <Link
               href="/flows"
