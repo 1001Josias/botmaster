@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { LayoutDashboard, Settings, Users, Workflow, Database, Bot, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Settings, Users, Workflow, Database, Bot, Menu, X, FolderTree } from 'lucide-react'
 import { useState } from 'react'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -53,7 +53,17 @@ export function Sidebar({ className }: SidebarProps) {
               {!collapsed && <span>Dashboard</span>}
             </Link>
             <Link
-              href="/workflows"
+              href="/folders"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname === '/folders' ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <FolderTree className="h-4 w-4" />
+              {!collapsed && <span>Folders</span>}
+            </Link>
+            <Link
+              href="/dashboard/workflows"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
                 pathname === '/workflows' ? 'bg-accent text-accent-foreground' : 'transparent'
