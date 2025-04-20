@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Zap, Clock, Calendar, AlertTriangle } from 'lucide-react'
+import { Zap, AlertTriangle, Workflow, Bot } from 'lucide-react'
 
 export function TriggersStats() {
   return (
@@ -16,22 +16,22 @@ export function TriggersStats() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Execuções Hoje</CardTitle>
-          <Clock className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">Workflows Acionados</CardTitle>
+          <Workflow className="h-4 w-4 text-blue-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">248</div>
-          <p className="text-xs text-muted-foreground">+15% em relação a ontem</p>
+          <div className="text-2xl font-bold">18</div>
+          <p className="text-xs text-muted-foreground">56% do total</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Próxima Execução</CardTitle>
-          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">Workers Acionados</CardTitle>
+          <Bot className="h-4 w-4 text-orange-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">5m 30s</div>
-          <p className="text-xs text-muted-foreground">Agendamento: Relatório Diário</p>
+          <div className="text-2xl font-bold">14</div>
+          <p className="text-xs text-muted-foreground">44% do total</p>
         </CardContent>
       </Card>
       <Card>
