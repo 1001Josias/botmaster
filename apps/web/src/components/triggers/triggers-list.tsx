@@ -29,16 +29,17 @@ import {
   BarChart2,
   Workflow,
   ArrowUpRight,
+  Bot,
 } from 'lucide-react'
 import Link from 'next/link'
 import { Switch } from '@/components/ui/switch'
 
-// Dados de exemplo
 const triggers = [
   {
     id: 'TRG-001',
     name: 'Relatório Diário',
     type: 'schedule',
+    targetType: 'workflow',
     workflow: 'Geração de Relatórios',
     workflowId: 'WF-003',
     status: 'active',
@@ -51,6 +52,7 @@ const triggers = [
     id: 'TRG-002',
     name: 'Webhook de Pagamento',
     type: 'webhook',
+    targetType: 'workflow',
     workflow: 'Processamento de Pagamentos',
     workflowId: 'WF-004',
     status: 'active',
@@ -63,8 +65,9 @@ const triggers = [
     id: 'TRG-003',
     name: 'Monitoramento de Estoque',
     type: 'data',
-    workflow: 'Reposição de Estoque',
-    workflowId: 'WF-002',
+    targetType: 'worker',
+    worker: 'Estoque Worker',
+    workerId: 'W-002',
     status: 'active',
     condition: 'quantity < threshold',
     lastRun: '2023-03-15T10:15:00',
@@ -75,6 +78,7 @@ const triggers = [
     id: 'TRG-004',
     name: 'Backup Semanal',
     type: 'schedule',
+    targetType: 'workflow',
     workflow: 'Backup de Dados',
     workflowId: 'WF-007',
     status: 'active',
@@ -87,8 +91,9 @@ const triggers = [
     id: 'TRG-005',
     name: 'Evento de Novo Usuário',
     type: 'event',
-    workflow: 'Onboarding de Usuário',
-    workflowId: 'WF-008',
+    targetType: 'worker',
+    worker: 'Notificação Worker',
+    workerId: 'W-003',
     status: 'inactive',
     event: 'user.created',
     lastRun: '2023-03-14T16:45:00',
@@ -99,6 +104,7 @@ const triggers = [
     id: 'TRG-006',
     name: 'Sincronização com CRM',
     type: 'schedule',
+    targetType: 'workflow',
     workflow: 'Integração CRM',
     workflowId: 'WF-004',
     status: 'active',
@@ -111,8 +117,9 @@ const triggers = [
     id: 'TRG-007',
     name: 'Alerta de Temperatura',
     type: 'data',
-    workflow: 'Notificação de Alerta',
-    workflowId: 'WF-009',
+    targetType: 'worker',
+    worker: 'Alerta Worker',
+    workerId: 'W-005',
     status: 'active',
     condition: 'temperature > 30',
     lastRun: '2023-03-15T13:12:00',
@@ -202,6 +209,11 @@ export function TriggersList() {
     return cronMap[schedule] || schedule
   }
 
+  const toggleTriggerStatus = (triggerId: string) => {
+    // Em uma aplicação real, isso enviaria uma requisição para a API
+    console.log(`Alterando status do trigger ${triggerId}`)
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -213,7 +225,7 @@ export function TriggersList() {
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Tipo</TableHead>
-              <TableHead>Workflow</TableHead>
+              <TableHead>Destino</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Configuração</TableHead>
               <TableHead>Última Execução</TableHead>
@@ -238,20 +250,39 @@ export function TriggersList() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Workflow className="h-4 w-4 text-blue-500" />
-                    <Button variant="link" className="p-0 h-auto" asChild>
-                      <Link href={`/dashboard/workflows/${trigger.workflowId}`}>
-                        <span className="flex items-center gap-1">
-                          {trigger.workflow}
-                          <ArrowUpRight className="h-3 w-3" />
-                        </span>
-                      </Link>
-                    </Button>
+                    {trigger.targetType === 'workflow' ? (
+                      <>
+                        <Workflow className="h-4 w-4 text-blue-500" />
+                        <Button variant="link" className="p-0 h-auto" asChild>
+                          <Link href={`/dashboard/workflows/${trigger.workflowId}`}>
+                            <span className="flex items-center gap-1">
+                              {trigger.workflow}
+                              <ArrowUpRight className="h-3 w-3" />
+                            </span>
+                          </Link>
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="h-4 w-4 text-orange-500" />
+                        <Button variant="link" className="p-0 h-auto" asChild>
+                          <Link href={`/dashboard/workers/${trigger.workerId}`}>
+                            <span className="flex items-center gap-1">
+                              {trigger.worker}
+                              <ArrowUpRight className="h-3 w-3" />
+                            </span>
+                          </Link>
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Switch checked={trigger.status === 'active'} />
+                    <Switch
+                      checked={trigger.status === 'active'}
+                      onCheckedChange={() => toggleTriggerStatus(trigger.id)}
+                    />
                     {getStatusBadge(trigger.status)}
                   </div>
                 </TableCell>
