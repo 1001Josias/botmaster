@@ -1,18 +1,5 @@
-import Button from '@/components/Button'
-import Link from 'next/link'
-import { config } from './page.config'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <>
-      <main className="flex flex-col items-center justify-between p-24">
-        <div className="flex flex-col items-center space-y-8">
-          <h1 className="text-4xl font-bold tracking-tight text-center">{config.title}</h1>
-          <Link href={'/about'}>
-            <Button variant={'default'}>See more</Button>
-          </Link>
-        </div>
-      </main>
-    </>
-  )
+  redirect('/dashboard')
 }
