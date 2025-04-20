@@ -7,7 +7,19 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/Button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { LayoutDashboard, Settings, Users, Workflow, Database, Bot, Menu, X, FolderTree } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Settings,
+  Users,
+  Workflow,
+  Database,
+  Bot,
+  Menu,
+  X,
+  FolderTree,
+  PlaySquare,
+  ListTodo,
+} from 'lucide-react'
 import { useState } from 'react'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -73,6 +85,16 @@ export function Sidebar({ className }: SidebarProps) {
               {!collapsed && <span>Workflows</span>}
             </Link>
             <Link
+              href="/flows"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname.startsWith('/dashboard/flows') ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <PlaySquare className="h-4 w-4" />
+              {!collapsed && <span>Flows</span>}
+            </Link>
+            <Link
               href="/queues"
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
@@ -91,6 +113,16 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <Bot className="h-4 w-4" />
               {!collapsed && <span>Workers</span>}
+            </Link>
+            <Link
+              href="/jobs"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname === '/dashboard/jobs' ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <ListTodo className="h-4 w-4" />
+              {!collapsed && <span>Jobs</span>}
             </Link>
             <Link
               href="/users"
