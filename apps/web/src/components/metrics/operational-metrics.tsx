@@ -15,9 +15,11 @@ import {
   PieChart,
   Pie,
   Cell,
+  ComposedChart,
 } from "recharts"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 
 // Dados de exemplo para os gráficos
 const executionData = [

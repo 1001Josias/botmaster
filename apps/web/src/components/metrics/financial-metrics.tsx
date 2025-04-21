@@ -115,7 +115,7 @@ export function FinancialMetrics() {
               config={{
                 paybackMonths: {
                   label: "Payback (meses)",
-                  color: "hsl(var(--chart-1))",
+                  color: '#3b82f6',
                 },
               }}
               className="h-[300px]"
@@ -143,11 +143,11 @@ export function FinancialMetrics() {
               config={{
                 roi: {
                   label: "ROI (%)",
-                  color: "hsl(var(--chart-1))",
+                  color: '#3b82f6',
                 },
                 payback: {
                   label: "Payback (meses)",
-                  color: "hsl(var(--chart-2))",
+                  color: '#10b981',
                 },
               }}
               className="h-[300px]"
@@ -224,11 +224,11 @@ export function FinancialMetrics() {
               config={{
                 investment: {
                   label: "Investimento (R$)",
-                  color: "hsl(var(--chart-1))",
+                  color: '#3b82f6',
                 },
                 savings: {
                   label: "Economia Anual (R$)",
-                  color: "hsl(var(--chart-2))",
+                  color: '#10b981',
                 },
               }}
               className="h-[300px]"
