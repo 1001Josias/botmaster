@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button"
-import { PlusCircle } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from '@/components/ui/button'
+import { PlusCircle } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export function FoldersHeader() {
   return (
@@ -29,4 +29,3 @@ export function FoldersHeader() {
     </div>
   )
 }
-

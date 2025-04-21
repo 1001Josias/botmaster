@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Folder, FolderOpen, FileText, Archive } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Folder, FolderOpen, FileText, Archive } from 'lucide-react'
 
 export function FoldersStats() {
   return (
@@ -47,4 +47,3 @@ export function FoldersStats() {
     </div>
   )
 }
-

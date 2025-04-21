@@ -1,12 +1,12 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import {
   Workflow,
   Database,
@@ -19,8 +19,8 @@ import {
   Search,
   Plus,
   Folder,
-} from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
   Pagination,
   PaginationContent,
@@ -29,97 +29,97 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination"
+} from '@/components/ui/pagination'
 
 interface Resource {
   id: string
   name: string
-  type: "workflow" | "queue" | "worker"
-  status: "active" | "inactive" | "error"
+  type: 'workflow' | 'queue' | 'worker'
+  status: 'active' | 'inactive' | 'error'
   createdAt: string
   updatedAt: string
 }
 
 // Dados de exemplo
 const resources: Record<string, Resource[]> = {
-  "1": [
+  '1': [
     {
-      id: "r1",
-      name: "Processamento de Pedidos",
-      type: "workflow",
-      status: "active",
-      createdAt: "2023-01-15",
-      updatedAt: "2023-03-10",
+      id: 'r1',
+      name: 'Processamento de Pedidos',
+      type: 'workflow',
+      status: 'active',
+      createdAt: '2023-01-15',
+      updatedAt: '2023-03-10',
     },
     {
-      id: "r2",
-      name: "Fila de Emails",
-      type: "queue",
-      status: "active",
-      createdAt: "2023-01-20",
-      updatedAt: "2023-03-05",
+      id: 'r2',
+      name: 'Fila de Emails',
+      type: 'queue',
+      status: 'active',
+      createdAt: '2023-01-20',
+      updatedAt: '2023-03-05',
     },
     {
-      id: "r3",
-      name: "Worker de Notificações",
-      type: "worker",
-      status: "inactive",
-      createdAt: "2023-02-01",
-      updatedAt: "2023-02-28",
-    },
-  ],
-  "1-1": [
-    {
-      id: "r4",
-      name: "Workflow de Pedidos",
-      type: "workflow",
-      status: "active",
-      createdAt: "2023-01-10",
-      updatedAt: "2023-03-15",
-    },
-    {
-      id: "r5",
-      name: "Workflow de Faturamento",
-      type: "workflow",
-      status: "active",
-      createdAt: "2023-01-12",
-      updatedAt: "2023-03-12",
+      id: 'r3',
+      name: 'Worker de Notificações',
+      type: 'worker',
+      status: 'inactive',
+      createdAt: '2023-02-01',
+      updatedAt: '2023-02-28',
     },
   ],
-  "1-2": [
+  '1-1': [
     {
-      id: "r6",
-      name: "Fila de Processamento",
-      type: "queue",
-      status: "active",
-      createdAt: "2023-01-05",
-      updatedAt: "2023-03-01",
+      id: 'r4',
+      name: 'Workflow de Pedidos',
+      type: 'workflow',
+      status: 'active',
+      createdAt: '2023-01-10',
+      updatedAt: '2023-03-15',
     },
     {
-      id: "r7",
-      name: "Fila de Notificações",
-      type: "queue",
-      status: "error",
-      createdAt: "2023-01-08",
-      updatedAt: "2023-02-20",
+      id: 'r5',
+      name: 'Workflow de Faturamento',
+      type: 'workflow',
+      status: 'active',
+      createdAt: '2023-01-12',
+      updatedAt: '2023-03-12',
     },
   ],
-  "2": [
+  '1-2': [
     {
-      id: "r8",
-      name: "Workflow de Teste",
-      type: "workflow",
-      status: "inactive",
-      createdAt: "2023-02-10",
-      updatedAt: "2023-03-05",
+      id: 'r6',
+      name: 'Fila de Processamento',
+      type: 'queue',
+      status: 'active',
+      createdAt: '2023-01-05',
+      updatedAt: '2023-03-01',
     },
     {
-      id: "r9",
-      name: "Worker de Teste",
-      type: "worker",
-      status: "active",
-      createdAt: "2023-02-15",
-      updatedAt: "2023-03-10",
+      id: 'r7',
+      name: 'Fila de Notificações',
+      type: 'queue',
+      status: 'error',
+      createdAt: '2023-01-08',
+      updatedAt: '2023-02-20',
+    },
+  ],
+  '2': [
+    {
+      id: 'r8',
+      name: 'Workflow de Teste',
+      type: 'workflow',
+      status: 'inactive',
+      createdAt: '2023-02-10',
+      updatedAt: '2023-03-05',
+    },
+    {
+      id: 'r9',
+      name: 'Worker de Teste',
+      type: 'worker',
+      status: 'active',
+      createdAt: '2023-02-15',
+      updatedAt: '2023-03-10',
     },
   ],
 }
@@ -129,24 +129,24 @@ interface FoldersResourcesTableProps {
 }
 
 export function FoldersResourcesTable({ selectedFolder }: FoldersResourcesTableProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [resourceType, setResourceType] = useState("all")
+  const [searchTerm, setSearchTerm] = useState('')
+  const [resourceType, setResourceType] = useState('all')
 
   const folderResources = selectedFolder && resources[selectedFolder] ? resources[selectedFolder] : []
 
   const filteredResources = folderResources.filter((resource) => {
     const matchesSearch = resource.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = resourceType === "all" || resource.type === resourceType
+    const matchesType = resourceType === 'all' || resource.type === resourceType
     return matchesSearch && matchesType
   })
 
   const getResourceIcon = (type: string) => {
     switch (type) {
-      case "workflow":
+      case 'workflow':
         return <Workflow className="h-4 w-4 text-blue-500" />
-      case "queue":
+      case 'queue':
         return <Database className="h-4 w-4 text-purple-500" />
-      case "worker":
+      case 'worker':
         return <Bot className="h-4 w-4 text-orange-500" />
       default:
         return null
@@ -155,19 +155,19 @@ export function FoldersResourcesTable({ selectedFolder }: FoldersResourcesTableP
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "active":
+      case 'active':
         return (
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Ativo
           </Badge>
         )
-      case "inactive":
+      case 'inactive':
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
             Inativo
           </Badge>
         )
-      case "error":
+      case 'error':
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
             Erro
@@ -180,10 +180,10 @@ export function FoldersResourcesTable({ selectedFolder }: FoldersResourcesTableP
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     }).format(date)
   }
 
@@ -195,8 +195,8 @@ export function FoldersResourcesTable({ selectedFolder }: FoldersResourcesTableP
             <CardTitle>Recursos do Folder</CardTitle>
             <CardDescription>
               {selectedFolder
-                ? `Gerenciando recursos ${filteredResources.length > 0 ? `(${filteredResources.length})` : ""}`
-                : "Selecione um folder para visualizar seus recursos"}
+                ? `Gerenciando recursos ${filteredResources.length > 0 ? `(${filteredResources.length})` : ''}`
+                : 'Selecione um folder para visualizar seus recursos'}
             </CardDescription>
           </div>
           {selectedFolder && (
@@ -255,9 +255,9 @@ export function FoldersResourcesTable({ selectedFolder }: FoldersResourcesTableP
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {resource.type === "workflow" && "Workflow"}
-                          {resource.type === "queue" && "Queue"}
-                          {resource.type === "worker" && "Worker"}
+                          {resource.type === 'workflow' && 'Workflow'}
+                          {resource.type === 'queue' && 'Queue'}
+                          {resource.type === 'worker' && 'Worker'}
                         </Badge>
                       </TableCell>
                       <TableCell>{getStatusBadge(resource.status)}</TableCell>
@@ -347,4 +347,3 @@ export function FoldersResourcesTable({ selectedFolder }: FoldersResourcesTableP
     </Card>
   )
 }
-

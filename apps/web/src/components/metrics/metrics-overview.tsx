@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TrendingUp, Clock, CheckCircle, Zap, DollarSign } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { TrendingUp, Clock, CheckCircle, Zap, DollarSign } from 'lucide-react'
 
 export function MetricsOverview() {
   return (
@@ -66,4 +66,3 @@ export function MetricsOverview() {
     </div>
   )
 }
-

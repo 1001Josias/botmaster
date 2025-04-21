@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Calendar, FolderTree, Bot, X } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { format } from "date-fns"
-import { Badge } from "@/components/ui/badge"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Calendar, FolderTree, Bot, X } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar as CalendarComponent } from '@/components/ui/calendar'
+import { format } from 'date-fns'
+import { Badge } from '@/components/ui/badge'
 
 export function DashboardFilters() {
   const [date, setDate] = useState<Date>()
@@ -31,7 +31,7 @@ export function DashboardFilters() {
           <PopoverTrigger asChild>
             <Button variant="outline" size="sm" className="h-8">
               <Calendar className="mr-2 h-3.5 w-3.5" />
-              {date ? format(date, "PPP") : "Selecionar data"}
+              {date ? format(date, 'PPP') : 'Selecionar data'}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -88,7 +88,7 @@ export function DashboardFilters() {
         <div className="flex flex-wrap gap-2">
           {date && (
             <Badge variant="secondary" className="rounded-sm">
-              Data: {format(date, "dd/MM/yyyy")}
+              Data: {format(date, 'dd/MM/yyyy')}
               <button className="ml-1 hover:text-destructive" onClick={() => setDate(undefined)}>
                 <X className="h-3 w-3" />
               </button>
@@ -98,7 +98,7 @@ export function DashboardFilters() {
           {selectedFolder && (
             <Badge variant="secondary" className="rounded-sm">
               <FolderTree className="mr-1 h-3 w-3" />
-              Folder: {selectedFolder === "all" ? "Todos" : selectedFolder}
+              Folder: {selectedFolder === 'all' ? 'Todos' : selectedFolder}
               <button className="ml-1 hover:text-destructive" onClick={() => setSelectedFolder(null)}>
                 <X className="h-3 w-3" />
               </button>
@@ -108,7 +108,7 @@ export function DashboardFilters() {
           {selectedWorker && (
             <Badge variant="secondary" className="rounded-sm">
               <Bot className="mr-1 h-3 w-3" />
-              Worker: {selectedWorker === "all" ? "Todos" : selectedWorker}
+              Worker: {selectedWorker === 'all' ? 'Todos' : selectedWorker}
               <button className="ml-1 hover:text-destructive" onClick={() => setSelectedWorker(null)}>
                 <X className="h-3 w-3" />
               </button>
@@ -117,7 +117,7 @@ export function DashboardFilters() {
 
           {selectedStatus && (
             <Badge variant="secondary" className="rounded-sm">
-              Status: {selectedStatus === "all" ? "Todos" : selectedStatus}
+              Status: {selectedStatus === 'all' ? 'Todos' : selectedStatus}
               <button className="ml-1 hover:text-destructive" onClick={() => setSelectedStatus(null)}>
                 <X className="h-3 w-3" />
               </button>
@@ -128,4 +128,3 @@ export function DashboardFilters() {
     </div>
   )
 }
-

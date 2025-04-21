@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Download, RefreshCw, Share2 } from "lucide-react"
+import { Button } from '@/components/ui/button'
+import { Download, RefreshCw, Share2 } from 'lucide-react'
 
 export function DashboardHeader() {
   return (
@@ -25,4 +25,3 @@ export function DashboardHeader() {
     </div>
   )
 }
-

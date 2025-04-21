@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, Clock, Calendar, User, Workflow, AlertTriangle, Play } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CheckCircle, Clock, Calendar, User, Workflow, AlertTriangle, Play } from 'lucide-react'
 
 interface FlowDetailsProps {
   id: string
@@ -11,35 +11,35 @@ export function FlowDetails({ id }: FlowDetailsProps) {
   // Dados de exemplo - em uma aplicação real, estes dados viriam de uma API
   const flowDetails = {
     id,
-    name: "Processamento de Pedido #789",
-    workflow: "Processamento de Pedidos",
-    status: "completed",
-    duration: "1m 12s",
+    name: 'Processamento de Pedido #789',
+    workflow: 'Processamento de Pedidos',
+    status: 'completed',
+    duration: '1m 12s',
     jobCount: 8,
     completedJobs: 8,
-    startedAt: "2023-03-15T14:30:00",
-    completedAt: "2023-03-15T14:31:12",
-    initiatedBy: "João Silva",
-    description: "Fluxo de processamento automático do pedido #789 incluindo validação, pagamento, estoque e envio.",
+    startedAt: '2023-03-15T14:30:00',
+    completedAt: '2023-03-15T14:31:12',
+    initiatedBy: 'João Silva',
+    description: 'Fluxo de processamento automático do pedido #789 incluindo validação, pagamento, estoque e envio.',
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "completed":
+      case 'completed':
         return (
           <div className="flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-green-500" />
             <span className="font-medium text-green-700">Concluído</span>
           </div>
         )
-      case "running":
+      case 'running':
         return (
           <div className="flex items-center gap-2">
             <Play className="h-5 w-5 text-blue-500" />
             <span className="font-medium text-blue-700">Em Execução</span>
           </div>
         )
-      case "failed":
+      case 'failed':
         return (
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
@@ -52,15 +52,15 @@ export function FlowDetails({ id }: FlowDetailsProps) {
   }
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
+    if (!dateString) return '-'
     const date = new Date(dateString)
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     }).format(date)
   }
 
@@ -133,4 +133,3 @@ export function FlowDetails({ id }: FlowDetailsProps) {
     </Card>
   )
 }
-

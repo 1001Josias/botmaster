@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, UserPlus, UserCheck, ShieldAlert } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Users, UserPlus, UserCheck, ShieldAlert } from 'lucide-react'
 
 export function UsersStats() {
   return (
@@ -47,4 +47,3 @@ export function UsersStats() {
     </div>
   )
 }
-

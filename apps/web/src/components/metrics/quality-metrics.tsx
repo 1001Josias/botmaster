@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ResponsiveContainer,
   LineChart,
@@ -14,91 +14,91 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+} from 'recharts'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 
 // Dados de exemplo para os gráficos
 const errorRateData = [
-  { day: "01/03", rate: 2.5 },
-  { day: "02/03", rate: 2.3 },
-  { day: "03/03", rate: 2.1 },
-  { day: "04/03", rate: 1.8 },
-  { day: "05/03", rate: 1.9 },
-  { day: "06/03", rate: 1.7 },
-  { day: "07/03", rate: 1.5 },
-  { day: "08/03", rate: 1.3 },
-  { day: "09/03", rate: 1.2 },
-  { day: "10/03", rate: 1.0 },
-  { day: "11/03", rate: 0.9 },
-  { day: "12/03", rate: 0.8 },
-  { day: "13/03", rate: 0.7 },
-  { day: "14/03", rate: 0.5 },
+  { day: '01/03', rate: 2.5 },
+  { day: '02/03', rate: 2.3 },
+  { day: '03/03', rate: 2.1 },
+  { day: '04/03', rate: 1.8 },
+  { day: '05/03', rate: 1.9 },
+  { day: '06/03', rate: 1.7 },
+  { day: '07/03', rate: 1.5 },
+  { day: '08/03', rate: 1.3 },
+  { day: '09/03', rate: 1.2 },
+  { day: '10/03', rate: 1.0 },
+  { day: '11/03', rate: 0.9 },
+  { day: '12/03', rate: 0.8 },
+  { day: '13/03', rate: 0.7 },
+  { day: '14/03', rate: 0.5 },
 ]
 
 const slaData = [
-  { name: "Dentro do SLA", value: 92, color: "#10b981" },
-  { name: "Fora do SLA", value: 8, color: "#ef4444" },
+  { name: 'Dentro do SLA', value: 92, color: '#10b981' },
+  { name: 'Fora do SLA', value: 8, color: '#ef4444' },
 ]
 
 const errorTypeData = [
-  { type: "Conexão de API", count: 45 },
-  { type: "Timeout", count: 32 },
-  { type: "Validação de Dados", count: 28 },
-  { type: "Permissões", count: 15 },
-  { type: "Configuração", count: 12 },
-  { type: "Outros", count: 8 },
+  { type: 'Conexão de API', count: 45 },
+  { type: 'Timeout', count: 32 },
+  { type: 'Validação de Dados', count: 28 },
+  { type: 'Permissões', count: 15 },
+  { type: 'Configuração', count: 12 },
+  { type: 'Outros', count: 8 },
 ]
 
 const incidentData = [
   {
-    id: "INC-001",
-    description: "Falha na integração com API de pagamentos",
-    severity: "Alta",
-    status: "Resolvido",
-    timeToResolve: "45 min",
-    impact: "120 transações afetadas",
+    id: 'INC-001',
+    description: 'Falha na integração com API de pagamentos',
+    severity: 'Alta',
+    status: 'Resolvido',
+    timeToResolve: '45 min',
+    impact: '120 transações afetadas',
   },
   {
-    id: "INC-002",
-    description: "Timeout em processamento de relatórios",
-    severity: "Média",
-    status: "Resolvido",
-    timeToResolve: "30 min",
-    impact: "5 relatórios atrasados",
+    id: 'INC-002',
+    description: 'Timeout em processamento de relatórios',
+    severity: 'Média',
+    status: 'Resolvido',
+    timeToResolve: '30 min',
+    impact: '5 relatórios atrasados',
   },
   {
-    id: "INC-003",
-    description: "Erro de validação em formulário de cadastro",
-    severity: "Baixa",
-    status: "Resolvido",
-    timeToResolve: "15 min",
-    impact: "8 cadastros afetados",
+    id: 'INC-003',
+    description: 'Erro de validação em formulário de cadastro',
+    severity: 'Baixa',
+    status: 'Resolvido',
+    timeToResolve: '15 min',
+    impact: '8 cadastros afetados',
   },
   {
-    id: "INC-004",
-    description: "Falha na sincronização de estoque",
-    severity: "Alta",
-    status: "Em Andamento",
-    timeToResolve: "-",
-    impact: "Estoque parcialmente desatualizado",
+    id: 'INC-004',
+    description: 'Falha na sincronização de estoque',
+    severity: 'Alta',
+    status: 'Em Andamento',
+    timeToResolve: '-',
+    impact: 'Estoque parcialmente desatualizado',
   },
   {
-    id: "INC-005",
-    description: "Erro em notificações push",
-    severity: "Média",
-    status: "Resolvido",
-    timeToResolve: "25 min",
-    impact: "50 notificações não enviadas",
+    id: 'INC-005',
+    description: 'Erro em notificações push',
+    severity: 'Média',
+    status: 'Resolvido',
+    timeToResolve: '25 min',
+    impact: '50 notificações não enviadas',
   },
 ]
 
 const reliabilityData = [
-  { workflow: "Processamento de Pedidos", uptime: 99.95, mttr: 12, mtbf: 720 },
-  { workflow: "Sincronização de Estoque", uptime: 99.8, mttr: 18, mtbf: 480 },
-  { workflow: "Geração de Relatórios", uptime: 99.99, mttr: 5, mtbf: 960 },
-  { workflow: "Processamento de Pagamentos", uptime: 99.9, mttr: 15, mtbf: 640 },
-  { workflow: "Envio de Notificações", uptime: 99.85, mttr: 10, mtbf: 720 },
+  { workflow: 'Processamento de Pedidos', uptime: 99.95, mttr: 12, mtbf: 720 },
+  { workflow: 'Sincronização de Estoque', uptime: 99.8, mttr: 18, mtbf: 480 },
+  { workflow: 'Geração de Relatórios', uptime: 99.99, mttr: 5, mtbf: 960 },
+  { workflow: 'Processamento de Pagamentos', uptime: 99.9, mttr: 15, mtbf: 640 },
+  { workflow: 'Envio de Notificações', uptime: 99.85, mttr: 10, mtbf: 720 },
 ]
 
 export function QualityMetrics() {
@@ -198,11 +198,11 @@ export function QualityMetrics() {
                       <Badge
                         variant="outline"
                         className={
-                          incident.severity === "Alta"
-                            ? "bg-red-50 text-red-700"
-                            : incident.severity === "Média"
-                              ? "bg-yellow-50 text-yellow-700"
-                              : "bg-blue-50 text-blue-700"
+                          incident.severity === 'Alta'
+                            ? 'bg-red-50 text-red-700'
+                            : incident.severity === 'Média'
+                              ? 'bg-yellow-50 text-yellow-700'
+                              : 'bg-blue-50 text-blue-700'
                         }
                       >
                         {incident.severity}
@@ -212,7 +212,7 @@ export function QualityMetrics() {
                       <Badge
                         variant="outline"
                         className={
-                          incident.status === "Resolvido" ? "bg-green-50 text-green-700" : "bg-blue-50 text-blue-700"
+                          incident.status === 'Resolvido' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'
                         }
                       >
                         {incident.status}
@@ -255,13 +255,13 @@ export function QualityMetrics() {
                       variant="outline"
                       className={
                         item.uptime >= 99.9
-                          ? "bg-green-50 text-green-700"
+                          ? 'bg-green-50 text-green-700'
                           : item.uptime >= 99.5
-                            ? "bg-yellow-50 text-yellow-700"
-                            : "bg-red-50 text-red-700"
+                            ? 'bg-yellow-50 text-yellow-700'
+                            : 'bg-red-50 text-red-700'
                       }
                     >
-                      {item.uptime >= 99.9 ? "Excelente" : item.uptime >= 99.5 ? "Bom" : "Precisa Melhorar"}
+                      {item.uptime >= 99.9 ? 'Excelente' : item.uptime >= 99.5 ? 'Bom' : 'Precisa Melhorar'}
                     </Badge>
                   </TableCell>
                 </TableRow>
@@ -273,4 +273,3 @@ export function QualityMetrics() {
     </div>
   )
 }
-

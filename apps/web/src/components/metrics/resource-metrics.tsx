@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ResponsiveContainer,
   LineChart,
@@ -15,100 +15,100 @@ import {
   Pie,
   Cell,
   ComposedChart,
-} from "recharts"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+} from 'recharts'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 
 // Dados de exemplo para os gráficos
 const resourceUsageData = [
-  { hour: "00:00", cpu: 25, memory: 40, disk: 35 },
-  { hour: "02:00", cpu: 20, memory: 38, disk: 35 },
-  { hour: "04:00", cpu: 15, memory: 35, disk: 36 },
-  { hour: "06:00", cpu: 18, memory: 37, disk: 36 },
-  { hour: "08:00", cpu: 35, memory: 45, disk: 37 },
-  { hour: "10:00", cpu: 55, memory: 55, disk: 38 },
-  { hour: "12:00", cpu: 65, memory: 60, disk: 38 },
-  { hour: "14:00", cpu: 70, memory: 65, disk: 39 },
-  { hour: "16:00", cpu: 68, memory: 63, disk: 39 },
-  { hour: "18:00", cpu: 60, memory: 58, disk: 40 },
-  { hour: "20:00", cpu: 45, memory: 50, disk: 40 },
-  { hour: "22:00", cpu: 30, memory: 45, disk: 41 },
+  { hour: '00:00', cpu: 25, memory: 40, disk: 35 },
+  { hour: '02:00', cpu: 20, memory: 38, disk: 35 },
+  { hour: '04:00', cpu: 15, memory: 35, disk: 36 },
+  { hour: '06:00', cpu: 18, memory: 37, disk: 36 },
+  { hour: '08:00', cpu: 35, memory: 45, disk: 37 },
+  { hour: '10:00', cpu: 55, memory: 55, disk: 38 },
+  { hour: '12:00', cpu: 65, memory: 60, disk: 38 },
+  { hour: '14:00', cpu: 70, memory: 65, disk: 39 },
+  { hour: '16:00', cpu: 68, memory: 63, disk: 39 },
+  { hour: '18:00', cpu: 60, memory: 58, disk: 40 },
+  { hour: '20:00', cpu: 45, memory: 50, disk: 40 },
+  { hour: '22:00', cpu: 30, memory: 45, disk: 41 },
 ]
 
 const machineDistributionData = [
-  { name: "AWS US-East", value: 45, color: "#3b82f6" },
-  { name: "AWS US-West", value: 20, color: "#10b981" },
-  { name: "GCP Europe", value: 15, color: "#8b5cf6" },
-  { name: "Azure East Asia", value: 10, color: "#f59e0b" },
-  { name: "On-Premise", value: 10, color: "#ef4444" },
+  { name: 'AWS US-East', value: 45, color: '#3b82f6' },
+  { name: 'AWS US-West', value: 20, color: '#10b981' },
+  { name: 'GCP Europe', value: 15, color: '#8b5cf6' },
+  { name: 'Azure East Asia', value: 10, color: '#f59e0b' },
+  { name: 'On-Premise', value: 10, color: '#ef4444' },
 ]
 
 const costData = [
-  { month: "Jan", machines: 5000, storage: 2000, network: 1000, total: 8000 },
-  { month: "Fev", machines: 5200, storage: 2100, network: 1100, total: 8400 },
-  { month: "Mar", machines: 5500, storage: 2200, network: 1200, total: 8900 },
-  { month: "Abr", machines: 5800, storage: 2300, network: 1300, total: 9400 },
-  { month: "Mai", machines: 6000, storage: 2400, network: 1400, total: 9800 },
-  { month: "Jun", machines: 6200, storage: 2500, network: 1500, total: 10200 },
-  { month: "Jul", machines: 6500, storage: 2600, network: 1600, total: 10700 },
-  { month: "Ago", machines: 6800, storage: 2700, network: 1700, total: 11200 },
-  { month: "Set", machines: 7000, storage: 2800, network: 1800, total: 11600 },
-  { month: "Out", machines: 7200, storage: 2900, network: 1900, total: 12000 },
-  { month: "Nov", machines: 7500, storage: 3000, network: 2000, total: 12500 },
-  { month: "Dez", machines: 7800, storage: 3100, network: 2100, total: 13000 },
+  { month: 'Jan', machines: 5000, storage: 2000, network: 1000, total: 8000 },
+  { month: 'Fev', machines: 5200, storage: 2100, network: 1100, total: 8400 },
+  { month: 'Mar', machines: 5500, storage: 2200, network: 1200, total: 8900 },
+  { month: 'Abr', machines: 5800, storage: 2300, network: 1300, total: 9400 },
+  { month: 'Mai', machines: 6000, storage: 2400, network: 1400, total: 9800 },
+  { month: 'Jun', machines: 6200, storage: 2500, network: 1500, total: 10200 },
+  { month: 'Jul', machines: 6500, storage: 2600, network: 1600, total: 10700 },
+  { month: 'Ago', machines: 6800, storage: 2700, network: 1700, total: 11200 },
+  { month: 'Set', machines: 7000, storage: 2800, network: 1800, total: 11600 },
+  { month: 'Out', machines: 7200, storage: 2900, network: 1900, total: 12000 },
+  { month: 'Nov', machines: 7500, storage: 3000, network: 2000, total: 12500 },
+  { month: 'Dez', machines: 7800, storage: 3100, network: 2100, total: 13000 },
 ]
 
 const machineData = [
   {
-    id: "MCH-001",
-    name: "Production Server 1",
-    location: "AWS US-East",
+    id: 'MCH-001',
+    name: 'Production Server 1',
+    location: 'AWS US-East',
     cpu: 65,
     memory: 72,
     disk: 45,
     jobs: 245,
-    status: "Online",
+    status: 'Online',
   },
   {
-    id: "MCH-002",
-    name: "Production Server 2",
-    location: "AWS US-East",
+    id: 'MCH-002',
+    name: 'Production Server 2',
+    location: 'AWS US-East',
     cpu: 58,
     memory: 65,
     disk: 40,
     jobs: 210,
-    status: "Online",
+    status: 'Online',
   },
   {
-    id: "MCH-003",
-    name: "Development Server",
-    location: "AWS US-West",
+    id: 'MCH-003',
+    name: 'Development Server',
+    location: 'AWS US-West',
     cpu: 35,
     memory: 42,
     disk: 30,
     jobs: 120,
-    status: "Online",
+    status: 'Online',
   },
   {
-    id: "MCH-004",
-    name: "Testing Server",
-    location: "GCP Europe",
+    id: 'MCH-004',
+    name: 'Testing Server',
+    location: 'GCP Europe',
     cpu: 25,
     memory: 30,
     disk: 25,
     jobs: 85,
-    status: "Online",
+    status: 'Online',
   },
   {
-    id: "MCH-005",
-    name: "Backup Server",
-    location: "Azure East Asia",
+    id: 'MCH-005',
+    name: 'Backup Server',
+    location: 'Azure East Asia',
     cpu: 15,
     memory: 25,
     disk: 75,
     jobs: 45,
-    status: "Online",
+    status: 'Online',
   },
 ]
 
@@ -251,4 +251,3 @@ export function ResourceMetrics() {
     </div>
   )
 }
-

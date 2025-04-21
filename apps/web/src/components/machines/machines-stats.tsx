@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Server, Cpu, HardDrive, Activity } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Server, Cpu, HardDrive, Activity } from 'lucide-react'
 
 export function MachinesStats() {
   return (
@@ -47,4 +47,3 @@ export function MachinesStats() {
     </div>
   )
 }
-

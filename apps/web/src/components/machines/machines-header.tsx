@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
-import { PlusCircle, RefreshCw, Filter } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
-import Link from "next/link"
+import { Button } from '@/components/ui/button'
+import { PlusCircle, RefreshCw, Filter } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
+import Link from 'next/link'
 
 export function MachinesHeader() {
   return (
@@ -44,4 +44,3 @@ export function MachinesHeader() {
     </div>
   )
 }
-

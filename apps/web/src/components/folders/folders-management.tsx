@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FoldersTree } from "@/components/folders/folders-tree"
-import { FoldersGrid } from "@/components/folders/folders-grid"
-import { FoldersResourcesTable } from "@/components/folders/folders-resources-table"
+import { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { FoldersTree } from '@/components/folders/folders-tree'
+import { FoldersGrid } from '@/components/folders/folders-grid'
+import { FoldersResourcesTable } from '@/components/folders/folders-resources-table'
 
 export function FoldersManagement() {
-  const [activeTab, setActiveTab] = useState("tree")
+  const [activeTab, setActiveTab] = useState('tree')
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
 
   return (
@@ -43,4 +43,3 @@ export function FoldersManagement() {
     </div>
   )
 }
-

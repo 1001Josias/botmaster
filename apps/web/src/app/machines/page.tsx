@@ -1,6 +1,6 @@
-import { MachinesHeader } from "@/components/machines/machines-header"
-import { MachinesStats } from "@/components/machines/machines-stats"
-import { MachinesList } from "@/components/machines/machines-list"
+import { MachinesHeader } from '@/components/machines/machines-header'
+import { MachinesStats } from '@/components/machines/machines-stats'
+import { MachinesList } from '@/components/machines/machines-list'
 
 export default function MachinesPage() {
   return (
@@ -11,4 +11,3 @@ export default function MachinesPage() {
     </div>
   )
 }
-

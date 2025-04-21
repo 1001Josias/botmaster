@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { OperationalMetrics } from "@/components/metrics/operational-metrics"
-import { BusinessMetrics } from "@/components/metrics/business-metrics"
-import { StrategicMetrics } from "@/components/metrics/strategic-metrics"
-import { QualityMetrics } from "@/components/metrics/quality-metrics"
-import { ResourceMetrics } from "@/components/metrics/resource-metrics"
+import { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { OperationalMetrics } from '@/components/metrics/operational-metrics'
+import { BusinessMetrics } from '@/components/metrics/business-metrics'
+import { StrategicMetrics } from '@/components/metrics/strategic-metrics'
+import { QualityMetrics } from '@/components/metrics/quality-metrics'
+import { ResourceMetrics } from '@/components/metrics/resource-metrics'
 import { FinancialMetrics } from '@/components/metrics/financial-metrics'
 
 export function MetricsTabs() {
-  const [activeTab, setActiveTab] = useState("operational")
+  const [activeTab, setActiveTab] = useState('operational')
 
   return (
     <Tabs defaultValue="operational" value={activeTab} onValueChange={setActiveTab}>
@@ -45,4 +45,3 @@ export function MetricsTabs() {
     </Tabs>
   )
 }
-

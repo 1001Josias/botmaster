@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ResponsiveContainer,
   LineChart,
@@ -16,52 +16,52 @@ import {
   Pie,
   Cell,
   ComposedChart,
-} from "recharts"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+} from 'recharts'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 
 // Dados de exemplo para os gráficos
 const executionData = [
-  { name: "01/03", workflows: 65, workers: 42, total: 107 },
-  { name: "02/03", workflows: 59, workers: 45, total: 104 },
-  { name: "03/03", workflows: 80, workers: 51, total: 131 },
-  { name: "04/03", workflows: 81, workers: 49, total: 130 },
-  { name: "05/03", workflows: 56, workers: 38, total: 94 },
-  { name: "06/03", workflows: 55, workers: 40, total: 95 },
-  { name: "07/03", workflows: 72, workers: 45, total: 117 },
-  { name: "08/03", workflows: 90, workers: 52, total: 142 },
-  { name: "09/03", workflows: 95, workers: 55, total: 150 },
-  { name: "10/03", workflows: 102, workers: 58, total: 160 },
-  { name: "11/03", workflows: 110, workers: 62, total: 172 },
-  { name: "12/03", workflows: 105, workers: 60, total: 165 },
-  { name: "13/03", workflows: 115, workers: 65, total: 180 },
-  { name: "14/03", workflows: 120, workers: 68, total: 188 },
+  { name: '01/03', workflows: 65, workers: 42, total: 107 },
+  { name: '02/03', workflows: 59, workers: 45, total: 104 },
+  { name: '03/03', workflows: 80, workers: 51, total: 131 },
+  { name: '04/03', workflows: 81, workers: 49, total: 130 },
+  { name: '05/03', workflows: 56, workers: 38, total: 94 },
+  { name: '06/03', workflows: 55, workers: 40, total: 95 },
+  { name: '07/03', workflows: 72, workers: 45, total: 117 },
+  { name: '08/03', workflows: 90, workers: 52, total: 142 },
+  { name: '09/03', workflows: 95, workers: 55, total: 150 },
+  { name: '10/03', workflows: 102, workers: 58, total: 160 },
+  { name: '11/03', workflows: 110, workers: 62, total: 172 },
+  { name: '12/03', workflows: 105, workers: 60, total: 165 },
+  { name: '13/03', workflows: 115, workers: 65, total: 180 },
+  { name: '14/03', workflows: 120, workers: 68, total: 188 },
 ]
 
 const statusData = [
-  { name: "Concluído", value: 1245, color: "#10b981" },
-  { name: "Em Execução", value: 42, color: "#3b82f6" },
-  { name: "Falha", value: 18, color: "#ef4444" },
-  { name: "Cancelado", value: 5, color: "#f59e0b" },
+  { name: 'Concluído', value: 1245, color: '#10b981' },
+  { name: 'Em Execução', value: 42, color: '#3b82f6' },
+  { name: 'Falha', value: 18, color: '#ef4444' },
+  { name: 'Cancelado', value: 5, color: '#f59e0b' },
 ]
 
 const durationData = [
-  { name: "< 1s", count: 320 },
-  { name: "1-5s", count: 520 },
-  { name: "5-10s", count: 280 },
-  { name: "10-30s", count: 120 },
-  { name: "30-60s", count: 45 },
-  { name: "1-5m", count: 20 },
-  { name: "> 5m", count: 5 },
+  { name: '< 1s', count: 320 },
+  { name: '1-5s', count: 520 },
+  { name: '5-10s', count: 280 },
+  { name: '10-30s', count: 120 },
+  { name: '30-60s', count: 45 },
+  { name: '1-5m', count: 20 },
+  { name: '> 5m', count: 5 },
 ]
 
 const topWorkflows = [
-  { id: "WF-001", name: "Processamento de Pedidos", executions: 245, avgDuration: "1.2s", successRate: 99.2 },
-  { id: "WF-002", name: "Sincronização de Estoque", executions: 189, avgDuration: "3.5s", successRate: 98.7 },
-  { id: "WF-003", name: "Geração de Relatórios", executions: 156, avgDuration: "8.7s", successRate: 100 },
-  { id: "WF-004", name: "Processamento de Pagamentos", executions: 132, avgDuration: "2.1s", successRate: 97.8 },
-  { id: "WF-005", name: "Envio de Notificações", executions: 128, avgDuration: "0.8s", successRate: 99.5 },
+  { id: 'WF-001', name: 'Processamento de Pedidos', executions: 245, avgDuration: '1.2s', successRate: 99.2 },
+  { id: 'WF-002', name: 'Sincronização de Estoque', executions: 189, avgDuration: '3.5s', successRate: 98.7 },
+  { id: 'WF-003', name: 'Geração de Relatórios', executions: 156, avgDuration: '8.7s', successRate: 100 },
+  { id: 'WF-004', name: 'Processamento de Pagamentos', executions: 132, avgDuration: '2.1s', successRate: 97.8 },
+  { id: 'WF-005', name: 'Envio de Notificações', executions: 128, avgDuration: '0.8s', successRate: 99.5 },
 ]
 
 const executionData2 = [
@@ -238,10 +238,10 @@ export function OperationalMetrics() {
                         variant="outline"
                         className={
                           workflow.successRate >= 99
-                            ? "bg-green-50 text-green-700"
+                            ? 'bg-green-50 text-green-700'
                             : workflow.successRate >= 95
-                              ? "bg-yellow-50 text-yellow-700"
-                              : "bg-red-50 text-red-700"
+                              ? 'bg-yellow-50 text-yellow-700'
+                              : 'bg-red-50 text-red-700'
                         }
                       >
                         {workflow.successRate}%
@@ -466,4 +466,3 @@ export function OperationalMetrics() {
     </div>
   )
 }
-

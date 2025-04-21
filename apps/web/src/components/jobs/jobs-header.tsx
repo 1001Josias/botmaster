@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button"
-import { RefreshCw, Filter } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { Button } from '@/components/ui/button'
+import { RefreshCw, Filter } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
 
 export function JobsHeader() {
   return (
@@ -38,4 +38,3 @@ export function JobsHeader() {
     </div>
   )
 }
-

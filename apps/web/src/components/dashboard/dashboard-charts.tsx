@@ -1,23 +1,23 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
+import { cn } from '@/lib/utils'
 
 // Dados de exemplo
 const jobStatusData = [
-  { name: "Em andamento", value: 24, color: "#3b82f6" },
-  { name: "Sucesso", value: 1842, color: "#10b981" },
-  { name: "Falha", value: 18, color: "#ef4444" },
-  { name: "Cancelado", value: 5, color: "#f59e0b" },
+  { name: 'Em andamento', value: 24, color: '#3b82f6' },
+  { name: 'Sucesso', value: 1842, color: '#10b981' },
+  { name: 'Falha', value: 18, color: '#ef4444' },
+  { name: 'Cancelado', value: 5, color: '#f59e0b' },
 ]
 
 const flowStatusData = [
-  { name: "Ativo", value: 85, color: "#3b82f6" },
-  { name: "Pausado", value: 12, color: "#f59e0b" },
-  { name: "Erro", value: 8, color: "#ef4444" },
-  { name: "Finalizado", value: 23, color: "#10b981" },
+  { name: 'Ativo', value: 85, color: '#3b82f6' },
+  { name: 'Pausado', value: 12, color: '#f59e0b' },
+  { name: 'Erro', value: 8, color: '#ef4444' },
+  { name: 'Finalizado', value: 23, color: '#10b981' },
 ]
 
 interface CustomTooltipProps {
@@ -117,14 +117,14 @@ export function DashboardCharts() {
                     <Cell
                       key={`cell-${index}`}
                       fill={entry.color}
-                      stroke={activeJobSegment === entry.name ? "#000" : "transparent"}
+                      stroke={activeJobSegment === entry.name ? '#000' : 'transparent'}
                       strokeWidth={activeJobSegment === entry.name ? 2 : 0}
                       className="transition-all duration-200 hover:opacity-80 cursor-pointer"
                       style={{
-                        filter: activeJobSegment && activeJobSegment !== entry.name ? "opacity(0.6)" : "none",
-                        transform: activeJobSegment === entry.name ? "scale(1.05)" : "scale(1)",
-                        transformOrigin: "center",
-                        transition: "transform 0.3s, filter 0.3s",
+                        filter: activeJobSegment && activeJobSegment !== entry.name ? 'opacity(0.6)' : 'none',
+                        transform: activeJobSegment === entry.name ? 'scale(1.05)' : 'scale(1)',
+                        transformOrigin: 'center',
+                        transition: 'transform 0.3s, filter 0.3s',
                       }}
                     />
                   ))}
@@ -135,7 +135,7 @@ export function DashboardCharts() {
                   verticalAlign="bottom"
                   align="center"
                   formatter={(value, entry, index) => (
-                    <span className={cn("text-sm", activeJobSegment === value ? "font-bold" : "font-normal")}>
+                    <span className={cn('text-sm', activeJobSegment === value ? 'font-bold' : 'font-normal')}>
                       {value}
                     </span>
                   )}
@@ -172,14 +172,14 @@ export function DashboardCharts() {
                     <Cell
                       key={`cell-${index}`}
                       fill={entry.color}
-                      stroke={activeFlowSegment === entry.name ? "#000" : "transparent"}
+                      stroke={activeFlowSegment === entry.name ? '#000' : 'transparent'}
                       strokeWidth={activeFlowSegment === entry.name ? 2 : 0}
                       className="transition-all duration-200 hover:opacity-80 cursor-pointer"
                       style={{
-                        filter: activeFlowSegment && activeFlowSegment !== entry.name ? "opacity(0.6)" : "none",
-                        transform: activeFlowSegment === entry.name ? "scale(1.05)" : "scale(1)",
-                        transformOrigin: "center",
-                        transition: "transform 0.3s, filter 0.3s",
+                        filter: activeFlowSegment && activeFlowSegment !== entry.name ? 'opacity(0.6)' : 'none',
+                        transform: activeFlowSegment === entry.name ? 'scale(1.05)' : 'scale(1)',
+                        transformOrigin: 'center',
+                        transition: 'transform 0.3s, filter 0.3s',
                       }}
                     />
                   ))}
@@ -190,7 +190,7 @@ export function DashboardCharts() {
                   verticalAlign="bottom"
                   align="center"
                   formatter={(value, entry, index) => (
-                    <span className={cn("text-sm", activeFlowSegment === value ? "font-bold" : "font-normal")}>
+                    <span className={cn('text-sm', activeFlowSegment === value ? 'font-bold' : 'font-normal')}>
                       {value}
                     </span>
                   )}
@@ -204,4 +204,3 @@ export function DashboardCharts() {
     </div>
   )
 }
-

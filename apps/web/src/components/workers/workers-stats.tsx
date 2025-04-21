@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bot, CheckCircle, Clock, AlertTriangle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Bot, CheckCircle, Clock, AlertTriangle } from 'lucide-react'
 
 export function WorkersStats() {
   return (
@@ -50,4 +50,3 @@ export function WorkersStats() {
     </div>
   )
 }
-

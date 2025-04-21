@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   ResponsiveContainer,
   LineChart,
@@ -17,84 +17,84 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-} from "recharts"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+} from 'recharts'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 
 // Dados de exemplo para os gráficos
 const forecastData = [
-  { month: "Jan", actual: 120, forecast: 120 },
-  { month: "Fev", actual: 132, forecast: 125 },
-  { month: "Mar", actual: 145, forecast: 130 },
-  { month: "Abr", actual: 160, forecast: 140 },
-  { month: "Mai", actual: 178, forecast: 150 },
-  { month: "Jun", actual: 195, forecast: 160 },
-  { month: "Jul", actual: 210, forecast: 170 },
-  { month: "Ago", actual: 230, forecast: 180 },
-  { month: "Set", actual: 245, forecast: 190 },
-  { month: "Out", actual: 260, forecast: 200 },
-  { month: "Nov", forecast: 210 },
-  { month: "Dez", forecast: 220 },
+  { month: 'Jan', actual: 120, forecast: 120 },
+  { month: 'Fev', actual: 132, forecast: 125 },
+  { month: 'Mar', actual: 145, forecast: 130 },
+  { month: 'Abr', actual: 160, forecast: 140 },
+  { month: 'Mai', actual: 178, forecast: 150 },
+  { month: 'Jun', actual: 195, forecast: 160 },
+  { month: 'Jul', actual: 210, forecast: 170 },
+  { month: 'Ago', actual: 230, forecast: 180 },
+  { month: 'Set', actual: 245, forecast: 190 },
+  { month: 'Out', actual: 260, forecast: 200 },
+  { month: 'Nov', forecast: 210 },
+  { month: 'Dez', forecast: 220 },
 ]
 
 const maturityData = [
-  { subject: "Cobertura de Processos", A: 85, fullMark: 100 },
-  { subject: "Complexidade", A: 70, fullMark: 100 },
-  { subject: "Governança", A: 65, fullMark: 100 },
-  { subject: "Integração", A: 80, fullMark: 100 },
-  { subject: "Monitoramento", A: 75, fullMark: 100 },
-  { subject: "Segurança", A: 90, fullMark: 100 },
+  { subject: 'Cobertura de Processos', A: 85, fullMark: 100 },
+  { subject: 'Complexidade', A: 70, fullMark: 100 },
+  { subject: 'Governança', A: 65, fullMark: 100 },
+  { subject: 'Integração', A: 80, fullMark: 100 },
+  { subject: 'Monitoramento', A: 75, fullMark: 100 },
+  { subject: 'Segurança', A: 90, fullMark: 100 },
 ]
 
 const opportunityData = [
-  { name: "Financeiro", value: 35, potential: 85, gap: 50 },
-  { name: "Operações", value: 65, potential: 95, gap: 30 },
-  { name: "RH", value: 25, potential: 80, gap: 55 },
-  { name: "Vendas", value: 45, potential: 90, gap: 45 },
-  { name: "Marketing", value: 30, potential: 75, gap: 45 },
+  { name: 'Financeiro', value: 35, potential: 85, gap: 50 },
+  { name: 'Operações', value: 65, potential: 95, gap: 30 },
+  { name: 'RH', value: 25, potential: 80, gap: 55 },
+  { name: 'Vendas', value: 45, potential: 90, gap: 45 },
+  { name: 'Marketing', value: 30, potential: 75, gap: 45 },
 ]
 
 const initiativeData = [
   {
-    name: "Automação de Onboarding",
-    status: "Em Progresso",
+    name: 'Automação de Onboarding',
+    status: 'Em Progresso',
     completion: 65,
-    impact: "Alto",
+    impact: 'Alto',
     roi: 320,
-    timeline: "Q2 2023",
+    timeline: 'Q2 2023',
   },
   {
-    name: "Integração ERP-CRM",
-    status: "Planejado",
+    name: 'Integração ERP-CRM',
+    status: 'Planejado',
     completion: 20,
-    impact: "Alto",
+    impact: 'Alto',
     roi: 280,
-    timeline: "Q3 2023",
+    timeline: 'Q3 2023',
   },
   {
-    name: "Automação de Relatórios",
-    status: "Concluído",
+    name: 'Automação de Relatórios',
+    status: 'Concluído',
     completion: 100,
-    impact: "Médio",
+    impact: 'Médio',
     roi: 180,
-    timeline: "Q1 2023",
+    timeline: 'Q1 2023',
   },
   {
-    name: "Chatbot de Atendimento",
-    status: "Em Progresso",
+    name: 'Chatbot de Atendimento',
+    status: 'Em Progresso',
     completion: 45,
-    impact: "Alto",
+    impact: 'Alto',
     roi: 250,
-    timeline: "Q2 2023",
+    timeline: 'Q2 2023',
   },
   {
-    name: "Automação de Backups",
-    status: "Concluído",
+    name: 'Automação de Backups',
+    status: 'Concluído',
     completion: 100,
-    impact: "Baixo",
+    impact: 'Baixo',
     roi: 120,
-    timeline: "Q1 2023",
+    timeline: 'Q1 2023',
   },
 ]
 
@@ -193,11 +193,11 @@ export function StrategicMetrics() {
                       <Badge
                         variant="outline"
                         className={
-                          item.status === "Concluído"
-                            ? "bg-green-50 text-green-700"
-                            : item.status === "Em Progresso"
-                              ? "bg-blue-50 text-blue-700"
-                              : "bg-yellow-50 text-yellow-700"
+                          item.status === 'Concluído'
+                            ? 'bg-green-50 text-green-700'
+                            : item.status === 'Em Progresso'
+                              ? 'bg-blue-50 text-blue-700'
+                              : 'bg-yellow-50 text-yellow-700'
                         }
                       >
                         {item.status}
@@ -221,4 +221,3 @@ export function StrategicMetrics() {
     </div>
   )
 }
-
