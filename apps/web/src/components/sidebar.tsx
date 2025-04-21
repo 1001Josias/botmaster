@@ -21,6 +21,7 @@ import {
   ListTodo,
   Zap,
   Server,
+  BarChart2,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -65,6 +66,16 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <LayoutDashboard className="h-4 w-4" />
               {!collapsed && <span>Dashboard</span>}
+            </Link>
+            <Link
+              href="/metrics"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname === '/metrics' ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <BarChart2 className="h-4 w-4" />
+              {!collapsed && <span>Métricas</span>}
             </Link>
             <Link
               href="/folders"
