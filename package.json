@@ -5,7 +5,7 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --config packages/eslint-config/.prettierrc --write . --inlude '*.js,*.json,*.md,*.ts,*.tsx'"
+    "format": "prettier --config packages/eslint-config/.prettierrc --write ."
   },
   "devDependencies": {
     "prettier": "^3.5.3",
