@@ -142,8 +142,8 @@ export function DashboardTable() {
 
   return (
     <Card>
+      <Tabs defaultValue="jobs" value={activeTab} onValueChange={setActiveTab}>
       <CardHeader className="pb-3">
-        <Tabs defaultValue="jobs" value={activeTab} onValueChange={setActiveTab}>
           <div className="flex items-center justify-between">
             <TabsList>
               <TabsTrigger value="jobs">Jobs Recentes</TabsTrigger>
@@ -154,7 +154,6 @@ export function DashboardTable() {
               Ver todos
             </Button>
           </div>
-        </Tabs>
       </CardHeader>
       <CardContent>
         <TabsContent value="jobs" className="m-0">
@@ -231,6 +230,7 @@ export function DashboardTable() {
           </Table>
         </TabsContent>
       </CardContent>
+      </Tabs>
     </Card>
   )
 }

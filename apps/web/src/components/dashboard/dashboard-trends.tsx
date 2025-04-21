@@ -84,8 +84,8 @@ export function DashboardTrends() {
 
   return (
     <Card>
+      <Tabs defaultValue="executions" value={activeTab} onValueChange={setActiveTab}>
       <CardHeader className="pb-3">
-        <Tabs defaultValue="executions" value={activeTab} onValueChange={setActiveTab}>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Tendências</CardTitle>
@@ -96,7 +96,6 @@ export function DashboardTrends() {
               <TabsTrigger value="duration">Duração</TabsTrigger>
             </TabsList>
           </div>
-        </Tabs>
       </CardHeader>
       <CardContent>
         <TabsContent value="executions" className="m-0">
@@ -154,6 +153,7 @@ export function DashboardTrends() {
           </div>
         </TabsContent>
       </CardContent>
+      </Tabs>
     </Card>
   )
 }
