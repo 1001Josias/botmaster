@@ -13,6 +13,7 @@ import {
   Archive,
   Share2,
   Copy,
+  Star,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -39,7 +40,7 @@ interface FolderItem {
 // Dados de exemplo
 const initialFolders: FolderItem[] = [
   {
-    id: "1",
+    id: 'folder-0',
     name: "Produção",
     type: "folder",
     status: "active",
@@ -47,14 +48,14 @@ const initialFolders: FolderItem[] = [
     expanded: true,
     children: [
       {
-        id: "1-1",
+        id: 'folder-2',
         name: "Workflows",
         type: "folder",
         status: "active",
         resourceCount: 15,
         children: [
           {
-            id: "1-1-1",
+            id: 'folder-5',
             name: "Processamento de Pedidos",
             type: "folder",
             status: "active",
@@ -62,7 +63,7 @@ const initialFolders: FolderItem[] = [
             children: [],
           },
           {
-            id: "1-1-2",
+            id: 'folder-6',
             name: "Notificações",
             type: "folder",
             status: "active",
@@ -72,7 +73,7 @@ const initialFolders: FolderItem[] = [
         ],
       },
       {
-        id: "1-2",
+        id: 'folder-7',
         name: "Queues",
         type: "folder",
         status: "active",
@@ -80,7 +81,7 @@ const initialFolders: FolderItem[] = [
         children: [],
       },
       {
-        id: "1-3",
+        id: 'folder-8',
         name: "Workers",
         type: "folder",
         status: "active",
@@ -90,14 +91,14 @@ const initialFolders: FolderItem[] = [
     ],
   },
   {
-    id: "2",
+    id: 'folder-1',
     name: "Desenvolvimento",
     type: "folder",
     status: "active",
     resourceCount: 45,
     children: [
       {
-        id: "2-1",
+        id: 'folder-3',
         name: "Testes",
         type: "folder",
         status: "active",
@@ -105,7 +106,7 @@ const initialFolders: FolderItem[] = [
         children: [],
       },
       {
-        id: "2-2",
+        id: 'folder-9',
         name: "Protótipos",
         type: "folder",
         status: "active",
@@ -115,14 +116,14 @@ const initialFolders: FolderItem[] = [
     ],
   },
   {
-    id: "3",
+    id: 'folder-4',
     name: "Arquivados",
     type: "folder",
     status: "archived",
     resourceCount: 10,
     children: [
       {
-        id: "3-1",
+        id: 'folder-10',
         name: "Projetos Antigos",
         type: "folder",
         status: "archived",
@@ -133,12 +134,12 @@ const initialFolders: FolderItem[] = [
   },
 ]
 
-interface FoldersTreeProps {
+interface FolderStructureProps {
   onSelectFolder: (folderId: string | null) => void
   selectedFolder: string | null
 }
 
-export function FoldersTree({ onSelectFolder, selectedFolder }: FoldersTreeProps) {
+export function FoldersTree({ onSelectFolder, selectedFolder }: FolderStructureProps) {
   const [folders, setFolders] = useState<FolderItem[]>(initialFolders)
   const [searchTerm, setSearchTerm] = useState("")
 
@@ -203,6 +204,10 @@ export function FoldersTree({ onSelectFolder, selectedFolder }: FoldersTreeProps
               <DropdownMenuItem>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Novo Subfolder
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Star className="mr-2 h-4 w-4" />
+                Adicionar aos Favoritos
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Edit className="mr-2 h-4 w-4" />
