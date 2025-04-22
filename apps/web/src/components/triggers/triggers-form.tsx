@@ -129,7 +129,7 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
     // Em uma aplicação real, aqui você enviaria os dados para a API
 
     // Redirecionar para a lista de triggers
-    router.push('/dashboard/triggers')
+    router.push('/triggers')
   }
 
   // Atualiza o tipo de trigger quando o usuário muda a seleção
@@ -562,7 +562,7 @@ export function TriggerForm({ isEdit, triggerId }: TriggerFormProps) {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" type="button" onClick={() => router.push('/dashboard/triggers')}>
+            <Button variant="outline" type="button" onClick={() => router.push('/triggers')}>
               Cancelar
             </Button>
             <Button type="submit">{isEdit ? 'Salvar Alterações' : 'Criar Trigger'}</Button>
