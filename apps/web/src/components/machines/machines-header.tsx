@@ -35,7 +35,7 @@ export function MachinesHeader() {
           <RefreshCw className="h-4 w-4" />
         </Button>
         <Button asChild>
-          <Link href="/dashboard/machines/new">
+          <Link href="/machines/new">
             <PlusCircle className="mr-2 h-4 w-4" />
             Nova Máquina
           </Link>

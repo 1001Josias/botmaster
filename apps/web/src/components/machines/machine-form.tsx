@@ -113,7 +113,7 @@ export function MachineForm({ isEdit, machineId }: MachineFormProps) {
     // Em uma aplicação real, aqui você enviaria os dados para a API
 
     // Redirecionar para a lista de máquinas
-    router.push('/dashboard/machines')
+    router.push('/machines')
   }
 
   return (
@@ -422,7 +422,7 @@ export function MachineForm({ isEdit, machineId }: MachineFormProps) {
         </Tabs>
 
         <div className="flex justify-between">
-          <Button variant="outline" type="button" onClick={() => router.push('/dashboard/machines')}>
+          <Button variant="outline" type="button" onClick={() => router.push('/machines')}>
             Cancelar
           </Button>
           <Button type="submit">{isEdit ? 'Salvar Alterações' : 'Criar Máquina'}</Button>

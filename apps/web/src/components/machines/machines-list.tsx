@@ -276,7 +276,7 @@ export function MachinesList() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/machines/${machine.id}`}>
+                          <Link href={`/machines/${machine.id}`}>
                             <Edit className="mr-2 h-4 w-4" />
                             Editar
                           </Link>
