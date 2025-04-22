@@ -4,7 +4,6 @@ import type React from 'react'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import ReactFlow, {
-  ReactFlowProvider,
   Controls,
   Background,
   useNodesState,
@@ -168,41 +167,104 @@ export function WorkflowEditor() {
     return hasCycle(newConnection.source as string)
   }
 
-  // Handle dropping a worker from the sidebar
+  // Handle dropping a worker from the sidebar - Corrigido para lidar melhor com os dados
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault()
+      console.log('Drop event triggered')
 
-      if (reactFlowWrapper.current && reactFlowInstance) {
-        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
-        const workerData = JSON.parse(event.dataTransfer.getData('application/reactflow')) as { name: string }
-
-        // Get position from drop coordinates
-        const position = reactFlowInstance.project({
-          x: event.clientX - reactFlowBounds.left,
-          y: event.clientY - reactFlowBounds.top,
-        })
-
-        // Create a new node
-        const newNode: Node = {
-          id: `worker-${Date.now()}`,
-          type: 'workerNode',
-          position,
-          data: {
-            ...workerData,
-            label: workerData.name,
-          },
-        }
-
-        setNodes((nds) => nds.concat(newNode))
+      if (!reactFlowWrapper.current || !reactFlowInstance) {
+        console.error('React Flow wrapper or instance not available')
+        return
       }
+
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
+
+      // Tentar obter dados de diferentes tipos MIME para maior compatibilidade
+      let dataTransfer = event.dataTransfer.getData('application/reactflow')
+
+      // Se não encontrar dados no tipo principal, tentar o tipo de texto simples
+      if (!dataTransfer) {
+        dataTransfer = event.dataTransfer.getData('text/plain')
+        console.log('Using text/plain data:', dataTransfer)
+      }
+
+      // Verificar novamente se temos dados
+      if (!dataTransfer) {
+        console.error('No data received from drag event')
+
+        // Listar todos os tipos disponíveis para depuração
+        const availableTypes = event.dataTransfer.types
+        console.log('Available data types:', availableTypes)
+
+        toast({
+          title: 'Error',
+          description: 'Failed to add worker. No data received.',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      let workerData
+      try {
+        workerData = JSON.parse(dataTransfer)
+        console.log('Parsed worker data:', workerData)
+      } catch (error) {
+        console.error('Failed to parse worker data:', error, 'Raw data:', dataTransfer)
+        toast({
+          title: 'Error',
+          description: 'Failed to add worker. Invalid data format.',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Verificar se temos os dados mínimos necessários
+      if (!workerData || !workerData.name) {
+        console.error('Invalid worker data:', workerData)
+        toast({
+          title: 'Error',
+          description: 'Failed to add worker. Invalid worker data.',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Get position from drop coordinates
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
+      })
+
+      // Create a new node
+      const newNode: Node = {
+        id: `worker-${Date.now()}`,
+        type: 'workerNode',
+        position,
+        data: {
+          ...workerData,
+          label: workerData.name,
+        },
+      }
+
+      console.log('Adding new node:', newNode)
+      setNodes((nds) => nds.concat(newNode))
     },
     [reactFlowInstance, setNodes]
   )
 
+  // Melhorado para lidar com diferentes tipos de dados
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
+
+    // Verificar se temos os tipos de dados que esperamos
+    const hasReactFlowData = event.dataTransfer.types.includes('application/reactflow')
+    const hasTextData = event.dataTransfer.types.includes('text/plain')
+
+    if (!hasReactFlowData && !hasTextData) {
+      console.warn("Drag event doesn't contain expected data types")
+    }
   }, [])
 
   // Save workflow
@@ -263,8 +325,13 @@ export function WorkflowEditor() {
       })
     }, 500)
 
-    // Save to localStorage for demo purposes
-    localStorage.setItem(`workflow-${Date.now()}`, JSON.stringify(workflowData))
+    try {
+      // Save to localStorage for demo purposes
+      localStorage.setItem(`workflow-${Date.now()}`, JSON.stringify(workflowData))
+    } catch (error) {
+      console.error('Failed to save workflow to localStorage:', error)
+      // Still show success message as this is just for demo
+    }
   }, [nodes, edges, workflowName])
 
   // Export workflow as JSON
@@ -289,16 +356,26 @@ export function WorkflowEditor() {
       edges: edges,
     }
 
-    const jsonString = JSON.stringify(workflowData, null, 2)
-    const blob = new Blob([jsonString], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
+    try {
+      const jsonString = JSON.stringify(workflowData, null, 2)
+      const blob = new Blob([jsonString], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
 
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${workflowName.replace(/\s+/g, '-').toLowerCase()}.json`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${workflowName.replace(/\s+/g, '-').toLowerCase()}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Failed to export workflow:', error)
+      toast({
+        title: 'Export Failed',
+        description: 'An error occurred while exporting the workflow.',
+        variant: 'destructive',
+      })
+    }
   }, [nodes, edges, workflowName])
 
   // Run workflow simulation
@@ -364,42 +441,40 @@ export function WorkflowEditor() {
         <WorkflowSidebar workers={workers} isLoading={isLoading} />
 
         <div className="flex-1 rounded-lg border bg-background shadow-sm" ref={reactFlowWrapper}>
-          <ReactFlowProvider>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onInit={setReactFlowInstance}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
-              nodeTypes={nodeTypes}
-              connectionLineType={ConnectionLineType.SmoothStep}
-              fitView
-              snapToGrid
-              snapGrid={[15, 15]}
-              defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-            >
-              <Background />
-              <Controls />
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onInit={setReactFlowInstance}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            nodeTypes={nodeTypes}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            fitView
+            snapToGrid
+            snapGrid={[15, 15]}
+            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+          >
+            <Background />
+            <Controls />
 
-              <Panel position="top-right" className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={saveWorkflow}>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save
-                </Button>
-                <Button variant="outline" size="sm" onClick={exportWorkflow}>
-                  <FileJson className="mr-2 h-4 w-4" />
-                  Export
-                </Button>
-                <Button variant="outline" size="sm" onClick={runWorkflow}>
-                  <Play className="mr-2 h-4 w-4" />
-                  Run
-                </Button>
-              </Panel>
-            </ReactFlow>
-          </ReactFlowProvider>
+            <Panel position="top-right" className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={saveWorkflow}>
+                <Save className="mr-2 h-4 w-4" />
+                Save
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportWorkflow}>
+                <FileJson className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+              <Button variant="outline" size="sm" onClick={runWorkflow}>
+                <Play className="mr-2 h-4 w-4" />
+                Run
+              </Button>
+            </Panel>
+          </ReactFlow>
         </div>
       </div>
     </div>

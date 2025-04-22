@@ -1,168 +1,134 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Handle, Position, type NodeProps } from "reactflow"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
-import { Settings, Info, Code, PlayCircle, Database, Workflow, Zap, Server, Bot } from "lucide-react"
+import { useState } from 'react'
+import { Handle, Position, type NodeProps } from 'reactflow'
+import { Cog, Database, Globe, Zap, Settings } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export function WorkerNode({ data, isConnectable }: NodeProps) {
-  const [showDialog, setShowDialog] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  // Verificar se temos dados válidos
+  if (!data) {
+    console.error('Worker node received invalid data:', data)
+    return (
+      <div className="rounded-md border bg-red-50 p-3 shadow-sm">
+        <Handle type="target" position={Position.Top} isConnectable={isConnectable} className="h-3 w-3 bg-primary" />
+        <div className="text-sm font-medium text-red-500">Invalid Worker Data</div>
+        <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className="h-3 w-3 bg-primary" />
+      </div>
+    )
+  }
+
+  // Get icon based on worker type
+  const getIcon = () => {
+    switch (data.type) {
+      case 'data':
+        return <Database className="h-4 w-4 text-blue-500" />
+      case 'process':
+        return <Cog className="h-4 w-4 text-amber-500" />
+      case 'api':
+        return <Globe className="h-4 w-4 text-green-500" />
+      default:
+        return <Zap className="h-4 w-4 text-purple-500" />
+    }
+  }
 
   return (
     <>
-      <Card className="w-60 shadow-md border-2">
-        <CardHeader className="p-3 pb-0">
-          <div className="flex items-center justify-between">
-            <Badge variant="outline" className="px-2 py-0 text-xs">
-              {data.type || "worker"}
-            </Badge>
-            <Dialog open={showDialog} onOpenChange={setShowDialog}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
-                  <Settings className="h-3.5 w-3.5" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                  <DialogTitle>Configure Worker: {data.name}</DialogTitle>
-                </DialogHeader>
-                <Tabs defaultValue="info">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="info">Info</TabsTrigger>
-                    <TabsTrigger value="inputs">Inputs</TabsTrigger>
-                    <TabsTrigger value="outputs">Outputs</TabsTrigger>
-                  </TabsList>
+      <div className="rounded-md border bg-background p-3 shadow-sm">
+        <Handle type="target" position={Position.Top} isConnectable={isConnectable} className="h-3 w-3 bg-primary" />
 
-                  <TabsContent value="info" className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="worker-name">Name</Label>
-                      <Input id="worker-name" value={data.name} readOnly />
+        <div className="flex items-center gap-2">
+          {getIcon()}
+          <div className="text-sm font-medium">{data.label || data.name || 'Worker'}</div>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="ml-auto h-6 w-6 rounded-full p-0">
+                <Settings className="h-4 w-4" />
+                <span className="sr-only">Configure</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Configure Worker: {data.name}</DialogTitle>
+                <DialogDescription>Configure the inputs and settings for this worker.</DialogDescription>
+              </DialogHeader>
+
+              <Tabs defaultValue="info" className="mt-4">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="info">Info</TabsTrigger>
+                  <TabsTrigger value="inputs">Inputs</TabsTrigger>
+                  <TabsTrigger value="outputs">Outputs</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="info" className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="worker-name">Name</Label>
+                    <Input id="worker-name" value={data.name || ''} readOnly />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="worker-type">Type</Label>
+                    <Input id="worker-type" value={data.type || ''} readOnly />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="worker-description">Description</Label>
+                    <div className="rounded-md border p-2 text-sm">
+                      {data.description || 'No description available.'}
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="worker-description">Description</Label>
-                      <Textarea id="worker-description" value={data.description} readOnly rows={3} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Type</Label>
-                      <div className="flex items-center gap-2">
-                        {getWorkerIcon(data.type)}
-                        <span className="text-sm">{data.type}</span>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="inputs" className="space-y-4 py-4">
+                  {data.inputs && data.inputs.length > 0 ? (
+                    data.inputs.map((input: any, index: number) => (
+                      <div key={index} className="space-y-2">
+                        <Label htmlFor={`input-${index}`}>
+                          {input.name} {input.required && <span className="text-red-500">*</span>}
+                        </Label>
+                        <Input
+                          id={`input-${index}`}
+                          placeholder={`Enter ${input.name}...`}
+                          type={input.type === 'number' ? 'number' : 'text'}
+                        />
+                        <p className="text-xs text-muted-foreground">Type: {input.type}</p>
                       </div>
-                    </div>
-                  </TabsContent>
+                    ))
+                  ) : (
+                    <div className="text-sm text-muted-foreground">This worker has no configurable inputs.</div>
+                  )}
+                </TabsContent>
 
-                  <TabsContent value="inputs" className="space-y-4 py-4">
-                    {data.inputs && data.inputs.length > 0 ? (
-                      data.inputs.map((input: any, index: number) => (
-                        <div key={index} className="space-y-2">
-                          <Label htmlFor={`input-${index}`}>{input.name}</Label>
-                          <div className="flex gap-2">
-                            <Input
-                              id={`input-${index}`}
-                              placeholder={input.description || "Enter value"}
-                              defaultValue={input.defaultValue || ""}
-                            />
-                            <Button variant="outline" size="icon">
-                              <Code className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {input.description || "No description available"}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <Info className="h-12 w-12 text-muted-foreground/50" />
-                        <h3 className="mt-2 text-lg font-medium">No inputs required</h3>
-                        <p className="text-sm text-muted-foreground">
-                          This worker doesn't require any input parameters
-                        </p>
+                <TabsContent value="outputs" className="space-y-4 py-4">
+                  {data.outputs && data.outputs.length > 0 ? (
+                    data.outputs.map((output: any, index: number) => (
+                      <div key={index} className="space-y-1">
+                        <Label>{output.name}</Label>
+                        <p className="text-xs text-muted-foreground">Type: {output.type}</p>
                       </div>
-                    )}
-                  </TabsContent>
+                    ))
+                  ) : (
+                    <div className="text-sm text-muted-foreground">Output information not available.</div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </DialogContent>
+          </Dialog>
+        </div>
 
-                  <TabsContent value="outputs" className="space-y-4 py-4">
-                    {data.outputs && data.outputs.length > 0 ? (
-                      data.outputs.map((output: any, index: number) => (
-                        <div key={index} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label>{output.name}</Label>
-                            <Badge variant="outline">{output.type}</Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {output.description || "No description available"}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <Info className="h-12 w-12 text-muted-foreground/50" />
-                        <h3 className="mt-2 text-lg font-medium">No defined outputs</h3>
-                        <p className="text-sm text-muted-foreground">Output schema is not defined for this worker</p>
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <CardTitle className="text-base mt-1 truncate" title={data.name}>
-            {data.name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-0">
-          <p className="text-xs text-muted-foreground line-clamp-2" title={data.description}>
-            {data.description}
-          </p>
-        </CardContent>
-        <CardFooter className="p-2 flex justify-between bg-muted/50 rounded-b-lg">
-          <div className="flex items-center text-xs text-muted-foreground">
-            <PlayCircle className="h-3 w-3 mr-1" />
-            {data.executionTime || "~1s"}
-          </div>
-          <div className="flex items-center">{getWorkerIcon(data.type)}</div>
-        </CardFooter>
-      </Card>
-
-      {/* Input handle */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        style={{ background: "#64748b", width: "10px", height: "10px" }}
-        isConnectable={isConnectable}
-      />
-
-      {/* Output handle */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        style={{ background: "#64748b", width: "10px", height: "10px" }}
-        isConnectable={isConnectable}
-      />
+        <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className="h-3 w-3 bg-primary" />
+      </div>
     </>
   )
 }
-
-function getWorkerIcon(type: string) {
-  switch (type) {
-    case "data":
-      return <Database className="h-4 w-4 text-blue-500" />
-    case "process":
-      return <Workflow className="h-4 w-4 text-purple-500" />
-    case "api":
-      return <Zap className="h-4 w-4 text-yellow-500" />
-    case "system":
-      return <Server className="h-4 w-4 text-green-500" />
-    default:
-      return <Bot className="h-4 w-4 text-gray-500" />
-  }
-}
-

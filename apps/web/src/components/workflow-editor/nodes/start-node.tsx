@@ -1,17 +1,15 @@
-import { Handle, Position, type NodeProps } from "reactflow"
-import { PlayCircle } from "lucide-react"
+import { Handle, Position, type NodeProps } from 'reactflow'
+import { Play } from 'lucide-react'
 
-export function StartNode({ data, isConnectable }: NodeProps) {
+export function StartNode({ isConnectable }: NodeProps) {
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white shadow-md">
-      <PlayCircle className="h-6 w-6" />
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        style={{ background: "#64748b", width: "10px", height: "10px" }}
-        isConnectable={isConnectable}
-      />
+    <div className="rounded-md border border-green-500 bg-green-50 p-3 shadow-sm dark:bg-green-950">
+      <div className="flex items-center gap-2">
+        <Play className="h-4 w-4 text-green-500" />
+        <div className="text-sm font-medium text-green-700 dark:text-green-300">Start</div>
+      </div>
+
+      <Handle type="source" position={Position.Bottom} isConnectable={isConnectable} className="h-3 w-3 bg-green-500" />
     </div>
   )
 }
-
