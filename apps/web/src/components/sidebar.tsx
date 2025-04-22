@@ -22,6 +22,7 @@ import {
   Zap,
   Server,
   BarChart2,
+  PenTool,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -96,6 +97,16 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <Workflow className="h-4 w-4" />
               {!collapsed && <span>Workflows</span>}
+            </Link>
+            <Link
+              href="/workflow-editor"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                pathname === '/workflow-editor' ? 'bg-accent text-accent-foreground' : 'transparent'
+              )}
+            >
+              <PenTool className="h-4 w-4" />
+              {!collapsed && <span>Workflow Editor</span>}
             </Link>
             <Link
               href="/triggers"
