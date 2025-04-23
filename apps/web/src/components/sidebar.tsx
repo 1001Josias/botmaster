@@ -25,6 +25,7 @@ import {
   BarChart2,
   PenTool,
   Network,
+  Webhook,
 } from 'lucide-react'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -190,6 +191,17 @@ export function Sidebar({ className }: SidebarProps) {
           >
             <ListTodo className="h-4 w-4" />
             {!collapsed && <span>Jobs</span>}
+          </Link>
+          <Link
+            href="/webhooks"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+              pathname === '/webhooks' ? 'bg-accent' : 'transparent',
+              collapsed ? 'justify-center' : ''
+            )}
+          >
+            <Webhook className="h-5 w-5" />
+            {!collapsed && <span>Webhooks</span>}
           </Link>
           <Link
             href="/users"
