@@ -24,6 +24,7 @@ import {
   Server,
   BarChart2,
   PenTool,
+  Network,
 } from 'lucide-react'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -90,6 +91,17 @@ export function Sidebar({ className }: SidebarProps) {
           >
             <FolderTree className="h-4 w-4" />
             {!collapsed && <span>Folders</span>}
+          </Link>
+          <Link
+            href="/processes"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+              pathname === '/processes' ? 'bg-accent text-accent-foreground' : 'transparent',
+              collapsed && 'justify-center px-0'
+            )}
+          >
+            <Network className="h-4 w-4" />
+            {!collapsed && <span>Processes</span>}
           </Link>
           <Link
             href="/workflows"
