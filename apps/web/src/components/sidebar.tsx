@@ -26,6 +26,7 @@ import {
   PenTool,
   Network,
   Webhook,
+  ShoppingBag,
 } from 'lucide-react'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -202,6 +203,17 @@ export function Sidebar({ className }: SidebarProps) {
           >
             <Webhook className="h-5 w-5" />
             {!collapsed && <span>Webhooks</span>}
+          </Link>
+          <Link
+            href="/marketplace"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+              pathname.startsWith('/marketplace') ? 'bg-accent' : 'transparent',
+              collapsed ? 'justify-center' : ''
+            )}
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {!collapsed && <span>Marketplace</span>}
           </Link>
           <Link
             href="/users"
