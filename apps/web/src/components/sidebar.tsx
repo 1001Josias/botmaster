@@ -28,6 +28,7 @@ import {
   Webhook,
   ShoppingBag,
   Shield,
+  ListCollapse,
 } from 'lucide-react'
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -160,6 +161,17 @@ export function Sidebar({ className }: SidebarProps) {
           >
             <Database className="h-4 w-4" />
             {!collapsed && <span>Queues</span>}
+          </Link>
+          <Link
+            href="/queue-items"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+              pathname.startsWith('/queue-items') ? 'bg-accent' : 'transparent',
+              collapsed ? 'justify-center' : ''
+            )}
+          >
+            <ListCollapse className="h-5 w-5" />
+            {!collapsed && <span>Queue Items</span>}
           </Link>
           <Link
             href="/workers"
