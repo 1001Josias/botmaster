@@ -1,11 +1,20 @@
 'use client'
 
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { MoreVertical, Edit, Trash2, ShieldAlert, Lock, Mail } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import { MoreVertical, Edit, Trash2, ShieldAlert, Lock, Mail, Pencil } from 'lucide-react'
 import {
   Pagination,
   PaginationContent,
@@ -16,6 +25,18 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { UserFormDialog } from './user-form-dialog'
+import { toast } from '@/components/ui/use-toast'
 
 // Dados de exemplo
 const users = [
@@ -77,7 +98,60 @@ const users = [
   },
 ]
 
+const roleLabels = {
+  admin: 'Administrador',
+  manager: 'Gerente',
+  user: 'Usuário',
+}
+
 export function UsersTable() {
+  const router = useRouter()
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
+
+  const handleEditUser = (user: any) => {
+    setSelectedUser(user)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleDeleteUser = (user: any) => {
+    setSelectedUser(user)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDeleteUser = async () => {
+    try {
+      // Simulação de chamada à API
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      toast({
+        title: 'Usuário excluído',
+        description: `O usuário ${selectedUser.name} foi excluído com sucesso.`,
+      })
+
+      setIsDeleteDialogOpen(false)
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Ocorreu um erro ao excluir o usuário.',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const handleUpdateUser = (data: any) => {
+    console.log('Atualizar usuário:', { ...selectedUser, ...data })
+    // Aqui você implementaria a lógica para atualizar um usuário
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -188,15 +262,19 @@ export function UsersTable() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.push(`/users/${user.id}`)}>
+                          Ver detalhes
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                          <Pencil className="mr-2 h-4 w-4" />
                           Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Lock className="mr-2 h-4 w-4" />
-                          Alterar Senha
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteUser(user)}
+                          className="text-destructive focus:text-destructive"
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Excluir
                         </DropdownMenuItem>
@@ -235,6 +313,37 @@ export function UsersTable() {
           </Pagination>
         </div>
       </CardContent>
+
+      {selectedUser && (
+        <UserFormDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          initialData={{
+            name: selectedUser.name,
+            email: selectedUser.email,
+            role: selectedUser.role,
+            isActive: selectedUser.isActive,
+          }}
+          onSubmit={handleUpdateUser}
+        />
+      )}
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir usuário</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o usuário {selectedUser?.name}? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteUser} className="bg-destructive text-destructive-foreground">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   )
 }
