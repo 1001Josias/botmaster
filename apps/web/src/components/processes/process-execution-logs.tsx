@@ -1,85 +1,178 @@
-"use client"
+'use client'
 
-import type { ProcessExecution } from "@/lib/types/process"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { Info, AlertTriangle, AlertCircle } from "lucide-react"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Eye } from 'lucide-react'
 
-interface ProcessExecutionLogsProps {
-  execution: ProcessExecution
-}
+// Dados de exemplo para execuções de processos
+const executionLogs = [
+  {
+    id: 'exec-001',
+    startedAt: '2023-05-15T10:30:00Z',
+    completedAt: '2023-05-15T10:35:00Z',
+    status: 'completed',
+    initiatedBy: 'Sarah Johnson',
+    duration: '5m 0s',
+    nodesExecuted: 7,
+    result: 'success',
+  },
+  {
+    id: 'exec-002',
+    startedAt: '2023-05-14T14:20:00Z',
+    completedAt: '2023-05-14T14:28:00Z',
+    status: 'completed',
+    initiatedBy: 'Michael Chen',
+    duration: '8m 0s',
+    nodesExecuted: 7,
+    result: 'success',
+  },
+  {
+    id: 'exec-003',
+    startedAt: '2023-05-13T09:15:00Z',
+    completedAt: '2023-05-13T09:18:00Z',
+    status: 'failed',
+    initiatedBy: 'Jessica Williams',
+    duration: '3m 0s',
+    nodesExecuted: 4,
+    result: 'error',
+  },
+  {
+    id: 'exec-004',
+    startedAt: '2023-05-12T16:45:00Z',
+    completedAt: '2023-05-12T16:52:00Z',
+    status: 'completed',
+    initiatedBy: 'David Rodriguez',
+    duration: '7m 0s',
+    nodesExecuted: 7,
+    result: 'success',
+  },
+  {
+    id: 'exec-005',
+    startedAt: '2023-05-11T11:30:00Z',
+    completedAt: '2023-05-11T11:36:00Z',
+    status: 'completed',
+    initiatedBy: 'Sarah Johnson',
+    duration: '6m 0s',
+    nodesExecuted: 7,
+    result: 'success',
+  },
+]
 
-export function ProcessExecutionLogs({ execution }: ProcessExecutionLogsProps) {
+export function ProcessLogs({ id }: { id: string }) {
+  const router = useRouter()
+  const [filter, setFilter] = useState('all')
+
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "HH:mm:ss", { locale: ptBR })
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
   }
 
-  const getLevelIcon = (level: string) => {
-    switch (level) {
-      case "info":
-        return <Info className="h-4 w-4 text-blue-500" />
-      case "warning":
-        return <AlertTriangle className="h-4 w-4 text-amber-500" />
-      case "error":
-        return <AlertCircle className="h-4 w-4 text-red-500" />
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <Badge className="bg-green-500">Completed</Badge>
+      case 'failed':
+        return <Badge className="bg-red-500">Failed</Badge>
+      case 'running':
+        return <Badge className="bg-blue-500">Running</Badge>
       default:
-        return <Info className="h-4 w-4 text-blue-500" />
+        return <Badge className="bg-gray-500">{status}</Badge>
     }
   }
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case "info":
-        return "bg-blue-100 text-blue-800"
-      case "warning":
-        return "bg-amber-100 text-amber-800"
-      case "error":
-        return "bg-red-100 text-red-800"
+  const getResultBadge = (result: string) => {
+    switch (result) {
+      case 'success':
+        return <Badge className="bg-green-500">Success</Badge>
+      case 'error':
+        return <Badge className="bg-red-500">Error</Badge>
+      case 'warning':
+        return <Badge className="bg-yellow-500">Warning</Badge>
       default:
-        return "bg-gray-100 text-gray-800"
+        return <Badge className="bg-gray-500">{result}</Badge>
     }
+  }
+
+  const handleViewExecution = (executionId: string) => {
+    router.push(`/dashboard/processes/executions/${executionId}`)
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Logs da Execução</CardTitle>
-        <CardDescription>Registros de eventos durante a execução do processo</CardDescription>
+        <CardTitle>Execution History</CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[400px] w-full rounded-md border">
-          <div className="p-4 space-y-2">
-            {execution.logs.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">Nenhum log disponível para esta execução.</div>
-            ) : (
-              execution.logs.map((log, index) => (
-                <div key={index} className="flex items-start gap-2 p-2 rounded-md hover:bg-muted/50">
-                  <div className="mt-1">{getLevelIcon(log.level)}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Badge className={`text-xs ${getLevelColor(log.level)}`}>{log.level.toUpperCase()}</Badge>
-                        {log.nodeId && <span className="text-xs text-muted-foreground">Nó: {log.nodeId}</span>}
-                      </div>
-                      <span className="text-xs text-muted-foreground">{formatDate(log.timestamp)}</span>
-                    </div>
-                    <p className="mt-1 text-sm">{log.message}</p>
-                    {log.data && (
-                      <div className="mt-1 text-xs bg-muted p-2 rounded">
-                        <pre>{JSON.stringify(log.data, null, 2)}</pre>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="space-x-2">
+              <Button variant={filter === 'all' ? 'default' : 'outline'} size="sm" onClick={() => setFilter('all')}>
+                All
+              </Button>
+              <Button
+                variant={filter === 'completed' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setFilter('completed')}
+              >
+                Completed
+              </Button>
+              <Button
+                variant={filter === 'failed' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setFilter('failed')}
+              >
+                Failed
+              </Button>
+            </div>
+            <Button variant="outline" size="sm">
+              Export Logs
+            </Button>
           </div>
-        </ScrollArea>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Execution ID</TableHead>
+                <TableHead>Started</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Result</TableHead>
+                <TableHead>Initiated By</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {executionLogs
+                .filter((log) => filter === 'all' || log.status === filter)
+                .map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell className="font-mono">{log.id}</TableCell>
+                    <TableCell>{formatDate(log.startedAt)}</TableCell>
+                    <TableCell>{log.duration}</TableCell>
+                    <TableCell>{getStatusBadge(log.status)}</TableCell>
+                    <TableCell>{getResultBadge(log.result)}</TableCell>
+                    <TableCell>{log.initiatedBy}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" onClick={() => handleViewExecution(log.id)}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   )
 }
-
