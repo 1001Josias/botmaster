@@ -11,6 +11,8 @@ export interface ProcessNode {
       resourceId?: string
       configuration?: Record<string, any>
     }
+    executionStatus?: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
+    executionData?: any
   }
 }
 
@@ -28,7 +30,7 @@ export interface Process {
   id: string
   name: string
   description: string
-  status: "draft" | "pending" | "active" | "completed"
+  status: 'draft' | 'pending' | 'active' | 'completed'
   version: string
   nodes: ProcessNode[]
   edges: ProcessEdge[]
@@ -53,7 +55,7 @@ export interface ProcessExecution {
   id: string
   processId: string
   version: string
-  status: "running" | "completed" | "failed" | "cancelled"
+  status: 'running' | 'completed' | 'failed' | 'cancelled'
   startedAt: string
   completedAt?: string
   currentNodeId?: string
@@ -61,7 +63,7 @@ export interface ProcessExecution {
     nodeId: string
     startedAt: string
     completedAt?: string
-    status: "completed" | "failed" | "skipped"
+    status: 'completed' | 'failed' | 'skipped'
     output?: any
   }[]
   input?: any
@@ -70,8 +72,7 @@ export interface ProcessExecution {
     timestamp: string
     nodeId?: string
     message: string
-    level: "info" | "warning" | "error"
+    level: 'info' | 'warning' | 'error'
     data?: any
   }[]
 }
-
