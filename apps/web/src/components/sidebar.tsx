@@ -83,7 +83,7 @@ export function Sidebar({ className }: SidebarProps) {
             )}
           >
             <BarChart2 className="h-4 w-4" />
-            {!collapsed && <span>Métricas</span>}
+            {!collapsed && <span>Metrics</span>}
           </Link>
           <Link
             href="/folders"
@@ -193,7 +193,7 @@ export function Sidebar({ className }: SidebarProps) {
             )}
           >
             <Server className="h-4 w-4" />
-            {!collapsed && <span>Máquinas</span>}
+            {!collapsed && <span>Machines</span>}
           </Link>
           <Link
             href="/jobs"
@@ -237,7 +237,7 @@ export function Sidebar({ className }: SidebarProps) {
             )}
           >
             <Users className="h-4 w-4" />
-            {!collapsed && <span>Usuários</span>}
+            {!collapsed && <span>Users</span>}
           </Link>
           <Link
             href="/audit"
@@ -248,7 +248,7 @@ export function Sidebar({ className }: SidebarProps) {
             )}
           >
             <Shield className="h-5 w-5" />
-            {!collapsed && <span>Auditoria</span>}
+            {!collapsed && <span>Audit Logs</span>}
           </Link>
           <Link
             href="/settings"
@@ -259,7 +259,7 @@ export function Sidebar({ className }: SidebarProps) {
             )}
           >
             <Settings className="h-4 w-4" />
-            {!collapsed && <span>Configurações</span>}
+            {!collapsed && <span>Settings</span>}
           </Link>
         </nav>
       </ScrollArea>
