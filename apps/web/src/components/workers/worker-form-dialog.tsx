@@ -40,6 +40,8 @@ interface Worker {
   autoScale: boolean
   minInstances: number
   maxInstances: number
+  customOptions?: string // Campo para opções personalizadas
+  selectedVersion?: string // Campo para selecionar a versão do worker
 }
 
 export function WorkerFormDialog({ open, onOpenChange, worker, onSave }: WorkerFormDialogProps) {
@@ -58,6 +60,8 @@ export function WorkerFormDialog({ open, onOpenChange, worker, onSave }: WorkerF
       autoScale: false,
       minInstances: 1,
       maxInstances: 5,
+      customOptions: '', // Inicializa o campo de opções personalizadas
+      selectedVersion: 'latest', // Inicializa o campo de seleção de versão
     }
   )
 
@@ -70,6 +74,8 @@ export function WorkerFormDialog({ open, onOpenChange, worker, onSave }: WorkerF
     onSave(formData)
     onOpenChange(false)
   }
+
+  const workerVersions = ['latest', '1.0.0', '1.1.0', '1.2.0']
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -249,6 +255,34 @@ export function WorkerFormDialog({ open, onOpenChange, worker, onSave }: WorkerF
                     </div>
                   </>
                 )}
+                <div className="grid gap-2">
+                  <Label htmlFor="selectedVersion">Versão do Worker</Label>
+                  <Select
+                    value={formData.selectedVersion}
+                    onValueChange={(value) => handleChange('selectedVersion', value)}
+                  >
+                    <SelectTrigger id="selectedVersion">
+                      <SelectValue placeholder="Selecione a versão" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {workerVersions.map((version) => (
+                        <SelectItem key={version} value={version}>
+                          {version}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="customOptions">Opções Personalizadas (JSON)</Label>
+                  <Textarea
+                    id="customOptions"
+                    placeholder="Ex: { 'param1': 'value1', 'param2': 123 }"
+                    value={formData.customOptions}
+                    onChange={(e) => handleChange('customOptions', e.target.value)}
+                    rows={3}
+                  />
+                </div>
               </div>
             </TabsContent>
           </Tabs>
