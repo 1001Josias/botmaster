@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Edit, Play, Pause, RefreshCw, Trash2, Clock, Server, Repeat, Cpu } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { ArrowLeft, Edit, Play, Pause, RefreshCw, Trash2, Clock, Server, Repeat } from 'lucide-react'
+import { Button } from '@/components/Button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -90,20 +90,20 @@ export function WorkerDetails({ id }: WorkerDetailsProps) {
     switch (level) {
       case 'info':
         return (
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            INFO
+          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+            Ativo
           </Badge>
         )
-      case 'warning':
+      case 'paused':
         return (
           <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-            WARN
+            Pausado
           </Badge>
         )
       case 'error':
         return (
           <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-            ERROR
+            Erro
           </Badge>
         )
       default:
@@ -185,32 +185,6 @@ export function WorkerDetails({ id }: WorkerDetailsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>CPU</CardDescription>
-            <CardTitle className="text-2xl">{worker.cpu}%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Progress
-              value={worker.cpu}
-              className={worker.cpu < 50 ? 'bg-green-500' : worker.cpu < 80 ? 'bg-yellow-500' : 'bg-red-500'}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Memória</CardDescription>
-            <CardTitle className="text-2xl">{worker.memory}%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Progress
-              value={worker.memory}
-              className={worker.memory < 50 ? 'bg-green-500' : worker.memory < 80 ? 'bg-yellow-500' : 'bg-red-500'}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
             <CardDescription>Tarefas Processadas</CardDescription>
             <CardTitle className="text-2xl">{worker.tasks.toLocaleString()}</CardTitle>
           </CardHeader>
@@ -268,7 +242,7 @@ export function WorkerDetails({ id }: WorkerDetailsProps) {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <Cpu className="h-4 w-4 mr-2 text-muted-foreground" />
+                  <Server className="h-4 w-4 mr-2 text-muted-foreground" />
                   <span className="text-sm">Auto Scaling</span>
                 </div>
                 <span className="text-sm font-medium">{worker.autoScale ? 'Sim' : 'Não'}</span>
@@ -317,7 +291,11 @@ export function WorkerDetails({ id }: WorkerDetailsProps) {
                   <div className="space-y-4">
                     {worker.logs.map((log, index) => (
                       <div key={index} className="flex items-start space-x-3 pb-3 border-b last:border-0">
-                        <div className="mt-0.5">{getLogLevelBadge(log.level)}</div>
+                        <div className="mt-0.5">
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            INFO
+                          </Badge>
+                        </div>
                         <div className="space-y-1">
                           <p className="text-sm">{log.message}</p>
                           <p className="text-xs text-muted-foreground">{formatDate(log.timestamp)}</p>

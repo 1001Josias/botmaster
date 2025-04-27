@@ -175,21 +175,7 @@ export function WorkerFormDialog({ open, onOpenChange, worker, onSave }: WorkerF
                     max={20}
                     step={1}
                     value={[formData.concurrency]}
-                    onValueChange={(value) => handleChange("concurrency", value[0])}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="flex justify-between">
-                    <Label htmlFor="memory">Memória (MB): {formData.memory}</Label>
-                  </div>
-                  <Slider
-                    id="memory"
-                    min={64}
-                    max={1024}
-                    step={64}
-                    value={[formData.memory]}
-                    onValueChange={(value) => handleChange("memory", value[0])}
+                    onValueChange={(value) => handleChange('concurrency', value[0])}
                   />
                 </div>
 

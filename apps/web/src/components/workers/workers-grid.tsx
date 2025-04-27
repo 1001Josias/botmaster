@@ -19,7 +19,6 @@ import {
   FileText,
   ExternalLink,
 } from 'lucide-react'
-import { Progress } from '@/components/ui/progress'
 import { WorkerFormDialog } from './worker-form-dialog'
 
 // Dados de exemplo
@@ -31,8 +30,6 @@ const workers = [
     type: 'email',
     status: 'active',
     folder: 'Produção',
-    cpu: 25,
-    memory: 40,
     tasks: 1245,
     lastActive: '2 minutos atrás',
     concurrency: 5,
@@ -49,8 +46,6 @@ const workers = [
     type: 'notification',
     status: 'active',
     folder: 'Produção',
-    cpu: 15,
-    memory: 30,
     tasks: 3456,
     lastActive: '1 minuto atrás',
     concurrency: 3,
@@ -67,8 +62,6 @@ const workers = [
     type: 'processing',
     status: 'paused',
     folder: 'Produção',
-    cpu: 0,
-    memory: 10,
     tasks: 2134,
     lastActive: '1 hora atrás',
     concurrency: 10,
@@ -85,8 +78,6 @@ const workers = [
     type: 'processing',
     status: 'error',
     folder: 'Desenvolvimento',
-    cpu: 85,
-    memory: 90,
     tasks: 567,
     lastActive: '5 minutos atrás',
     concurrency: 2,
@@ -103,8 +94,6 @@ const workers = [
     type: 'notification',
     status: 'active',
     folder: 'Produção',
-    cpu: 35,
-    memory: 45,
     tasks: 1890,
     lastActive: '30 segundos atrás',
     concurrency: 8,
@@ -121,8 +110,6 @@ const workers = [
     type: 'processing',
     status: 'active',
     folder: 'Produção',
-    cpu: 55,
-    memory: 60,
     tasks: 789,
     lastActive: '3 minutos atrás',
     concurrency: 4,
@@ -175,12 +162,6 @@ export function WorkersGrid() {
       default:
         return <Bot className="h-4 w-4" />
     }
-  }
-
-  const getProgressColor = (value: number) => {
-    if (value < 50) return 'bg-green-500'
-    if (value < 80) return 'bg-yellow-500'
-    return 'bg-red-500'
   }
 
   const getActionButton = (status: string) => {
@@ -260,22 +241,7 @@ export function WorkersGrid() {
                   </DropdownMenu>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span>CPU</span>
-                        <span>{worker.cpu}%</span>
-                      </div>
-                      <Progress value={worker.cpu} className={getProgressColor(worker.cpu)} />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between text-xs">
-                        <span>Memória</span>
-                        <span>{worker.memory}%</span>
-                      </div>
-                      <Progress value={worker.memory} className={getProgressColor(worker.memory)} />
-                    </div>
-                  </div>
+                  <div className="space-y-2"></div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 flex justify-between">
                   <div className="text-xs text-muted-foreground">
