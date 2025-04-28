@@ -2,7 +2,7 @@ import { logger } from '@/server'
 import type { ErrorRequestHandler, RequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ServiceResponse } from '../models/serviceResponse'
-import { InternalError } from '../utils/errorHandlers'
+import { InternalError, SystemErrorMessages } from '../utils/errorHandlers'
 
 const unexpectedRequest: RequestHandler = (req, res) => {
   const apiDocsUrl = `${req.protocol}://${req.get('host')}/api-docs/v1`
@@ -18,10 +18,24 @@ const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
   next(err)
 }
 
+const syntaxErrorResponse: ErrorRequestHandler = (err, _req, res, next) => {
+  if (err instanceof SyntaxError) {
+    logger.error(err)
+    const response = ServiceResponse.failure(
+      SystemErrorMessages.SYNTAX_ERROR,
+      { error: err.message },
+      StatusCodes.BAD_REQUEST
+    )
+    res.status(response.statusCode).send(response)
+  } else {
+    next(err)
+  }
+}
+
 const internalServerErrorResponse: ErrorRequestHandler = (err, _req, res, _next) => {
   logger.error(err)
   const response = ServiceResponse.failure('Internal error.', new InternalError(), StatusCodes.INTERNAL_SERVER_ERROR)
   res.status(response.statusCode).send(response)
 }
 
-export default () => [unexpectedRequest, addErrorToRequestLog, internalServerErrorResponse]
+export default () => [unexpectedRequest, addErrorToRequestLog, syntaxErrorResponse, internalServerErrorResponse]
