@@ -23,7 +23,7 @@ const syntaxErrorResponse: ErrorRequestHandler = (err, _req, res, next) => {
     logger.error(err)
     const response = ServiceResponse.failure(
       SystemErrorMessages.SYNTAX_ERROR,
-      { error: err.message },
+      { errors: [err.message] },
       StatusCodes.BAD_REQUEST
     )
     res.status(response.statusCode).send(response)
