@@ -14,6 +14,8 @@ export const WorkerSchema = z.object({
   updatedBy: userIdSchema.describe('The user id of the last user to update the worker'),
   createdAt: timestamp.describe('The timestamp when the worker was created').optional(),
   updatedAt: timestamp.describe('The timestamp of the last worker update').optional(),
+  folderKey: z.string().uuid().describe('The unique identifier of the folder'),
+  tenantKey: z.string().uuid().describe('The unique identifier of the tenant'),
 })
 
 export type Worker = z.infer<typeof WorkerSchema>

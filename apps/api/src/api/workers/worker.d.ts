@@ -7,6 +7,8 @@ export interface IWorker {
   updatedBy: number
   createdAt?: Date
   updatedAt?: Date
+  folderKey: string
+  tenantKey: string
 }
 
 export interface IWorkerContract<I = any, O> {

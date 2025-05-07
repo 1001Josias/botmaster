@@ -12,7 +12,9 @@ export class WorkerRepository {
       worker.name,
       worker.description,
       worker.createdBy,
-      worker.updatedBy
+      worker.updatedBy,
+      worker.folderKey,
+      worker.tenantKey,
     ]
     const querySql = readSqlFile(`${__dirname}/db/insert_worker.sql`)
     try {
@@ -28,6 +30,8 @@ export class WorkerRepository {
         updatedBy: row.updated_by,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
+        folderKey: row.folder_key,
+        tenantKey: row.tenant_key,
       }
     } catch (err) {
       if (err instanceof DatabaseError) {
