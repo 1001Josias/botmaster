@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS worker (
     language VARCHAR(50), -- ['python', 'javascript', 'java', 'csharp', 'go', 'ruby', 'php', 'shell', ...]
     mode VARCHAR(50) DEFAULT 'single' NOT NULL, -- ['single', 'batch']
     input_schema JSONB,
-    output_schema JSONB,
+    output_schema JSONB
 );
 
 -- CREATE INDEX idx_workers_name ON workers(name);
