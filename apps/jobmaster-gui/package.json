@@ -2,7 +2,7 @@
   "name": "jobmaster",
   "private": true,
   "main": "src/electron/dist/index.js",
-  "description": "JobMaster is a desktop application designed to execute scripts, workflows, automations, or any JavaScript code simply and efficiently. Ideal for non-technical areas, it increases productivity and reduces errors in repetitive tasks.",
+  "description": "JobMaster is a desktop application designed to execute scripts, workflows, workers, or any JavaScript code simply and efficiently. Ideal for non-technical areas, it increases productivity and reduces errors in repetitive tasks.",
   "author": {
     "email": "1001josias@gmail.com",
     "name": "Josias Junior",

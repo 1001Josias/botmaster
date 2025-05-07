@@ -10,14 +10,14 @@ import { StatusCodes } from 'http-status-codes'
 export const healthCheckRegistry = new OpenAPIRegistry()
 export const healthCheckRouter: Router = express.Router()
 
-const automationResponseSuccess: OpenApiResponseConfig<null> = {
+const workerResponseSuccess: OpenApiResponseConfig<null> = {
   success: true,
   description: 'Success',
   dataSchema: z.null(),
   statusCode: StatusCodes.OK,
 }
 
-const automationResponseFailure: OpenApiResponseConfig<null> = {
+const workerResponseFailure: OpenApiResponseConfig<null> = {
   success: false,
   description: 'Failure',
   dataSchema: z.null(),
@@ -28,7 +28,7 @@ healthCheckRegistry.registerPath({
   method: 'get',
   path: '/health-check',
   tags: ['Health Check'],
-  responses: createOpenApiResponse([automationResponseSuccess, automationResponseFailure]),
+  responses: createOpenApiResponse([workerResponseSuccess, workerResponseFailure]),
 })
 
 healthCheckRouter.get('/', (_req: Request, res: Response) => {

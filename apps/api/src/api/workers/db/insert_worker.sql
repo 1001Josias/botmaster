@@ -1,4 +1,4 @@
-INSERT INTO automation (
+INSERT INTO worker (
   name,
   description,
   created_by,

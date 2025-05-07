@@ -1,24 +1,24 @@
 import { DatabaseError } from 'pg'
 import { logger } from '@/server'
-import { IAutomation } from '@/api/automations/automation'
+import { IWorker } from '@/api/workers/worker'
 import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 
-export class AutomationRepository {
-  async createAutomation(automation: IAutomation): Promise<IAutomation> {
+export class WorkerRepository {
+  async createWorker(worker: IWorker): Promise<IWorker> {
     // prettier-ignore
     const values = [
-      automation.name,
-      automation.description,
-      automation.createdBy,
-      automation.updatedBy
+      worker.name,
+      worker.description,
+      worker.createdBy,
+      worker.updatedBy
     ]
-    const querySql = readSqlFile(`${__dirname}/db/insert_automation.sql`)
+    const querySql = readSqlFile(`${__dirname}/db/insert_worker.sql`)
     try {
       const { rows } = await dbPool.query(querySql, values)
       const row = rows[0]
-      logger.info(`Automation ${row.id} created!`)
+      logger.info(`Worker ${row.id} created!`)
       return {
         id: row.id,
         key: row.key,

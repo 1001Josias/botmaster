@@ -1,4 +1,4 @@
-export interface IAutomation {
+export interface IWorker {
   id?: number
   key?: string
   name: string
@@ -9,6 +9,6 @@ export interface IAutomation {
   updatedAt?: Date
 }
 
-export interface IAutomationContract<I = any, O> {
-  createAutomation: (...args: I) => O
+export interface IWorkerContract<I = any, O> {
+  createWorker: (...args: I) => O
 }
