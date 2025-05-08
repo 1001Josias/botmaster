@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { WorkerService } from '@/api/workers/workerService'
-import { IWorker, IWorkerContract } from '@/api/workers/worker'
+import { IWorkerContract } from '@/api/workers/worker'
+import { Worker } from '@/api/workers/workerModel'
 
 export class WorkerController implements IWorkerContract<any, any> {
   private workerService: WorkerService
@@ -10,7 +11,7 @@ export class WorkerController implements IWorkerContract<any, any> {
     this.workerService = service
   }
 
-  public createWorker: RequestHandler<{}, {}, IWorker> = async (req, res, next) => {
+  public createWorker: RequestHandler<{}, {}, Worker> = async (req, res, next) => {
     try {
       const workerService = await this.workerService.createWorker(req.body)
       return handleServiceResponse(workerService, res)

@@ -1,12 +1,12 @@
 import { DatabaseError } from 'pg'
 import { logger } from '@/server'
-import { IWorker } from '@/api/workers/worker'
+import { Worker } from '@/api/workers/workerModel'
 import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 
 export class WorkerRepository {
-  async createWorker(worker: IWorker): Promise<IWorker> {
+  async createWorker(worker: Worker): Promise<Worker> {
     // prettier-ignore
     const values = [
       worker.name,

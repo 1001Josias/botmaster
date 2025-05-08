@@ -2,14 +2,14 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
 import { WorkerCreateSchema, WorkerSchema } from './workerModel'
 import { createOpenApiResponse, OpenApiResponseConfig } from '@/api-docs/openAPIResponseBuilders'
 import { StatusCodes } from 'http-status-codes'
-import { IWorker } from './worker'
+import { Worker } from '@/api/workers/workerModel'
 import { z } from 'zod'
 
 export const workerRegistryV1 = new OpenAPIRegistry()
 
 const workerPath = '/workers'
 
-const workerOpenApiResponseSuccess: OpenApiResponseConfig<IWorker> = {
+const workerOpenApiResponseSuccess: OpenApiResponseConfig<Worker> = {
   success: true,
   description: 'Success',
   dataSchema: WorkerSchema,
