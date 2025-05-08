@@ -1,10 +1,16 @@
 import { RequestHandler } from 'express'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { WorkerService } from '@/api/workers/workerService'
-import { IWorkerContract } from '@/api/workers/worker'
+import { IWorker } from '@/api/workers/worker'
 import { Worker } from '@/api/workers/workerModel'
 
-export class WorkerController implements IWorkerContract<any, any> {
+export class WorkerController
+  implements
+    IWorker<
+      [Parameters<RequestHandler>[0], Parameters<RequestHandler>[1], Parameters<RequestHandler>[2]],
+      ReturnType<RequestHandler>
+    >
+{
   private workerService: WorkerService
 
   constructor(service: WorkerService = new WorkerService()) {

@@ -2,12 +2,12 @@ import { StatusCodes } from 'http-status-codes'
 
 import { WorkerRepository } from '@/api/workers/workerRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
-import { IWorkerContract } from '@/api/workers/worker'
+import { IWorker } from '@/api/workers/worker'
 import { Worker } from '@/api/workers/workerModel'
 import { BusinessError } from '@/common/utils/errorHandlers'
 import { logger } from '@/server'
 
-export class WorkerService implements IWorkerContract<any, Promise<ServiceResponse<Worker | null>>> {
+export class WorkerService implements IWorker<[Worker], Promise<ServiceResponse<Worker | null>>> {
   private workerRepository: WorkerRepository
 
   constructor(repository: WorkerRepository = new WorkerRepository()) {

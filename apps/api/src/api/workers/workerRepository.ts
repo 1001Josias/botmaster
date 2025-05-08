@@ -4,10 +4,10 @@ import { Worker } from '@/api/workers/workerModel'
 import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
+import { IWorker } from '@/api/workers/worker'
 
-export class WorkerRepository {
-  async createWorker(worker: Worker): Promise<Worker> {
-    // prettier-ignore
+export class WorkerRepository implements IWorker<[Worker], Promise<Worker>> {
+  async createWorker(worker: Worker) {
     const values = [
       worker.name,
       worker.description,
