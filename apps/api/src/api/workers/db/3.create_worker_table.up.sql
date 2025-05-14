@@ -5,26 +5,17 @@ CREATE TABLE IF NOT EXISTS worker (
     key UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
     name VARCHAR(255) UNIQUE NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,    -- created_by INT REFERENCES users(id) NOT NULL,
     updated_by INT NOT NULL,    -- updated_by INT REFERENCES users(id) NOT NULL,
     folder_key UUID NOT NULL,
     tenant_key UUID NOT NULL,
-    timeout INT DEFAULT 0 NOT NULL,
     priority INT DEFAULT 0 NOT NULL,
     tags TEXT[],
     properties JSONB,
-    properties_schema JSONB,
     allowed_machines TEXT[], -- Replace by FK machines
-    max_retries INT DEFAULT 0 NOT NULL,
-    retry_delay BIGINT DEFAULT 0 NOT NULL,
-    default_version VARCHAR(50) DEFAULT 'latest',
-    status VARCHAR(50) DEFAULT 'development' NOT NULL, -- ['active', 'inactive', 'development', 'archived']
-    language VARCHAR(50), -- ['python', 'javascript', 'java', 'csharp', 'go', 'ruby', 'php', 'shell', ...]
-    mode VARCHAR(50) DEFAULT 'single' NOT NULL, -- ['single', 'batch']
-    input_schema JSONB,
-    output_schema JSONB
+    status VARCHAR(50) DEFAULT 'active' NOT NULL
 );
 
 -- CREATE INDEX idx_workers_name ON workers(name);
