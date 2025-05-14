@@ -53,15 +53,15 @@ export const WorkerBaseSchema = z.object({
   tags: z.array(z.string()).describe('The tags associated with the worker').optional(),
 })
 
+export const WorkerResponseSchema = WorkerBaseSchema.extend({
+  id: workerId,
+  key: z.string().uuid().describe('The unique identifier of the worker'),
   createdBy: userIdSchema.describe('The user id of the creator of the worker'),
   updatedBy: userIdSchema.describe('The user id of the last user to update the worker'),
-  createdAt: timestamp.describe('The timestamp when the worker was created').optional(),
-  updatedAt: timestamp.describe('The timestamp of the last worker update').optional(),
-  folderKey: z.string().uuid().describe('The unique identifier of the folder'),
-  tenantKey: z.string().uuid().describe('The unique identifier of the tenant'),
+  createdAt: timestamp.describe('The timestamp when the worker was created'),
+  updatedAt: timestamp.describe('The timestamp of the last worker update'),
 })
-
-export type Worker = z.infer<typeof WorkerSchema>
+export type WorkerResponseDto = z.infer<typeof WorkerResponseSchema>
 
 export const WorkerCreateSchema = WorkerSchema.omit({ id: true, key: true, createdAt: true, updatedAt: true })
 
