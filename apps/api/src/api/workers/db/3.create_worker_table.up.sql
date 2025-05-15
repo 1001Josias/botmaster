@@ -18,6 +18,11 @@ CREATE TABLE IF NOT EXISTS worker (
     status VARCHAR(50) DEFAULT 'active' NOT NULL
 );
 
+CREATE OR REPLACE TRIGGER trigger_set_updated_at
+BEFORE UPDATE ON worker
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
 -- CREATE INDEX idx_workers_name ON workers(name);
 -- CREATE INDEX idx_workers_folder_key ON workers(folder_key);
 -- CREATE INDEX idx_workers_tenant_key ON workers(tenant_key);
