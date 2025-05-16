@@ -15,11 +15,18 @@ const propertiesSchema = z.object({
   settings: z.object({}).describe('The settings of the worker').optional(),
   options: z
     .object({
-      maxConcurrent: z.number().int().positive().describe('The maximum number of concurrent executions'),
+      maxConcurrent: z
+        .number()
+        .int()
+        .positive()
+        .describe(
+          'The maximum number of concurrent jobs the worker can process. If not specified, it will default to 1.'
+        )
+        .optional()
+        .default(1),
     })
     .describe('The options of the worker')
     .optional(),
-
   retryPolicy: z
     .object({
       maxRetries: z.number().int().positive().describe('The maximum number of retries'),
