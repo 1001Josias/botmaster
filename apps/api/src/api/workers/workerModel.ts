@@ -55,7 +55,7 @@ export const WorkerBaseSchema = z.object({
   status: z.enum(['active', 'inactive', 'archived']).describe('The status of the worker').optional(),
   description: z.string().max(2500).describe('The description of the worker').optional(),
   priority: z.enum(['low', 'medium', 'high']).describe('The priority of the worker').optional(),
-  properties: propertiesSchema.describe('The properties of the worker'),
+  properties: propertiesSchema.describe('The properties of the worker').optional(),
   allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional(),
   tags: z.array(z.string()).describe('The tags associated with the worker').optional(),
 })
