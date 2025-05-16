@@ -5,46 +5,51 @@ const workerId = commonValidations.id.describe('The unique identifier of the wor
 const userIdSchema = commonValidations.id.describe('The unique identifier of the user')
 const timestamp = commonValidations.timestamp
 
-const parametersSchema = z.object({
-  schema: z.object({}).describe('The schema of the worker'),
-  values: z.object({}).describe('The values of the worker').optional(),
-})
-
-const propertiesSchema = z.object({
-  parameters: parametersSchema.describe('The parameters of the worker').optional(),
-  settings: z.object({}).describe('The settings of the worker').optional(),
-  options: z
-    .object({
+const optionsSchema = z.object({
       maxConcurrent: z
         .number()
         .int()
         .positive()
-        .describe(
-          'The maximum number of concurrent jobs the worker can process. If not specified, it will default to 1.'
-        )
+    .describe('The maximum number of concurrent jobs the worker can process. If not specified, it will default to 1.')
         .optional()
         .default(1),
-    })
-    .describe('The options of the worker')
-    .optional(),
   retryPolicy: z
     .object({
-      maxRetries: z.number().int().positive().describe('The maximum number of retries'),
-      retryDelay: z.number().int().positive().describe('The delay between retries in seconds'),
-      estrategy: z.enum(['exponential', 'linear']).describe('The strategy for retrying'),
+      maxRetries: z.number().int().positive().describe('The maximum number of retries').default(3),
+      retryDelay: z.number().int().positive().describe('The delay between retries in seconds').default(5),
+      strategy: z.enum(['exponential', 'linear']).describe('The strategy for retrying').default('linear'),
     })
-    .describe('The retry policy of the worker'),
-  timeout: z.number().int().positive().describe('The timeout for the worker in seconds').optional(),
-  language: z.enum(['javascript', 'python', 'nodejs', 'shell']).describe('The language of the worker').optional(),
-  processingMode: z.enum(['single', 'batch']).describe('The queue processing mode of the worker by job').optional(),
-  release: z
-    .object({
-      version: z.string().describe('The version of the worker'),
-      releaseNotes: z.string().describe('The release notes of the worker'),
-      releaseDate: z.string().describe('The release date of the worker'),
-      releaseType: z.enum(['major', 'minor', 'patch']).describe('The type of the release'),
-    })
-    .describe('The release of the worker')
+    .describe('The retry policy of the worker')
+    .optional(),
+  timeout: z
+    .number()
+    .int()
+    .positive()
+    .describe('The timeout for the worker execution in seconds')
+    .optional()
+    .default(60),
+  processingMode: z
+    .enum(['single', 'batch'])
+    .describe('The queue processing mode of the worker by job')
+    .optional()
+    .default('single'),
+})
+
+const propertiesSchema = z.object({
+  parameters: z
+    .object({})
+    .describe('The parameters of the worker. If not specified, it will default to an empty object.')
+    .optional(),
+  settings: z
+    .object({})
+    .describe(
+      'Customized and specific settings for each worker, containing information necessary for the worker to function according to its logic.'
+    )
+    .optional(),
+  options: optionsSchema
+    .describe(
+      'Configurable operational options of the worker that allow you to control the execution behavior of the worker.'
+    )
     .optional(),
 })
 
