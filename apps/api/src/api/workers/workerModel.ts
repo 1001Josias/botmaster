@@ -7,7 +7,7 @@ const timestamp = commonValidations.timestamp
 
 const parametersSchema = z.object({
   schema: z.object({}).describe('The schema of the worker'),
-  values: z.object({}).describe('The values of the worker'),
+  values: z.object({}).describe('The values of the worker').optional(),
 })
 
 const propertiesSchema = z.object({
