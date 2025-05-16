@@ -1,15 +1,21 @@
 INSERT INTO worker (
   name,
-  description,
-  created_by,
-  updated_by,
   folder_key,
-  tenant_key
+  tenant_key,
+  description,
+  status,
+  priority,
+  allowed_machines,
+  tags,
+  properties,
 ) VALUES (
   $1,
   $2,
   $3,
   $4,
   $5,
-  $6
+  $6,
+  $7,
+  $8,
+  $9,
 ) RETURNING *;
