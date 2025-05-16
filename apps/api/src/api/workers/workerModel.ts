@@ -6,13 +6,13 @@ const userIdSchema = commonValidations.id.describe('The unique identifier of the
 const timestamp = commonValidations.timestamp
 
 const optionsSchema = z.object({
-      maxConcurrent: z
-        .number()
-        .int()
-        .positive()
+  maxConcurrent: z
+    .number()
+    .int()
+    .positive()
     .describe('The maximum number of concurrent jobs the worker can process. If not specified, it will default to 1.')
-        .optional()
-        .default(1),
+    .optional()
+    .default(1),
   retryPolicy: z
     .object({
       maxRetries: z.number().int().positive().describe('The maximum number of retries').default(3),
