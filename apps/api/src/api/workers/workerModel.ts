@@ -53,7 +53,7 @@ const propertiesSchema = z.object({
     .optional(),
 })
 
-export const WorkerPriority = {
+export const workerPriority = {
   trivial: 0,
   lowest: 1,
   veryLow: 2,
@@ -67,7 +67,7 @@ export const WorkerPriority = {
   critical: 10,
 } as const
 
-export type WorkerPriority = (typeof WorkerPriority)[keyof typeof WorkerPriority]
+export type WorkerPriority = (typeof workerPriority)[keyof typeof workerPriority]
 
 export const WorkerBaseSchema = z.object({
   name: z.string({ description: 'The name of the worker' }),
@@ -76,7 +76,7 @@ export const WorkerBaseSchema = z.object({
   status: z.enum(['active', 'inactive', 'archived']).describe('The status of the worker').optional(),
   description: z.string().max(2500).describe('The description of the worker').optional(),
   priority: z
-    .nativeEnum(WorkerPriority)
+    .nativeEnum(workerPriority)
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
     .optional(),
   properties: propertiesSchema.describe('The properties of the worker').optional(),
