@@ -8,6 +8,8 @@ INSERT INTO worker (
   allowed_machines,
   tags,
   properties,
+  created_by,
+  updated_by
 ) VALUES (
   $1,
   $2,
@@ -18,4 +20,6 @@ INSERT INTO worker (
   $7,
   $8,
   $9,
+  $10,
+  $11
 ) RETURNING *;
