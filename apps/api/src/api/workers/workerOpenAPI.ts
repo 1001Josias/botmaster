@@ -30,7 +30,7 @@ workerRegistryV1.registerPath({
     body: {
       content: {
         'application/json': {
-          schema: WorkerCreateSchema,
+          schema: CreateWorkerSchema,
         },
       },
     },
