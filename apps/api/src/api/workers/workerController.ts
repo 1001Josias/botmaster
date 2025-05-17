@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { WorkerService } from '@/api/workers/workerService'
 import { IWorker } from '@/api/workers/worker'
-import { Worker } from '@/api/workers/workerModel'
+import { WorkerResponseDto } from '@/api/workers/workerModel'
 
 export class WorkerController
   implements
@@ -17,7 +17,7 @@ export class WorkerController
     this.workerService = service
   }
 
-  public createWorker: RequestHandler<{}, {}, Worker> = async (req, res, next) => {
+  public createWorker: RequestHandler<{}, {}, WorkerResponseDto> = async (req, res, next) => {
     try {
       const workerService = await this.workerService.createWorker(req.body)
       return handleServiceResponse(workerService, res)
