@@ -13,7 +13,6 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Crea
     const values = [
       worker.name,
       worker.folderKey,
-      worker.tenantKey,
       worker.description,
       worker.status,
       worker.priority,
@@ -38,7 +37,11 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Crea
         createdAt: row.created_at,
         updatedAt: row.updated_at,
         folderKey: row.folder_key,
-        tenantKey: row.tenant_key,
+        status: row.status,
+        priority: row.priority,
+        allowedMachines: row.allowed_machines,
+        tags: row.tags,
+        properties: row.properties,
       }
     } catch (err) {
       if (err instanceof DatabaseError) {

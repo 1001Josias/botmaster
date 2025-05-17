@@ -1,7 +1,6 @@
 INSERT INTO worker (
   name,
   folder_key,
-  tenant_key,
   description,
   status,
   priority,
@@ -20,6 +19,5 @@ INSERT INTO worker (
   $7,
   $8,
   $9,
-  $10,
-  $11
+  $10
 ) RETURNING *;
