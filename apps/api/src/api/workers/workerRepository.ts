@@ -8,13 +8,20 @@ import { IWorker } from '@/api/workers/worker'
 
 export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<CreateWorkerDto>> {
   async createWorker(worker: CreateWorkerDto) {
+    const created_by = 123 // TODO: Replace with actual user ID
+    const updated_by = 123 // TODO: Replace with actual user ID
     const values = [
       worker.name,
-      worker.description,
-      worker.createdBy,
-      worker.updatedBy,
       worker.folderKey,
       worker.tenantKey,
+      worker.description,
+      worker.status,
+      worker.priority,
+      worker.allowedMachines,
+      worker.tags,
+      worker.properties,
+      created_by,
+      updated_by,
     ]
     const querySql = readSqlFile(`${__dirname}/db/insert_worker.sql`)
     try {
