@@ -10,7 +10,7 @@ const optionsSchema = z.object({
     .number()
     .int()
     .min(1)
-    .describe('The maximum number of concurrent jobs the worker can process. If not specified, it will default to 1.')
+    .describe('The maximum number of jobs the worker can run simultaneously')
     .optional()
     .default(1),
   retryPolicy: z
