@@ -67,6 +67,8 @@ export const WorkerPriority = {
   critical: 10,
 } as const
 
+export type WorkerPriority = (typeof WorkerPriority)[keyof typeof WorkerPriority]
+
 export const WorkerBaseSchema = z.object({
   name: z.string({ description: 'The name of the worker' }),
   tenantKey: z.string().uuid().describe('The unique identifier of the tenant'),
@@ -92,7 +94,8 @@ export const WorkerResponseSchema = WorkerBaseSchema.extend({
 })
 export type WorkerResponseDto = z.infer<typeof WorkerResponseSchema>
 
-export const WorkerCreateSchema = WorkerSchema.omit({ id: true, key: true, createdAt: true, updatedAt: true })
+export const CreateWorkerSchema = WorkerBaseSchema
+export type CreateWorkerDto = z.infer<typeof CreateWorkerSchema>
 
 export const WorkerRouteParamsSchema = z.object({
   params: z.object({ id: workerId }),
