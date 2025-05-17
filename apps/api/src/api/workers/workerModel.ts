@@ -15,8 +15,8 @@ const optionsSchema = z.object({
     .default(1),
   retryPolicy: z
     .object({
-      maxRetries: z.number().int().min(1).max(10).describe('The maximum number of retries').default(3),
-      retryDelay: z.number().int().min(1).max(60).describe('The delay between retries in seconds').default(5),
+      maxRetries: z.number().int().max(10).describe('The maximum number of retries').default(0),
+      retryDelay: z.number().int().max(60).describe('The delay between retries in seconds').default(0),
       strategy: z.enum(['exponential', 'linear']).describe('The strategy for retrying').default('linear'),
     })
     .describe('The retry policy of the worker')
