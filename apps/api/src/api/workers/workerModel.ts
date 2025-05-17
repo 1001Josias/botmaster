@@ -9,14 +9,14 @@ const optionsSchema = z.object({
   maxConcurrent: z
     .number()
     .int()
-    .positive()
+    .min(1)
     .describe('The maximum number of concurrent jobs the worker can process. If not specified, it will default to 1.')
     .optional()
     .default(1),
   retryPolicy: z
     .object({
-      maxRetries: z.number().int().positive().describe('The maximum number of retries').default(3),
-      retryDelay: z.number().int().positive().describe('The delay between retries in seconds').default(5),
+      maxRetries: z.number().int().min(1).max(10).describe('The maximum number of retries').default(3),
+      retryDelay: z.number().int().min(1).max(60).describe('The delay between retries in seconds').default(5),
       strategy: z.enum(['exponential', 'linear']).describe('The strategy for retrying').default('linear'),
     })
     .describe('The retry policy of the worker')
