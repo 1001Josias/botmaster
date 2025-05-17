@@ -78,7 +78,8 @@ export const WorkerBaseSchema = z.object({
   priority: z
     .nativeEnum(workerPriority)
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
-    .optional(),
+    .optional()
+    .default(workerPriority.medium),
   properties: propertiesSchema.describe('The properties of the worker').optional(),
   allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional(),
   tags: z.array(z.string()).describe('The tags associated with the worker').optional(),
