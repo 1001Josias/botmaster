@@ -20,7 +20,8 @@ const optionsSchema = z.object({
       strategy: z.enum(['exponential', 'linear']).describe('The strategy for retrying').default('linear'),
     })
     .describe('The retry policy of the worker')
-    .optional(),
+    .optional()
+    .default({}),
   timeout: z
     .number()
     .int()
