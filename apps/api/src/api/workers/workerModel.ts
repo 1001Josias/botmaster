@@ -83,7 +83,13 @@ export const WorkerBaseSchema = z.object({
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
     .optional()
     .default(workerPriority.medium),
-  properties: propertiesSchema.describe('The properties of the worker').optional().default({}),
+  properties: propertiesSchema
+    .describe('The properties of the worker')
+    .optional()
+    .default({})
+    .openapi({
+      example: propertiesSchema.parse({}),
+    }),
   allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional().default([]),
   tags: z.array(z.string()).describe('The tags associated with the worker').optional().default([]),
 })
