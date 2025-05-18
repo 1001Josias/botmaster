@@ -39,18 +39,21 @@ const propertiesSchema = z.object({
   parameters: z
     .object({})
     .describe('The parameters of the worker. If not specified, it will default to an empty object.')
-    .optional(),
+    .optional()
+    .default({}),
   settings: z
     .object({})
     .describe(
       'Customized and specific settings for each worker, containing information necessary for the worker to function according to its logic.'
     )
-    .optional(),
+    .optional()
+    .default({}),
   options: optionsSchema
     .describe(
       'Configurable operational options of the worker that allow you to control the execution behavior of the worker.'
     )
-    .optional(),
+    .optional()
+    .default({}),
 })
 
 export const workerPriority = {
@@ -79,7 +82,7 @@ export const WorkerBaseSchema = z.object({
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
     .optional()
     .default(workerPriority.medium),
-  properties: propertiesSchema.describe('The properties of the worker').optional(),
+  properties: propertiesSchema.describe('The properties of the worker').optional().default({}),
   allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional(),
   tags: z.array(z.string()).describe('The tags associated with the worker').optional(),
 })
