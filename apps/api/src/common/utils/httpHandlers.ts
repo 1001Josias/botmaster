@@ -2,6 +2,10 @@ import type { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ZodError, ZodSchema } from 'zod'
 
+export interface RequestWithValidatedData<T> extends Request {
+  validatedData: T
+}
+
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { logger } from '@/server'
 
@@ -12,9 +16,10 @@ export const handleServiceResponse = (serviceResponse: ServiceResponse<any>, res
 type ValidateRequestContext = 'body' | 'query' | 'params'
 
 export const validateRequest =
-  (schema: ZodSchema, context: ValidateRequestContext) => (req: Request, res: Response, next: NextFunction) => {
+  (schema: ZodSchema, context: ValidateRequestContext) =>
+  (req: RequestWithValidatedData<typeof schema>, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req[context])
+      req['validatedData'] = schema.parse(req[context])
       next()
     } catch (err) {
       if (err instanceof ZodError) {
