@@ -76,15 +76,15 @@ export const WorkerBaseSchema = z.object({
   name: z.string({ description: 'The name of the worker' }),
   folderKey: z.string().uuid().describe('The unique identifier of the folder'),
   status: z.enum(['active', 'inactive', 'archived']).describe('The status of the worker').optional().default('active'),
-  description: z.string().max(2500).describe('The description of the worker').optional(),
+  description: z.string().max(2500).describe('The description of the worker').optional().default(''),
   priority: z
     .nativeEnum(workerPriority)
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
     .optional()
     .default(workerPriority.medium),
   properties: propertiesSchema.describe('The properties of the worker').optional().default({}),
-  allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional(),
-  tags: z.array(z.string()).describe('The tags associated with the worker').optional(),
+  allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional().default([]),
+  tags: z.array(z.string()).describe('The tags associated with the worker').optional().default([]),
 })
 
 export const WorkerResponseSchema = WorkerBaseSchema.extend({
