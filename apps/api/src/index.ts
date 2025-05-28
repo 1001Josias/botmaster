@@ -4,7 +4,8 @@ import { endDbConnection } from './common/utils/dbPool'
 
 const server = app.listen(env.PORT, () => {
   const { NODE_ENV, HOST, PORT } = env
-  logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`)
+  logger.info(`Server (${NODE_ENV}) running on http://${HOST}:${PORT}`)
+  logger.info(`Documentation available at http://${HOST}:${PORT}/api-docs/v1`)
 })
 
 const onCloseSignal = () => {
