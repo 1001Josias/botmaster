@@ -458,8 +458,8 @@ src/api/example/
     │   ├── update_example.sql
     │   └── delete_example.sql
     ├── migrations/        # Database migrations for the resource
-    │   ├── 001_create_example_table.sql
-    │   └── 002_add_example_indexes.sql
+    │   ├── 001.create_example_table.up.sql
+    │   ├── 001.drop_example_table.down.sql
     └── seeds/             # Seed data for development/testing
         └── example_seeds.sql
 ```
@@ -499,7 +499,7 @@ WHERE
   id = $1;
 ```
 
-**migrations/001_create_example_table.sql**:
+**migrations/001.create_example_table.up.sql**:
 
 ```sql
 CREATE TABLE IF NOT EXISTS examples (
@@ -511,6 +511,12 @@ CREATE TABLE IF NOT EXISTS examples (
 );
 
 CREATE INDEX IF NOT EXISTS examples_name_idx ON examples(name);
+```
+
+**migrations/001.drop_example_table.down.sql**:
+
+```sql
+DROP TABLE IF EXISTS examples;
 ```
 
 ## System Integration
