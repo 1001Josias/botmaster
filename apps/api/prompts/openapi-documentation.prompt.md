@@ -309,4 +309,4 @@ For more details on available options, consult:
 
 ## Complete Example
 
-See existing files in `src/api/workers/workerOpenAPI.ts` as a reference for complete implementations.
+See existing files in `src/api/workers/workerOpenAPI.ts` as a reference for implementation patterns.
