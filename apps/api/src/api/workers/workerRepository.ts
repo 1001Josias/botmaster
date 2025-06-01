@@ -1,12 +1,12 @@
 import { DatabaseError } from 'pg'
 import { logger } from '@/server'
-import { CreateWorkerDto } from '@/api/workers/workerModel'
+import { CreateWorkerDto, WorkerResponseDto } from '@/api/workers/workerModel'
 import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
 
-export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<CreateWorkerDto>> {
+export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
   async createWorker(worker: CreateWorkerDto) {
     const created_by = 123 // TODO: Replace with actual user ID
     const updated_by = 123 // TODO: Replace with actual user ID

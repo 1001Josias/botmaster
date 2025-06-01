@@ -31,7 +31,7 @@ export class WorkerService implements IWorker<[CreateWorkerDto], Promise<Service
     } catch (err) {
       if (err instanceof BusinessError) {
         logger.warn(`${err.name}: ${err.message}`)
-        return ServiceResponse.failure(err.message, null, err.status)
+        return ServiceResponse.failure<null>(err.message, null, err.status)
       }
       throw err
     }

@@ -1,12 +1,12 @@
-import { Response, NextFunction } from 'express'
+import { NextFunction, Request } from 'express'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { WorkerService } from '@/api/workers/workerService'
 import { IWorker } from '@/api/workers/worker'
-import { WorkerResponseDto } from '@/api/workers/workerModel'
-import { RequestWithValidatedData } from '@/common/utils/httpHandlers'
+import { CreateWorkerDto, WorkerResponseDto } from '@/api/workers/workerModel'
+import { ResponseCustom } from '@/common/utils/httpHandlers'
 
 export class WorkerController
-  implements IWorker<[RequestWithValidatedData<WorkerResponseDto>, Response, NextFunction]>
+  implements IWorker<[Request<CreateWorkerDto>, ResponseCustom<WorkerResponseDto, CreateWorkerDto>, NextFunction]>
 {
   private workerService: WorkerService
 
@@ -14,9 +14,13 @@ export class WorkerController
     this.workerService = service
   }
 
-  public createWorker = async (req: RequestWithValidatedData<WorkerResponseDto>, res: Response, next: NextFunction) => {
+  public createWorker = async (
+    req: Request<CreateWorkerDto>,
+    res: ResponseCustom<WorkerResponseDto, CreateWorkerDto>,
+    next: NextFunction
+  ) => {
     try {
-      const workerService = await this.workerService.createWorker(req.validatedData)
+      const workerService = await this.workerService.createWorker(res.locals.validatedData.body)
       return handleServiceResponse(workerService, res)
     } catch (err) {
       next(err)

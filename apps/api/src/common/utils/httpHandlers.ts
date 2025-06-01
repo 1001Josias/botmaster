@@ -1,25 +1,36 @@
 import type { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { ZodError, ZodSchema } from 'zod'
-
-export interface RequestWithValidatedData<T> extends Request {
-  validatedData: T
-}
-
+import z, { ZodError, ZodSchema } from 'zod'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { logger } from '@/server'
 
-export const handleServiceResponse = (serviceResponse: ServiceResponse<any>, response: Response) => {
+export const handleServiceResponse = <T>(serviceResponse: ServiceResponse<T>, response: Response) => {
   return response.status(serviceResponse.statusCode).send(serviceResponse)
 }
 
 type ValidateRequestContext = 'body' | 'query' | 'params'
 
-export const validateRequest =
-  (schema: ZodSchema, context: ValidateRequestContext) =>
-  (req: RequestWithValidatedData<typeof schema>, res: Response, next: NextFunction) => {
+type Locals<B, Q, P> = {
+  validatedData: {
+    body: B
+    query: Q
+    params: P
+  }
+}
+
+export type ResponseCustom<ResBody, ValBody = undefined, ValQuery = undefined, ValParams = undefined> = Response<
+  ResBody,
+  Locals<ValBody, ValQuery, ValParams>
+>
+
+export function validateRequest<I, O>(schema: ZodSchema, context: ValidateRequestContext) {
+  return (
+    req: Request<I>,
+    res: ResponseCustom<O, z.infer<typeof schema>, z.infer<typeof schema>, z.infer<typeof schema>>,
+    next: NextFunction
+  ) => {
     try {
-      req['validatedData'] = schema.parse(req[context])
+      res.locals.validatedData[context] = schema.parse(req[context])
       next()
     } catch (err) {
       if (err instanceof ZodError) {
@@ -32,3 +43,4 @@ export const validateRequest =
       next(err)
     }
   }
+}
