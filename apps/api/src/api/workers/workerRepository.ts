@@ -12,7 +12,6 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Crea
     const updated_by = 123 // TODO: Replace with actual user ID
     const values = [
       worker.name,
-      worker.folderKey,
       worker.description,
       worker.status,
       worker.priority,
@@ -21,6 +20,8 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Crea
       worker.properties,
       created_by,
       updated_by,
+      worker.scope,
+      worker.scopeRef,
     ]
     const querySql = readSqlFile(`${__dirname}/db/insert_worker.sql`)
     try {
@@ -36,12 +37,12 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Crea
         updatedBy: row.updated_by,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
-        folderKey: row.folder_key,
         status: row.status,
         priority: row.priority,
         allowedMachines: row.allowed_machines,
         tags: row.tags,
         properties: row.properties,
+        scope: row.scope,
       }
     } catch (err) {
       if (err instanceof DatabaseError) {

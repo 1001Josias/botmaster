@@ -9,12 +9,19 @@ CREATE TABLE IF NOT EXISTS worker (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,    -- created_by INT REFERENCES users(id) NOT NULL,
     updated_by INT NOT NULL,    -- updated_by INT REFERENCES users(id) NOT NULL,
-    folder_key UUID NOT NULL,
     priority INT DEFAULT 0 NOT NULL,
     tags TEXT[],
     properties JSONB,
     allowed_machines TEXT[], -- Replace by FK machines
-    status VARCHAR(50) DEFAULT 'active' NOT NULL
+    status VARCHAR(50) DEFAULT 'active' NOT NULL,
+    scope VARCHAR(20) NOT NULL,
+    scope_ref UUID,
+    CONSTRAINT scope_ref_constraint CHECK (
+        (scope = 'folder' AND scope_ref IS NOT NULL) OR
+        (scope = 'tenant' AND scope_ref IS NOT NULL) OR
+        (scope = 'organization' AND scope_ref IS NOT NULL) OR
+        (scope = 'public' AND scope_ref IS NULL)
+    )
 );
 
 CREATE OR REPLACE TRIGGER trigger_set_updated_at

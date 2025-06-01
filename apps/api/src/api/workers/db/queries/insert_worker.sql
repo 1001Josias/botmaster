@@ -1,6 +1,5 @@
 INSERT INTO worker (
   name,
-  folder_key,
   description,
   status,
   priority,
@@ -8,7 +7,9 @@ INSERT INTO worker (
   tags,
   properties,
   created_by,
-  updated_by
+  updated_by,
+  scope,
+  scope_ref
 ) VALUES (
   $1,
   $2,
@@ -19,5 +20,6 @@ INSERT INTO worker (
   $7,
   $8,
   $9,
-  $10
+  $10,
+  $11
 ) RETURNING *;

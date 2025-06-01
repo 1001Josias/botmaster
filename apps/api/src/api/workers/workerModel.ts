@@ -75,7 +75,18 @@ export type WorkerPriority = (typeof workerPriority)[keyof typeof workerPriority
 
 export const WorkerBaseSchema = z.object({
   name: z.string({ description: 'The name of the worker' }),
-  folderKey: z.string().uuid().describe('The unique identifier of the folder'),
+  scope: z
+    .enum(['folder', 'tenant', 'organization', 'public'])
+    .describe('The scope of the worker, determining its visibility and accessibility in the marketplace')
+    .optional()
+    .default('folder'),
+  scopeRef: z
+    .string()
+    .uuid()
+    .describe('The reference to the scope, such as a folder key, tenant key, or organization key')
+    .nullable()
+    .optional()
+    .default(null),
   status: z.enum(['active', 'inactive', 'archived']).describe('The status of the worker').optional().default('active'),
   description: z.string().max(2500).describe('The description of the worker').optional().default(''),
   priority: z
@@ -94,7 +105,7 @@ export const WorkerBaseSchema = z.object({
   tags: z.array(z.string()).describe('The tags associated with the worker').optional().default([]),
 })
 
-export const WorkerResponseSchema = WorkerBaseSchema.extend({
+export const WorkerResponseSchema = WorkerBaseSchema.omit({ scopeRef: true }).extend({
   id: workerId,
   key: z.string().uuid().describe('The unique identifier of the worker'),
   createdBy: userIdSchema.describe('The user id of the creator of the worker'),

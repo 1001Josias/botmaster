@@ -6,6 +6,7 @@ import { IWorker } from '@/api/workers/worker'
 import { WorkerResponseDto, CreateWorkerDto } from '@/api/workers/workerModel'
 import { BusinessError } from '@/common/utils/errorHandlers'
 import { logger } from '@/server'
+import { WorkerInvalidScopeRefException } from './workerExceptions'
 
 export class WorkerService implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | null>>> {
   private workerRepository: WorkerRepository
@@ -16,6 +17,14 @@ export class WorkerService implements IWorker<[CreateWorkerDto], Promise<Service
 
   async createWorker(worker: CreateWorkerDto): Promise<ServiceResponse<WorkerResponseDto | null>> {
     try {
+      if (worker.scope === 'public' && worker.scopeRef !== null) {
+        throw new WorkerInvalidScopeRefException(worker)
+      }
+
+      if (worker.scope !== 'public' && worker.scopeRef === null) {
+        throw new WorkerInvalidScopeRefException(worker)
+      }
+
       const createdWorker = await this.workerRepository.createWorker(worker)
       const message = `Worker created successfully`
       return ServiceResponse.success(message, createdWorker, StatusCodes.CREATED)
