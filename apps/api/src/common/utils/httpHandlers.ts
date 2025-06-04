@@ -12,9 +12,9 @@ type ValidateRequestContext = 'body' | 'query' | 'params'
 
 type Locals<B, Q, P> = {
   validatedData: {
-    body: B
-    query: Q
-    params: P
+    body?: B
+    query?: Q
+    params?: P
   }
 }
 
@@ -30,7 +30,7 @@ export function validateRequest<I, O>(schema: ZodSchema, context: ValidateReques
     next: NextFunction
   ) => {
     try {
-      res.locals.validatedData[context] = schema.parse(req[context])
+      res.locals = { validatedData: { [context]: schema.parse(req[context]) } }
       next()
     } catch (err) {
       if (err instanceof ZodError) {
