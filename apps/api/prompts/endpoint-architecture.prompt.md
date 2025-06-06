@@ -59,6 +59,8 @@ Each resource in `src/api/` should contain the following components:
 3. **Error Handling**: Use `BusinessError` and derivatives, returning responses via `ServiceResponse`.
 4. **Swagger Documentation**: Use `zod-to-openapi` to generate documentation from schemas.
 5. **SQL Files**: Organize SQL scripts in a `db/` directory with descriptive names.
+   - Use `readSqlFile` utility to read SQL files.
+   - Place migrations, seeds, and queries in their respective directories.
 6. **Dependency Injection**: Use it to facilitate testing and decoupling.
 7. **Common Utilities**: Reuse code from utilities in `src/common/`.
 8. **Appropriate Logging**: Record relevant information in each layer.
@@ -80,9 +82,17 @@ src/api/example/
 ├── exampleRoutes.ts         # Route definition
 ├── exampleOpenAPI.ts        # OpenAPI documentation
 ├── db/                      # Directory for SQL files
-│   ├── create_example.sql
-│   ├── get_example.sql
-│   └── ...
+<!-- insira os paths migrations, seeds e queries -->
+│   ├── migrations/
+│   │   ├── 1.create_example_table.up.sql
+│   │   ├── 1.drop_example_table.down.sql
+│   │   └── ...
+│   ├── seeds/
+│   │   ├── example_seed.sql
+│   │   └── ...
+│   └── queries/
+│       ├── insert_example.sql
+│       └── ...
 └── tests/                  # Unit tests
     ├── example.test.ts
     └── example.e2e.test.ts
