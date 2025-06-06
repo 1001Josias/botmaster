@@ -23,7 +23,7 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
       worker.scope,
       worker.scopeRef,
     ]
-    const querySql = readSqlFile(`${__dirname}/db/insert_worker.sql`)
+    const querySql = readSqlFile(`${__dirname}/db/queries/insert_worker.sql`)
     try {
       const { rows } = await dbPool.query(querySql, values)
       const row = rows[0]
