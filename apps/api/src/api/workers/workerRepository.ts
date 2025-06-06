@@ -43,6 +43,7 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
         tags: row.tags,
         properties: row.properties,
         scope: row.scope,
+        scopeRef: row.scope_ref,
       }
     } catch (err) {
       if (err instanceof DatabaseError) {

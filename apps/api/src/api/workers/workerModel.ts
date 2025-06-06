@@ -105,7 +105,7 @@ export const WorkerBaseSchema = z.object({
   tags: z.array(z.string()).describe('The tags associated with the worker').optional().default([]),
 })
 
-export const WorkerResponseSchema = WorkerBaseSchema.omit({ scopeRef: true }).extend({
+export const WorkerResponseSchema = WorkerBaseSchema.extend({
   id: workerId,
   key: z.string().uuid().describe('The unique identifier of the worker'),
   createdBy: userIdSchema.describe('The user id of the creator of the worker'),
