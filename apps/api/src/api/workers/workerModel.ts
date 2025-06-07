@@ -75,6 +75,7 @@ export type WorkerPriority = (typeof workerPriority)[keyof typeof workerPriority
 
 export const WorkerBaseSchema = z.object({
   name: z.string({ description: 'The name of the worker' }),
+  folderKey: z.string().uuid().describe('The unique identifier of the folder'),
   scope: z
     .enum(['folder', 'tenant', 'organization', 'public'])
     .describe('The scope of the worker, determining its visibility and accessibility in the marketplace')

@@ -1,5 +1,6 @@
 INSERT INTO worker (
   name,
+  folder_key,
   description,
   status,
   priority,

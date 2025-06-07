@@ -12,6 +12,7 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
     const updated_by = 123 // TODO: Replace with actual user ID
     const values = [
       worker.name,
+      worker.folderKey,
       worker.description,
       worker.status,
       worker.priority,
@@ -32,6 +33,7 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
         id: row.id,
         key: row.key,
         name: row.name,
+        folderKey: row.folder_key,
         description: row.description,
         createdBy: row.created_by,
         updatedBy: row.updated_by,
