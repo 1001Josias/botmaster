@@ -64,4 +64,5 @@ CREATE POLICY organization_scope_policy ON worker
 
 -- Create a policy for public scope
 CREATE POLICY public_scope_policy ON worker
+  FOR SELECT 
   USING (scope = 'public');
