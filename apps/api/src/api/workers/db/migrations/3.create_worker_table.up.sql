@@ -38,31 +38,24 @@ EXECUTE FUNCTION update_updated_at_column();
 -- CREATE INDEX idx_workers_scope_ref ON worker(scope_ref);
 -- CREATE INDEX idx_workers_scope ON worker(scope);
 
--- This index ensures that the combination of folder_key and name is unique
-CREATE UNIQUE INDEX unique_worker_name_per_folder ON worker(folder_key, name);
-
--- Adiciona índice para workers públicos
-CREATE UNIQUE INDEX unique_worker_name_public_scope ON worker(name) WHERE (scope = 'public');
-
--- Adiciona índice para workers com escopos não públicos
-CREATE UNIQUE INDEX unique_worker_name_scope_ref ON worker(scope_ref, name) WHERE (scope != 'public');
-
--- Enable Row-Level Security (RLS) for the worker table
 ALTER TABLE worker ENABLE ROW LEVEL SECURITY;
 
--- Create a policy for folder scope
+CREATE POLICY folder_access_policy ON worker
+  FOR INSERT, UPDATE, DELETE
+  USING (folder_key = current_setting('app.current_folder_key')::UUID);
+
 CREATE POLICY folder_scope_policy ON worker
+  FOR SELECT 
   USING (scope = 'folder' AND scope_ref = current_setting('app.current_folder_key')::UUID);
 
--- Create a policy for tenant scope
 CREATE POLICY tenant_scope_policy ON worker
+  FOR SELECT 
   USING (scope = 'tenant' AND scope_ref = current_setting('app.current_tenant_key')::UUID);
 
--- Create a policy for organization scope
 CREATE POLICY organization_scope_policy ON worker
+  FOR SELECT 
   USING (scope = 'organization' AND scope_ref = current_setting('app.current_organization_key')::UUID);
 
--- Create a policy for public scope
 CREATE POLICY public_scope_policy ON worker
   FOR SELECT 
   USING (scope = 'public');
