@@ -74,7 +74,14 @@ export const workerPriority = {
 export type WorkerPriority = (typeof workerPriority)[keyof typeof workerPriority]
 
 export const WorkerBaseSchema = z.object({
-  name: z.string({ description: 'The name of the worker' }),
+  name: z
+    .string({ description: 'The name of the worker' })
+    .nonempty()
+    .trim()
+    .min(1)
+    .max(100)
+    .describe('The name of the worker')
+    .regex(/^[a-zA-Z0-9-_]+$/, 'Name must contain only alphanumeric characters, dashes, or underscores'),
   folderKey: z.string().uuid().describe('The unique identifier of the folder'),
   scope: z
     .enum(['folder', 'tenant', 'organization', 'public'])
