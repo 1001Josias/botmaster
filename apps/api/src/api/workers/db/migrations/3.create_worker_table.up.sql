@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS worker (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,    -- created_by INT REFERENCES users(id) NOT NULL,
     updated_by INT NOT NULL,    -- updated_by INT REFERENCES users(id) NOT NULL,
-    priority INT DEFAULT 0 NOT NULL,
     tags TEXT[],
     properties JSONB,
     status VARCHAR(50) DEFAULT 'active' NOT NULL,

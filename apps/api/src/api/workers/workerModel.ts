@@ -97,11 +97,6 @@ export const WorkerBaseSchema = z.object({
     .default(null),
   status: z.enum(['active', 'inactive', 'archived']).describe('The status of the worker').optional().default('active'),
   description: z.string().max(2500).describe('The description of the worker').optional().default(''),
-  priority: z
-    .nativeEnum(workerPriority)
-    .describe('The priority level of the worker, from trivial (0) to critical (10)')
-    .optional()
-    .default(workerPriority.medium),
   properties: propertiesSchema
     .describe('The properties of the worker')
     .optional()
