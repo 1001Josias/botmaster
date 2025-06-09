@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS worker (
     priority INT DEFAULT 0 NOT NULL,
     tags TEXT[],
     properties JSONB,
-    allowed_machines TEXT[], -- Replace by FK machines
     status VARCHAR(50) DEFAULT 'active' NOT NULL,
     scope VARCHAR(20) NOT NULL,
     scope_ref UUID,

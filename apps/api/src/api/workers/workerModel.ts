@@ -102,7 +102,6 @@ export const WorkerBaseSchema = z.object({
     .openapi({
       example: propertiesSchema.parse({}),
     }),
-  allowedMachines: z.array(z.string()).describe('The machines allowed to run the worker').optional().default([]),
   tags: z.array(z.string()).describe('The tags associated with the worker').optional().default([]),
 })
 

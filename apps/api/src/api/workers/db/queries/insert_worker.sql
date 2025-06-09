@@ -4,7 +4,6 @@ INSERT INTO worker (
   description,
   status,
   priority,
-  allowed_machines,
   tags,
   properties,
   created_by,
@@ -22,6 +21,5 @@ INSERT INTO worker (
   $8,
   $9,
   $10,
-  $11,
-  $12
+  $11
 ) RETURNING *;
