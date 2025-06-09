@@ -79,9 +79,12 @@ export const WorkerBaseSchema = z.object({
     .nonempty()
     .trim()
     .min(1)
-    .max(100)
+    .max(50)
     .describe('The name of the worker')
-    .regex(/^[a-zA-Z0-9-_]+$/, 'Name must contain only alphanumeric characters, dashes, or underscores'),
+    .regex(/^[a-zA-Z0-9-_]+$/, 'Name must contain only alphanumeric characters, dashes, or underscores')
+    .openapi({
+      example: 'example-worker',
+    }),
   folderKey: z.string().uuid().describe('The unique identifier of the folder'),
   scope: z
     .enum(['folder', 'tenant', 'organization', 'public'])
