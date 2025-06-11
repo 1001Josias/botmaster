@@ -20,7 +20,7 @@ export class WorkerController
     next: NextFunction
   ) => {
     try {
-      const workerService = await this.workerService.createWorker(res.locals.validatedData.body)
+      const workerService = await this.workerService.createWorker(res.locals.validatedData.body as CreateWorkerDto)
       return handleServiceResponse(workerService, res)
     } catch (err) {
       next(err)
