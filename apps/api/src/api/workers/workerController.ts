@@ -14,13 +14,13 @@ export class WorkerController
     this.workerService = service
   }
 
-  public createWorker = async (
+  public create = async (
     req: Request<CreateWorkerDto>,
     res: ResponseCustom<WorkerResponseDto, CreateWorkerDto>,
     next: NextFunction
   ) => {
     try {
-      const workerService = await this.workerService.createWorker(res.locals.validatedData.body as CreateWorkerDto)
+      const workerService = await this.workerService.create(res.locals.validatedData.body as CreateWorkerDto)
       return handleServiceResponse(workerService, res)
     } catch (err) {
       next(err)

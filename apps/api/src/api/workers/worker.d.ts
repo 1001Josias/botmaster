@@ -1,5 +1,5 @@
 // export interface IWorker<I = any, O> {
-//   createWorker: (...args: I) => O
+//   create: (...args: I) => O
 //   // update(worker: I): O
 //   // delete(worker: I): O
 //   // get(worker: I): O
@@ -13,5 +13,5 @@
 // }
 
 export interface IWorker<I extends unknown[] = unknown[], O = unknown> {
-  createWorker: (...args: I) => O
+  create: (...args: I) => O
 }

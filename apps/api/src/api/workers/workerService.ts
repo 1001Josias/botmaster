@@ -15,7 +15,7 @@ export class WorkerService implements IWorker<[CreateWorkerDto], Promise<Service
     this.workerRepository = repository
   }
 
-  async createWorker(worker: CreateWorkerDto): Promise<ServiceResponse<WorkerResponseDto | null>> {
+  async create(worker: CreateWorkerDto): Promise<ServiceResponse<WorkerResponseDto | null>> {
     try {
       if (worker.scope === 'public' && worker.scopeRef !== null) {
         throw new WorkerInvalidScopeRefException(worker)
@@ -25,7 +25,7 @@ export class WorkerService implements IWorker<[CreateWorkerDto], Promise<Service
         throw new WorkerInvalidScopeRefException(worker)
       }
 
-      const createdWorker = await this.workerRepository.createWorker(worker)
+      const createdWorker = await this.workerRepository.create(worker)
       const message = `Worker created successfully`
       return ServiceResponse.success(message, createdWorker, StatusCodes.CREATED)
     } catch (err) {

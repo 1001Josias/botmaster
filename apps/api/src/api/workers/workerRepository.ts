@@ -7,7 +7,7 @@ import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
 
 export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
-  async createWorker(worker: CreateWorkerDto) {
+  async create(worker: CreateWorkerDto) {
     const created_by = 123 // TODO: Replace with actual user ID
     const updated_by = 123 // TODO: Replace with actual user ID
     const values = [
