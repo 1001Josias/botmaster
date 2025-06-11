@@ -22,6 +22,8 @@ const workerOpenApiResponseConflict: OpenApiResponseConfig<null> = {
   statusCode: StatusCodes.CONFLICT,
 }
 
+workerRegistryV1.register('CreateWorker', CreateWorkerSchema)
+
 workerRegistryV1.registerPath({
   method: 'post',
   path: workerPath,
