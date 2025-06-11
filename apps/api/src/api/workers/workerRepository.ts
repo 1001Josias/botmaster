@@ -16,7 +16,6 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
       worker.description,
       worker.status,
       worker.tags,
-      worker.properties,
       created_by,
       updated_by,
       worker.scope,
@@ -39,7 +38,6 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
         updatedAt: row.updated_at,
         status: row.status,
         tags: row.tags,
-        properties: row.properties,
         scope: row.scope,
         scopeRef: row.scope_ref,
       }

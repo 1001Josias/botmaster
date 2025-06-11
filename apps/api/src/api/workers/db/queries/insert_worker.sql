@@ -4,7 +4,6 @@ INSERT INTO worker (
   description,
   status,
   tags,
-  properties,
   created_by,
   updated_by,
   scope,
@@ -18,6 +17,5 @@ INSERT INTO worker (
   $6,
   $7,
   $8,
-  $9,
-  $10
+  $9
 ) RETURNING *;

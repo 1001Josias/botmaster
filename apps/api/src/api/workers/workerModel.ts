@@ -100,13 +100,6 @@ export const WorkerBaseSchema = z.object({
     .default(null),
   status: z.enum(['active', 'inactive', 'archived']).describe('The status of the worker').optional().default('active'),
   description: z.string().max(2500).describe('The description of the worker').optional().default(''),
-  properties: propertiesSchema
-    .describe('The properties of the worker')
-    .optional()
-    .default({})
-    .openapi({
-      example: propertiesSchema.parse({}),
-    }),
   tags: z.array(z.string()).describe('The tags associated with the worker').optional().default([]),
 })
 
