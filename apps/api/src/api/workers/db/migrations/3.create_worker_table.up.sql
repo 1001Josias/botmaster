@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS worker (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_by INT NOT NULL,    -- created_by INT REFERENCES users(id) NOT NULL,
     updated_by INT NOT NULL,    -- updated_by INT REFERENCES users(id) NOT NULL,
-    tags TEXT[],
+    tags TEXT[] DEFAULT '{}' NOT NULL,
     status VARCHAR(50) DEFAULT 'active' NOT NULL,
     scope VARCHAR(20) NOT NULL,
     scope_ref UUID,
