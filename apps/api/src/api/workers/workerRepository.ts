@@ -9,7 +9,7 @@ import { BaseRepository } from '@/common/repositories/baseRepository'
 
 export class WorkerRepository extends BaseRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
   constructor(protected readonly database: PoolClient | Pool = dbPool) {
-    super()
+    super(database)
   }
 
   async create(worker: CreateWorkerDto) {
