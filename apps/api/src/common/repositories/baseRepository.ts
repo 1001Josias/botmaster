@@ -1,5 +1,5 @@
 import { DatabaseError, PoolClient } from 'pg'
-import { getDbConnection } from '../utils/dbPool'
+import { dbPool } from '../utils/dbPool'
 import { PostgresError } from '../utils/errorHandlers'
 import { logger } from '@/server'
 
@@ -8,7 +8,7 @@ export abstract class BaseRepository {
     this: new (client: PoolClient) => Repo,
     callback: (repository: Repo) => Promise<T>
   ): Promise<T> {
-    const client = await getDbConnection()
+    const client = await dbPool.connect()
     const repository = new this(client)
     try {
       await client.query('BEGIN')
@@ -19,6 +19,8 @@ export abstract class BaseRepository {
       return result
     } catch (err) {
       await client.query('ROLLBACK')
+      client.release()
+      logger.error(`Transaction failed in ${this.name}: ${err}`)
       if (err instanceof DatabaseError) {
         throw PostgresError.toBusinessError(err)
       }

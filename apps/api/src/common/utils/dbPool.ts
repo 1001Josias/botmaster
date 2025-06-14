@@ -13,14 +13,6 @@ export const dbPool = new Pool({
   connectionTimeoutMillis: env.DB_CONNECTION_TIMEOUT,
 })
 
-export async function getDbConnection() {
-  try {
-    return await dbPool.connect()
-  } catch (err) {
-    throw new Error(`Error getting database connection: ${err}`)
-  }
-}
-
 export async function endDbConnection() {
   try {
     await dbPool.end()
