@@ -1,12 +1,17 @@
-import { DatabaseError } from 'pg'
+import { DatabaseError, Pool, PoolClient } from 'pg'
 import { logger } from '@/server'
 import { CreateWorkerDto, WorkerResponseDto } from '@/api/workers/workerModel'
 import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
+import { BaseRepository } from '@/common/repositories/baseRepository'
 
-export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
+export class WorkerRepository extends BaseRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
+  constructor(protected readonly database: PoolClient | Pool = dbPool) {
+    super()
+  }
+
   async create(worker: CreateWorkerDto) {
     const created_by = 123 // TODO: Replace with actual user ID
     const updated_by = 123 // TODO: Replace with actual user ID
@@ -23,7 +28,7 @@ export class WorkerRepository implements IWorker<[CreateWorkerDto], Promise<Work
     ]
     const querySql = readSqlFile(`${__dirname}/db/queries/insert_worker.sql`)
     try {
-      const { rows } = await dbPool.query(querySql, values)
+      const { rows } = await this.database.query(querySql, values)
       const row = rows[0]
       logger.info(`Worker ${row.id} created!`)
       return {
