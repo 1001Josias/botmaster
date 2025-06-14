@@ -23,7 +23,6 @@ export abstract class BaseRepository {
       return result
     } catch (err) {
       await client.query('ROLLBACK')
-      logger.error(`Transaction failed in ${this.name}: ${err}`)
       throw err
     } finally {
       client.release()
@@ -35,13 +34,7 @@ export abstract class BaseRepository {
     if (!this.isTransactionClient(this.database)) {
       throw new Error('Locking can only be done within a transaction context')
     }
-    try {
-      await this.database.query(lockQuery, [entityKey])
-      logger.info(`Entity locked with key: ${entityKey}`)
-    } catch (err) {
-      logger.error(`Failed to lock entity with key: ${entityKey}`)
-      throw err
-    }
+    await this.database.query(lockQuery, [entityKey])
   }
 
   private isTransactionClient(db: Pool | PoolClient): db is PoolClient {
