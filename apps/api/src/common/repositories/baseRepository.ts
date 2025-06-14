@@ -19,7 +19,6 @@ export abstract class BaseRepository {
       return result
     } catch (err) {
       await client.query('ROLLBACK')
-      client.release()
       logger.error(`Transaction failed in ${this.name}: ${err}`)
       if (err instanceof DatabaseError) {
         throw PostgresError.toBusinessError(err)
