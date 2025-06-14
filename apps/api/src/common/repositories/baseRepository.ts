@@ -4,6 +4,11 @@ import { PostgresError } from '../utils/errorHandlers'
 import { logger } from '@/server'
 
 export abstract class BaseRepository {
+  protected database: Pool | PoolClient
+  constructor(database: Pool | PoolClient) {
+    this.database = database
+  }
+
   static async transaction<T, Repo>(
     this: new (client: PoolClient) => Repo,
     callback: (repository: Repo) => Promise<T>
@@ -27,5 +32,23 @@ export abstract class BaseRepository {
     } finally {
       client.release()
     }
+  }
+
+  async lockEntity(entityKey: string): Promise<void> {
+    const lockQuery = 'SELECT pg_advisory_xact_lock(hashtext($1));'
+    if (!this.isTransactionClient(this.database)) {
+      throw new Error('Locking can only be done within a transaction context')
+    }
+    try {
+      await this.database.query(lockQuery, [entityKey])
+      logger.info(`Entity locked with key: ${entityKey}`)
+    } catch (err) {
+      logger.error(`Failed to lock entity with key: ${entityKey}`)
+      throw err
+    }
+  }
+
+  private isTransactionClient(db: Pool | PoolClient): db is PoolClient {
+    return typeof (db as PoolClient).release === 'function'
   }
 }
