@@ -6,6 +6,7 @@ import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
 import { BaseRepository } from '@/common/repositories/baseRepository'
+import { executeSqlFile } from '@/common/utils/sqlExecutor'
 
 export class WorkerRepository extends BaseRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
   constructor(protected readonly database: PoolClient | Pool = dbPool) {
@@ -26,9 +27,8 @@ export class WorkerRepository extends BaseRepository implements IWorker<[CreateW
       worker.scope,
       worker.scopeRef,
     ]
-    const querySql = readSqlFile(`${__dirname}/db/queries/insert_worker.sql`)
     try {
-      const { rows } = await this.database.query(querySql, values)
+      const { rows } = await executeSqlFile(`${__dirname}/db/queries/insert_worker.sql`, values)
       const row = rows[0]
       logger.info(`Worker ${row.id} created!`)
       return {
