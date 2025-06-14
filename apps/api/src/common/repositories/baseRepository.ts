@@ -3,17 +3,18 @@ import { getDbConnection } from '../utils/dbPool'
 import { PostgresError } from '../utils/errorHandlers'
 
 export abstract class BaseRepository {
-  static async transaction<Repo>(
+  static async transaction<T, Repo>(
     this: new (client: PoolClient) => Repo,
-    callback: (repository: Repo) => Promise<void>
-  ): Promise<void> {
+    callback: (repository: Repo) => Promise<T>
+  ): Promise<T> {
     const client = await getDbConnection()
     const repository = new this(client)
     try {
       await client.query('BEGIN')
       console.log(`Transaction started for repository`)
-      await callback(repository)
+      const result = await callback(repository)
       await client.query('COMMIT')
+      return result
     } catch (err) {
       await client.query('ROLLBACK')
       if (err instanceof DatabaseError) {
