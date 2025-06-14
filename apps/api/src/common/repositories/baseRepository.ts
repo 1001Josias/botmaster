@@ -1,6 +1,5 @@
-import { DatabaseError, PoolClient } from 'pg'
+import { Pool, PoolClient } from 'pg'
 import { dbPool } from '../utils/dbPool'
-import { PostgresError } from '../utils/errorHandlers'
 import { logger } from '@/server'
 
 export abstract class BaseRepository {
@@ -25,9 +24,6 @@ export abstract class BaseRepository {
     } catch (err) {
       await client.query('ROLLBACK')
       logger.error(`Transaction failed in ${this.name}: ${err}`)
-      if (err instanceof DatabaseError) {
-        throw PostgresError.toBusinessError(err)
-      }
       throw err
     } finally {
       client.release()
