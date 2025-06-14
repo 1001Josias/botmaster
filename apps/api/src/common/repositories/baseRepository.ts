@@ -16,10 +16,10 @@ export abstract class BaseRepository {
     const repository = new this(client)
     try {
       await client.query('BEGIN')
-      logger.info(`Transaction started in ${this.name}`)
+      logger.debug(`Transaction started in ${this.name}`)
       const result = await callback(repository)
       await client.query('COMMIT')
-      logger.info(`Transaction completed in ${this.name}`)
+      logger.debug(`Transaction completed in ${this.name}`)
       return result
     } catch (err) {
       await client.query('ROLLBACK')
