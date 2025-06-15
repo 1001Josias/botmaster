@@ -1,6 +1,7 @@
-import { Pool, PoolClient } from 'pg'
+import { DatabaseError, Pool, PoolClient, QueryResultRow } from 'pg'
 import { dbPool } from '../utils/dbPool'
 import { logger } from '@/server'
+import { PostgresError } from '../utils/errorHandlers'
 
 export abstract class BaseRepository {
   protected database: Pool | PoolClient
@@ -39,5 +40,16 @@ export abstract class BaseRepository {
 
   private isTransactionClient(db: Pool | PoolClient): db is PoolClient {
     return typeof (db as PoolClient).release === 'function'
+  }
+
+  async query<R extends QueryResultRow>(text: string, params?: any[]) {
+    try {
+      return await this.database.query<R>(text, params)
+    } catch (error) {
+      if (error instanceof DatabaseError) {
+        throw PostgresError.toBusinessError(error)
+      }
+      throw error
+    }
   }
 }
