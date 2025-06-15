@@ -1,12 +1,11 @@
 import { DatabaseError, Pool, PoolClient } from 'pg'
 import { logger } from '@/server'
-import { CreateWorkerDto, WorkerResponseDto } from '@/api/workers/workerModel'
+import { CreateWorkerDto, WorkerDatabaseDto, WorkerResponseDto } from '@/api/workers/workerModel'
 import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
 import { BaseRepository } from '@/common/repositories/baseRepository'
-import { executeSqlFile } from '@/common/utils/sqlExecutor'
 
 export class WorkerRepository extends BaseRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
   constructor(protected readonly database: PoolClient | Pool = dbPool) {
@@ -27,30 +26,23 @@ export class WorkerRepository extends BaseRepository implements IWorker<[CreateW
       worker.scope,
       worker.scopeRef,
     ]
-    try {
-      const { rows } = await executeSqlFile(`${__dirname}/db/queries/insert_worker.sql`, values)
-      const row = rows[0]
-      logger.info(`Worker ${row.id} created!`)
-      return {
-        id: row.id,
-        key: row.key,
-        name: row.name,
-        folderKey: row.folder_key,
-        description: row.description,
-        createdBy: row.created_by,
-        updatedBy: row.updated_by,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-        status: row.status,
-        tags: row.tags,
-        scope: row.scope,
-        scopeRef: row.scope_ref,
-      }
-    } catch (err) {
-      if (err instanceof DatabaseError) {
-        throw PostgresError.toBusinessError(err)
-      }
-      throw err
+    const { rows } = await this.queryFromFile<WorkerDatabaseDto>(`${__dirname}/db/queries/insert_worker.sql`, values)
+    const row = rows[0]
+    logger.info(`Worker ${row.id} created!`)
+    return {
+      id: row.id,
+      key: row.key,
+      name: row.name,
+      folderKey: row.folder_key,
+      description: row.description,
+      createdBy: row.created_by,
+      updatedBy: row.updated_by,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      status: row.status,
+      tags: row.tags,
+      scope: row.scope,
+      scopeRef: row.scope_ref,
     }
   }
 

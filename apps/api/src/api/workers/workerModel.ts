@@ -126,3 +126,19 @@ export const GetWorkersRouteQuerySchema = z.object({
     limit: z.number().int().positive(),
   }),
 })
+
+export type WorkerDatabaseDto = {
+  id: number
+  key: string
+  name: string
+  folder_key: string
+  description: string
+  created_by: number
+  updated_by: number
+  created_at: Date
+  updated_at: Date
+  tags: string[]
+  status: 'active' | 'inactive' | 'archived'
+  scope: 'folder' | 'tenant' | 'organization' | 'public'
+  scope_ref: string | null
+}
