@@ -1,8 +1,7 @@
-import { DatabaseError, Pool, PoolClient } from 'pg'
+import { Pool, PoolClient } from 'pg'
 import { logger } from '@/server'
 import { CreateWorkerDto, WorkerDatabaseDto, WorkerResponseDto } from '@/api/workers/workerModel'
 import { PostgresError } from '@/common/utils/errorHandlers'
-import { readSqlFile } from '@/common/utils/sqlReader'
 import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
 import { BaseRepository } from '@/common/repositories/baseRepository'
@@ -47,16 +46,8 @@ export class WorkerRepository extends BaseRepository implements IWorker<[CreateW
   }
 
   async exists(workerId: string): Promise<boolean> {
-    const querySql = readSqlFile(`${__dirname}/db/queries/exists_worker.sql`)
-    try {
-      const result = await dbPool.query(querySql, [workerId])
-      if (result.rowCount === null) throw new Error('Worker existence check returned null row count.')
-      return result.rowCount > 0
-    } catch (err) {
-      if (err instanceof DatabaseError) {
-        throw PostgresError.toBusinessError(err)
-      }
-      throw err
-    }
+    const result = await this.queryFromFile(`${__dirname}/db/queries/exists_worker.sql`, [workerId])
+    if (result.rowCount === null) throw new Error('Worker existence check returned null row count.')
+    return result.rowCount > 0
   }
 }
