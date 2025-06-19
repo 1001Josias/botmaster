@@ -5,58 +5,6 @@ const workerId = commonValidations.id.describe('The unique identifier of the wor
 const userIdSchema = commonValidations.id.describe('The unique identifier of the user')
 const timestamp = commonValidations.timestamp
 
-const optionsSchema = z.object({
-  maxConcurrent: z
-    .number()
-    .int()
-    .min(1)
-    .describe('The maximum number of jobs the worker can run simultaneously')
-    .optional()
-    .default(1),
-  retryPolicy: z
-    .object({
-      maxRetries: z.number().int().max(10).describe('The maximum number of retries').default(0),
-      retryDelay: z.number().int().max(60).describe('The delay between retries in seconds').default(0),
-      strategy: z.enum(['exponential', 'linear']).describe('The strategy for retrying').default('linear'),
-    })
-    .describe('The retry policy of the worker')
-    .optional()
-    .default({}),
-  timeout: z
-    .number()
-    .int()
-    .positive()
-    .describe('The timeout for the worker execution in seconds')
-    .optional()
-    .default(60),
-  processingMode: z
-    .enum(['single', 'batch'])
-    .describe('The queue processing mode of the worker by job')
-    .optional()
-    .default('single'),
-})
-
-const propertiesSchema = z.object({
-  parameters: z
-    .object({})
-    .describe('The parameters of the worker. If not specified, it will default to an empty object.')
-    .optional()
-    .default({}),
-  settings: z
-    .object({})
-    .describe(
-      'Customized and specific settings for each worker, containing information necessary for the worker to function according to its logic.'
-    )
-    .optional()
-    .default({}),
-  options: optionsSchema
-    .describe(
-      'Configurable operational options of the worker that allow you to control the execution behavior of the worker.'
-    )
-    .optional()
-    .default({}),
-})
-
 export const workerPriority = {
   trivial: 0,
   lowest: 1,
