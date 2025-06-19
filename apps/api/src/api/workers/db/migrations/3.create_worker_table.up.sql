@@ -34,6 +34,9 @@ EXECUTE FUNCTION update_updated_at_column();
 -- CREATE INDEX idx_workers_updated_at ON workers(updated_at DESC);
 -- CREATE INDEX idx_workers_scope_ref ON worker(scope_ref);
 -- CREATE INDEX idx_workers_scope ON worker(scope);
+CREATE INDEX idx_worker_created_by ON worker(created_by);
+CREATE INDEX idx_worker_updated_by ON worker(updated_by);
+CREATE INDEX idx_worker_status ON worker(status);
 
 ALTER TABLE worker ENABLE ROW LEVEL SECURITY;
 
