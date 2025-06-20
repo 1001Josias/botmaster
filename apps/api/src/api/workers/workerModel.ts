@@ -39,9 +39,7 @@ export const WorkerBaseSchema = z.object({
     .describe('The scope of the worker, determining its visibility and accessibility in the marketplace')
     .optional()
     .default('folder'),
-  scopeRef: z
-    .string()
-    .uuid()
+  scopeRef: commonValidations.key
     .describe('The reference to the scope, such as a folder key, tenant key, or organization key')
     .nullable()
     .optional()
