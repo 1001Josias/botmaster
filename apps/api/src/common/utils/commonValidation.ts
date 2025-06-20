@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const commonValidations = {
   id: z.number().int().positive("'ID must be a positive number'"),
+  key: z.string().uuid(),
   timestamp: z.date().describe('Timestamp'),
   params: z.object({
     id: z

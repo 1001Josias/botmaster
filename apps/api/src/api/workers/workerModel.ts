@@ -33,7 +33,7 @@ export const WorkerBaseSchema = z.object({
     .openapi({
       example: 'example-worker',
     }),
-  folderKey: z.string().uuid().describe('The unique identifier of the folder'),
+  folderKey: commonValidations.key.describe('The unique identifier of the folder'),
   scope: z
     .enum(['folder', 'tenant', 'organization', 'public'])
     .describe('The scope of the worker, determining its visibility and accessibility in the marketplace')
@@ -53,7 +53,7 @@ export const WorkerBaseSchema = z.object({
 
 export const WorkerResponseSchema = WorkerBaseSchema.extend({
   id: workerId,
-  key: z.string().uuid().describe('The unique identifier of the worker'),
+  key: commonValidations.key.describe('The unique identifier of the worker'),
   createdBy: userIdSchema.describe('The user id of the creator of the worker'),
   updatedBy: userIdSchema.describe('The user id of the last user to update the worker'),
   createdAt: timestamp.describe('The timestamp when the worker was created'),
