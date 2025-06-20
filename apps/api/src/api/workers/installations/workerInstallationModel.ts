@@ -84,3 +84,7 @@ export const WorkerInstallationBaseSchema = z.object({
       example: propertiesSchema.parse({}),
     }),
 })
+
+export const installWorkerSchema = WorkerInstallationBaseSchema
+export type InstallWorkerDto = z.infer<typeof installWorkerSchema>
+
