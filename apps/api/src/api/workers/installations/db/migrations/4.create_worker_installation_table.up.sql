@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS worker_installation (
     worker_key INT NOT NULL REFERENCES worker(key),
     priority INT NOT NULL,
     folder_key UUID NOT NULL, -- folder_key UUID REFERENCES folders(key) NOT NULL,
-    default_version VARCHAR(50) NOT NULL,
+    default_version VARCHAR(50) NOT NULL, -- default_version VARCHAR(50) NOT NULL REFERENCES worker_release(version),
     installed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     installed_by INT NOT NULL, -- installed_by INT REFERENCES users(id) NOT NULL,
     default_properties JSONB NOT NULL,
