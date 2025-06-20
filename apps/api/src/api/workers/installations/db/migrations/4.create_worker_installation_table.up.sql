@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS worker_installation (
     default_properties JSONB NOT NULL,
 );
 
-CREATE INDEX idx_installed_worker_worker_key ON worker_installation(worker_key);
-CREATE INDEX idx_installed_worker_folder_key ON worker_installation(folder_key);
-CREATE INDEX idx_installed_worker_priority ON worker_installation(priority DESC);
-CREATE INDEX idx_installed_worker_installed_at ON worker_installation(installed_at);
-CREATE INDEX idx_installed_worker_installed_by ON worker_installation(installed_by);
+CREATE INDEX idx_worker_installation_worker_key ON worker_installation(worker_key);
+CREATE INDEX idx_worker_installation_folder_key ON worker_installation(folder_key);
+CREATE INDEX idx_worker_installation_priority ON worker_installation(priority DESC);
+CREATE INDEX idx_worker_installation_installed_at ON worker_installation(installed_at);
+CREATE INDEX idx_worker_installation_installed_by ON worker_installation(installed_by);
