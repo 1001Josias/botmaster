@@ -61,7 +61,7 @@ export const propertiesSchema = z.object({
 })
 
 export const WorkerInstallationBaseSchema = z.object({
-  workerKey: commonValidations.id,
+  workerKey: commonValidations.key.describe('The unique identifier of the worker to be installed'),
   priority: z
     .nativeEnum(workerPriority)
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
