@@ -59,6 +59,7 @@ export const propertiesSchema = z.object({
     .optional()
     .default({}),
 })
+export type PropertiesSchema = z.infer<typeof propertiesSchema>
 
 export const WorkerInstallationBaseSchema = z.object({
   workerKey: commonValidations.key.describe('The unique identifier of the worker to be installed'),
@@ -92,3 +93,13 @@ export const WorkerInstallationResponseSchema = WorkerInstallationBaseSchema.ext
   installedAt: commonValidations.timestamp.describe('The timestamp when the worker was installed'),
 })
 export type WorkerInstallationResponseDto = z.infer<typeof WorkerInstallationResponseSchema>
+
+export type WorkerInstallationDatabaseResponseDto = {
+  worker_key: string
+  priority: WorkerPriority
+  folder_key: string
+  default_version: string
+  installed_by: string
+  default_properties: PropertiesSchema
+  installed_at: Date
+}
