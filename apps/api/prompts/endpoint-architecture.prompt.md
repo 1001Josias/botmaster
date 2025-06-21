@@ -67,6 +67,22 @@ Each resource in `src/api/` should contain the following components:
 9. **Unit Tests**: Test each layer in isolation.
 10. **Strong Typing**: Use Zod schemas and TypeScript to ensure type safety.
 11. **Consult the Workers Module**: Use `api/workers` as an implementation reference in case of doubt.
+12. **Separation of Concerns**: Each layer should have a single responsibility.
+13. **Rigorous Validation**: Validate data at multiple levels.
+14. **Error Handling**: Use ServiceResponse for consistent responses.
+15. **Adequate Logging**: Record relevant information in each layer.
+16. **Complete Documentation**: Document endpoints and models with OpenAPI.
+17. **Strong Typing**: Use Zod schemas and TypeScript for type safety.
+18. **Testing**: Write unit and integration tests for each layer.
+19. **Naming Consistency**: Follow established patterns throughout the project.
+20. **Centralized Configuration**: Keep configurations in dedicated files and use environment variables.
+21. **Business Logic Location**: Never implement business logic in controllers or repositories.
+22. **Error Translation**: Translate technical errors to domain errors whenever possible.
+23. **Documentation Proximity**: Document endpoints and business rules in markdown files close to the code.
+24. **Critical Logging**: Use logs in all critical flows.
+25. **Self-Contained Domains**: Keep each domain self-contained with its own controllers, services, repositories, models, and prompts.
+26. **Use of Transactions**: Use the `transaction` method from `BaseRepository` to ensure consistency and atomicity in critical operations that involve multiple steps in the database.
+27. **BaseRepository Methods**: Use the `BaseRepository` methods such as `query`, `transaction` and outhers to standardize database interactions, ensure consistency, and simplify error handling. These methods provide built-in error translation and transaction management.
 
 ## File Structure and Implementation Examples
 
@@ -231,15 +247,17 @@ export type AdvancedExampleResponseDto = z.infer<typeof AdvancedExampleResponseS
 ### Repository
 
 ```typescript
-import { DatabaseError } from 'pg'
-import { logger } from '@/server'
-import { PostgresError } from '@/common/utils/errorHandlers'
 import { readSqlFile } from '@/common/utils/sqlReader'
-import { dbPool } from '@/common/utils/dbPool'
 import { CreateExampleDto, ExampleResponseDto } from './exampleModel'
+import { BaseRepository } from '@/common/repositories/baseRepository'
 import { IExample } from './example'
 
-export class ExampleRepository implements IExample<[CreateExampleDto], Promise<ExampleResponseDto>> {
+const createExamploQuerySql = readSqlFile(`${__dirname}/db/create_example.sql`)
+
+export class ExampleRepository
+  extends BaseRepository
+  implements IExample<[CreateExampleDto], Promise<ExampleResponseDto>>
+{
   async create(example: CreateExampleDto): Promise<ExampleResponseDto> {
     const values = [
       example.name,
@@ -247,25 +265,16 @@ export class ExampleRepository implements IExample<[CreateExampleDto], Promise<E
       // Other values...
     ]
 
-    const querySql = readSqlFile(`${__dirname}/db/create_example.sql`)
+    const rows = await this.query<ExampleResponseDto>(createExamploQuerySql, values)
+    const row = rows[0]
 
-    try {
-      const { rows } = await dbPool.query(querySql, values)
-      const row = rows[0]
-
-      return {
-        id: row.id,
-        name: row.name,
-        description: row.description,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-        // Other fields...
-      }
-    } catch (err) {
-      if (err instanceof DatabaseError) {
-        throw PostgresError.toBusinessError(err)
-      }
-      throw err
+    return {
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      // Other fields...
     }
   }
 }
@@ -691,20 +700,3 @@ const resourceType = ResourceTypes.EXAMPLE
 
 - Implement unit, integration, and end-to-end tests for all layers
 - Use mocks for external dependencies in unit tests
-
-## Best Practices
-
-1. **Separation of Concerns**: Each layer should have a single responsibility.
-2. **Rigorous Validation**: Validate data at multiple levels.
-3. **Error Handling**: Use ServiceResponse for consistent responses.
-4. **Adequate Logging**: Record relevant information in each layer.
-5. **Complete Documentation**: Document endpoints and models with OpenAPI.
-6. **Strong Typing**: Use Zod schemas and TypeScript for type safety.
-7. **Testing**: Write unit and integration tests for each layer.
-8. **Naming Consistency**: Follow established patterns throughout the project.
-9. **Centralized Configuration**: Keep configurations in dedicated files and use environment variables.
-10. **Business Logic Location**: Never implement business logic in controllers or repositories.
-11. **Error Translation**: Translate technical errors to domain errors whenever possible.
-12. **Documentation Proximity**: Document endpoints and business rules in markdown files close to the code.
-13. **Critical Logging**: Use logs in all critical flows.
-14. **Self-Contained Domains**: Keep each domain self-contained with its own controllers, services, repositories, models, and prompts.
