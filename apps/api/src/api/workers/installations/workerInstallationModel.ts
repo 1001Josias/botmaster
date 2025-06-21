@@ -86,7 +86,7 @@ export const WorkerInstallationBaseSchema = z.object({
 })
 
 export const installWorkerSchema = WorkerInstallationBaseSchema
-export type InstallWorkerDto = z.infer<typeof installWorkerSchema>
+export type WorkerInstallationDto = z.infer<typeof installWorkerSchema>
 
 export const WorkerInstallationResponseSchema = WorkerInstallationBaseSchema.extend({
   installedAt: commonValidations.timestamp.describe('The timestamp when the worker was installed'),
