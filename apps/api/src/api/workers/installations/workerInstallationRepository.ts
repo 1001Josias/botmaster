@@ -15,7 +15,7 @@ export class WorkerInstallationRepository
   extends BaseRepository
   implements IWorkerInstallation<[WorkerInstallationDto], Promise<WorkerInstallationResponseDto | void>>
 {
-  constructor(database: PoolClient | Pool = dbPool) {
+  constructor(protected readonly database: PoolClient | Pool = dbPool) {
     super(database)
   }
 
