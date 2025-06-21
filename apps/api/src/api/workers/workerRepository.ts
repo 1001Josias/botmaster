@@ -1,10 +1,13 @@
 import { Pool, PoolClient } from 'pg'
 import { logger } from '@/server'
 import { CreateWorkerDto, WorkerDatabaseDto, WorkerResponseDto } from '@/api/workers/workerModel'
-import { PostgresError } from '@/common/utils/errorHandlers'
 import { dbPool } from '@/common/utils/dbPool'
 import { IWorker } from '@/api/workers/worker'
 import { BaseRepository } from '@/common/repositories/baseRepository'
+import { readSqlFile } from '@/common/utils/sqlReader'
+
+const workerCreateQuery = readSqlFile(`${__dirname}/db/queries/insert_worker.sql`)
+const workerExistsQuery = readSqlFile(`${__dirname}/db/queries/worker_exists.sql`)
 
 export class WorkerRepository extends BaseRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
   constructor(protected readonly database: PoolClient | Pool = dbPool) {
@@ -25,7 +28,7 @@ export class WorkerRepository extends BaseRepository implements IWorker<[CreateW
       worker.scope,
       worker.scopeRef,
     ]
-    const { rows } = await this.queryFromFile<WorkerDatabaseDto>(`${__dirname}/db/queries/insert_worker.sql`, values)
+    const { rows } = await this.query<WorkerDatabaseDto>(workerCreateQuery, values)
     const row = rows[0]
     logger.info(`Worker ${row.id} created!`)
     return {
@@ -46,7 +49,7 @@ export class WorkerRepository extends BaseRepository implements IWorker<[CreateW
   }
 
   async exists(workerId: string): Promise<boolean> {
-    const result = await this.queryFromFile(`${__dirname}/db/queries/exists_worker.sql`, [workerId])
+    const result = await this.query(workerExistsQuery, [workerId])
     if (result.rowCount === null) throw new Error('Worker existence check returned null row count.')
     return result.rowCount > 0
   }

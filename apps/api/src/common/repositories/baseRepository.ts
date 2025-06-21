@@ -1,7 +1,6 @@
 import { DatabaseError, Pool, PoolClient, QueryConfig, QueryResultRow } from 'pg'
 import { dbPool } from '../utils/dbPool'
 import { logger } from '@/server'
-import { readSqlFile } from '../utils/sqlReader'
 import { PostgresError } from '../utils/errorHandlers'
 
 export abstract class BaseRepository {
@@ -52,10 +51,5 @@ export abstract class BaseRepository {
       }
       throw error
     }
-  }
-
-  async queryFromFile<R extends QueryResultRow>(filePath: string, values?: any[]) {
-    const sql = readSqlFile(filePath)
-    return await this.query<R>(sql, values)
   }
 }
