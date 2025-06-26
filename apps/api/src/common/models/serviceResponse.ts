@@ -1,12 +1,13 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
+import { ServiceResponseObjectError } from '@/common/services/services'
 
 extendZodWithOpenApi(z)
 export class ServiceResponse<T = null> {
   readonly success: boolean
   readonly message: string
-  readonly responseObject: T
+  readonly responseObject: T | ServiceResponseObjectError
   readonly statusCode: number
 
   private constructor(success: boolean, message: string, responseObject: T, statusCode: number) {
