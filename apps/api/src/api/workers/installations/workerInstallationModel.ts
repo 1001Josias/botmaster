@@ -76,7 +76,7 @@ export const WorkerInstallationBaseSchema = z.object({
     )
     .optional()
     .default('latest'),
-  installedBy: commonValidations.key.describe('The unique identifier of the user who installed the worker'),
+  installedBy: commonValidations.id.describe('The unique identifier of the user who installed the worker'),
   defaultProperties: propertiesSchema
     .describe('The default properties of the worker, including settings, parameters, and options')
     .optional()
@@ -99,7 +99,7 @@ export type WorkerInstallationDatabaseResponseDto = {
   priority: WorkerPriority
   folder_key: string
   default_version: string
-  installed_by: string
+  installed_by: number
   default_properties: PropertiesSchema
   installed_at: Date
 }
