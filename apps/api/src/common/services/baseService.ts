@@ -18,6 +18,8 @@ export abstract class BaseService {
     switch (error.code) {
       case PostgresErrorCodes.UNIQUE_VIOLATION:
         return this.conflictError(serviceMessage)
+      case PostgresErrorCodes.FOREIGN_KEY_VIOLATION:
+        return this.badRequestError(serviceMessage)
       default:
         logger.debug(`Error code: ${error.code}, message: ${error.message} in entity: ${error.table || 'unknown'}`)
         throw new Error(`Not handled database error: ${error.message}, ${error}`)
@@ -26,5 +28,9 @@ export abstract class BaseService {
 
   protected conflictError(errorParams: ServiceResponseErrorParams) {
     return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.CONFLICT)
+  }
+
+  protected badRequestError(errorParams: ServiceResponseErrorParams) {
+    return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.BAD_REQUEST)
   }
 }
