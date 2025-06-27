@@ -39,4 +39,8 @@ export abstract class BaseService {
     return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.NOT_FOUND)
   }
 
+  protected createdSuccessfully<T = null>(message: string, responseObject: T) {
+    return ServiceResponse.success(message, responseObject, StatusCodes.CREATED)
+  }
+
 }
