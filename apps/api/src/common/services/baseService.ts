@@ -34,4 +34,9 @@ export abstract class BaseService {
   protected badRequestError(errorParams: ServiceResponseErrorParams) {
     return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.BAD_REQUEST)
   }
+
+  protected notFoundError(errorParams: ServiceResponseErrorParams) {
+    return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.NOT_FOUND)
+  }
+
 }
