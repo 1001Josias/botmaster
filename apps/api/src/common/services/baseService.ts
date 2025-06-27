@@ -14,6 +14,7 @@ export abstract class BaseService {
 
     const serviceMessage = callback(error)
     if (!serviceMessage) throw error
+    logger.warn(`${serviceMessage.message}: ${error.detail}`)
 
     switch (error.code) {
       case PostgresErrorCodes.UNIQUE_VIOLATION:
