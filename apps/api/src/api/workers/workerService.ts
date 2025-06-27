@@ -4,14 +4,19 @@ import { WorkerRepository } from '@/api/workers/workerRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IWorker } from '@/api/workers/worker'
 import { WorkerResponseDto, CreateWorkerDto } from '@/api/workers/workerModel'
-import { BusinessError } from '@/common/utils/errorHandlers'
 import { logger } from '@/server'
 import { WorkerInvalidScopeRefException } from './workerExceptions'
+import { BaseService } from '@/common/services/baseService'
+import { WorkerResponseMessages } from './workerResponseMessages'
 
-export class WorkerService implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | null>>> {
+export class WorkerService
+  extends BaseService
+  implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | null>>>
+{
   private workerRepository: WorkerRepository
 
   constructor(repository: WorkerRepository = new WorkerRepository()) {
+    super()
     this.workerRepository = repository
   }
 
@@ -29,10 +34,8 @@ export class WorkerService implements IWorker<[CreateWorkerDto], Promise<Service
       const message = `Worker created successfully`
       return ServiceResponse.success(message, createdWorker, StatusCodes.CREATED)
     } catch (err) {
-      if (err instanceof BusinessError) {
-        logger.warn(`${err.name}: ${err.message}`)
-        return ServiceResponse.failure<null>(err.message, null, err.status)
-      }
+      logger.warn(`${err.name}: ${err.message}`)
+      return ServiceResponse.failure<null>(err.message, null, err.status)
       throw err
     }
   }
