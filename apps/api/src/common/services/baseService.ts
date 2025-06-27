@@ -43,4 +43,8 @@ export abstract class BaseService {
     return ServiceResponse.success(message, responseObject, StatusCodes.CREATED)
   }
 
+  protected updatedSuccessfully<T = null>(message: string, responseObject: T) {
+    return ServiceResponse.success(message, responseObject, StatusCodes.OK)
+  }
+
 }
