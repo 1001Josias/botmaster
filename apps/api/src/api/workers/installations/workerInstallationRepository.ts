@@ -7,7 +7,7 @@ import {
 import { dbPool } from '@/common/utils/dbPool'
 import { BaseRepository } from '@/common/repositories/baseRepository'
 import { readSqlFile } from '@/common/utils/sqlReader'
-import { IWorkerInstallation } from './workerInstalation'
+import { IWorkerInstallation } from './workerInstallation'
 
 const installWorkerSql = readSqlFile(`${__dirname}/db/queries/install_worker.sql`)
 
