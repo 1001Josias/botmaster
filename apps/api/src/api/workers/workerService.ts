@@ -31,8 +31,7 @@ export class WorkerService
       }
 
       const createdWorker = await this.workerRepository.create(worker)
-      const message = `Worker created successfully`
-      return ServiceResponse.success(message, createdWorker, StatusCodes.CREATED)
+      return this.createdSuccessfully(WorkerResponseMessages.createdSuccessfullyMessage, createdWorker)
     } catch (err) {
       logger.warn(`${err.name}: ${err.message}`)
       return ServiceResponse.failure<null>(err.message, null, err.status)
