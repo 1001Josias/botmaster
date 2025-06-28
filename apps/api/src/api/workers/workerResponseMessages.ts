@@ -1,4 +1,5 @@
 import { ServiceResponseErrorParams } from '@/common/services/services'
+import { Scope } from './workerModel'
 
 export class WorkerResponseMessages {
   static createdSuccessfullyMessage: string = 'Worker created successfully'
@@ -12,6 +13,11 @@ export class WorkerResponseMessages {
     message: 'ScopeRef must be null when scope is public',
     responseObject: null,
   }
+
+  static invalidScopeRefPrivate = (scope: Scope): ServiceResponseErrorParams => ({
+    message: `ScopeRef must not be null when scope is ${scope}`,
+    responseObject: null,
+  })
 }
 
 export const workerConstraintErrorMessages = {

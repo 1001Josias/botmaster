@@ -2,7 +2,6 @@ import { WorkerRepository } from '@/api/workers/workerRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IWorker } from '@/api/workers/worker'
 import { WorkerResponseDto, CreateWorkerDto } from '@/api/workers/workerModel'
-import { WorkerInvalidScopeRefException } from './workerExceptions'
 import { BaseService } from '@/common/services/baseService'
 import { workerConstraintErrorMessages, WorkerConstraints, WorkerResponseMessages } from './workerResponseMessages'
 import { ServiceResponseObjectError } from '@/common/services/services'
@@ -27,7 +26,7 @@ export class WorkerService
       }
 
       if (worker.scope !== 'public' && worker.scopeRef === null) {
-        throw new WorkerInvalidScopeRefException(worker)
+        return this.badRequestError(WorkerResponseMessages.invalidScopeRefPrivate(worker.scope))
       }
 
       const createdWorker = await this.workerRepository.create(worker)
