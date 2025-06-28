@@ -7,6 +7,11 @@ export class WorkerResponseMessages {
     message: 'Already exists a worker with this name',
     responseObject: null,
   }
+
+  static invalidScopeRefPublic: ServiceResponseErrorParams = {
+    message: 'ScopeRef must be null when scope is public',
+    responseObject: null,
+  }
 }
 
 export const workerConstraintErrorMessages = {

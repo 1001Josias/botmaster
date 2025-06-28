@@ -23,7 +23,7 @@ export class WorkerService
   ): Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>> {
     try {
       if (worker.scope === 'public' && worker.scopeRef !== null) {
-        throw new WorkerInvalidScopeRefException(worker)
+        return this.badRequestError(WorkerResponseMessages.invalidScopeRefPublic)
       }
 
       if (worker.scope !== 'public' && worker.scopeRef === null) {
