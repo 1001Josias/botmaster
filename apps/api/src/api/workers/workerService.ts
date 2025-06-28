@@ -1,17 +1,15 @@
-import { StatusCodes } from 'http-status-codes'
-
 import { WorkerRepository } from '@/api/workers/workerRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IWorker } from '@/api/workers/worker'
 import { WorkerResponseDto, CreateWorkerDto } from '@/api/workers/workerModel'
-import { logger } from '@/server'
 import { WorkerInvalidScopeRefException } from './workerExceptions'
 import { BaseService } from '@/common/services/baseService'
-import { WorkerResponseMessages } from './workerResponseMessages'
+import { workerConstraintErrorMessages, WorkerConstraints, WorkerResponseMessages } from './workerResponseMessages'
+import { ServiceResponseObjectError } from '@/common/services/services'
 
 export class WorkerService
   extends BaseService
-  implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | null>>>
+  implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>>>
 {
   private workerRepository: WorkerRepository
 
@@ -20,7 +18,9 @@ export class WorkerService
     this.workerRepository = repository
   }
 
-  async create(worker: CreateWorkerDto): Promise<ServiceResponse<WorkerResponseDto | null>> {
+  async create(
+    worker: CreateWorkerDto
+  ): Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>> {
     try {
       if (worker.scope === 'public' && worker.scopeRef !== null) {
         throw new WorkerInvalidScopeRefException(worker)
@@ -32,10 +32,10 @@ export class WorkerService
 
       const createdWorker = await this.workerRepository.create(worker)
       return this.createdSuccessfully(WorkerResponseMessages.createdSuccessfullyMessage, createdWorker)
-    } catch (err) {
-      logger.warn(`${err.name}: ${err.message}`)
-      return ServiceResponse.failure<null>(err.message, null, err.status)
-      throw err
+    } catch (error) {
+      return this.handleError(error, (dbError) => {
+        return workerConstraintErrorMessages[dbError.constraint as WorkerConstraints]
+      })
     }
   }
 }
