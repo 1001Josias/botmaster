@@ -21,10 +21,10 @@ export const workerPriority = {
 
 export type WorkerPriority = (typeof workerPriority)[keyof typeof workerPriority]
 
-const Scopes = z
+export const Scopes = z
   .enum(['folder', 'tenant', 'organization', 'public'])
   .describe('The scope of the worker, determining its visibility and accessibility in the marketplace')
-type Scope = z.infer<typeof Scopes>
+export type Scope = z.infer<typeof Scopes>
 
 export const WorkerBaseSchema = z.object({
   name: z
