@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import z, { ZodError, ZodSchema } from 'zod'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { logger } from '@/server'
+import { contextSchema } from './commonValidation'
 
 export const handleServiceResponse = <T>(serviceResponse: ServiceResponse<T>, response: Response) => {
   return response.status(serviceResponse.statusCode).send(serviceResponse)
@@ -15,6 +16,7 @@ type Locals<B, Q, P> = {
     body?: B
     query?: Q
     params?: P
+    context: z.infer<typeof contextSchema>
   }
 }
 
@@ -30,7 +32,13 @@ export function validateRequest<I, O>(schema: ZodSchema, context: ValidateReques
     next: NextFunction
   ) => {
     try {
-      res.locals = { validatedData: { [context]: schema.parse(req[context]) } }
+      res.locals = {
+        validatedData: {
+          ...res.locals?.validatedData,
+          [context]: schema.parse(req[context]),
+          context: contextSchema.parse({ folderKey: req.headers['x-folder-key'] }),
+        },
+      }
       next()
     } catch (err) {
       if (err instanceof ZodError) {

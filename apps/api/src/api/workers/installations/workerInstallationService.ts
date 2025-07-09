@@ -14,7 +14,7 @@ import {
 import { ServiceResponseObjectError } from '@/common/services/services'
 
 export class WorkerInstallationService
-  extends BaseService
+  extends BaseService<WorkerInstallationRepository>
   implements
     IWorkerInstallation<
       [WorkerInstallationDto],
@@ -24,7 +24,7 @@ export class WorkerInstallationService
   private workerInstallationRepository: WorkerInstallationRepository
 
   constructor(repository: WorkerInstallationRepository = new WorkerInstallationRepository()) {
-    super()
+    super(repository)
     this.workerInstallationRepository = repository
   }
 

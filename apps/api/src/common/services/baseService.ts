@@ -4,8 +4,14 @@ import { PostgresErrorCodes } from '../utils/dbStatusCode'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@/server'
 import { ServiceResponseObjectError, ServiceResponseErrorParams } from './services'
+import { BaseRepository } from '../repositories/baseRepository'
+import { ContextDto } from '../utils/commonValidation'
 
 export abstract class BaseService {
+  protected context!: ContextDto
+
+  constructor() {}
+
   protected handleError(
     error: unknown,
     callback: (dbError: DatabaseError) => ServiceResponseErrorParams | undefined
@@ -49,5 +55,9 @@ export abstract class BaseService {
 
   protected deletedSuccessfully<T = null>(message: string, responseObject: T) {
     return ServiceResponse.success(message, responseObject, StatusCodes.NO_CONTENT)
+  }
+
+  public setContext(context: ContextDto): void {
+    this.context = context
   }
 }

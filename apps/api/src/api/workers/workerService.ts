@@ -10,11 +10,8 @@ export class WorkerService
   extends BaseService
   implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>>>
 {
-  private workerRepository: WorkerRepository
-
-  constructor(repository: WorkerRepository = new WorkerRepository()) {
+  constructor() {
     super()
-    this.workerRepository = repository
   }
 
   async create(
@@ -29,8 +26,10 @@ export class WorkerService
         return this.badRequestError(WorkerResponseMessages.invalidScopeRefPrivate(worker.scope))
       }
 
-      const createdWorker = await this.workerRepository.create(worker)
-      return this.createdSuccessfully(WorkerResponseMessages.createdSuccessfullyMessage, createdWorker)
+      return await WorkerRepository.session(this.context, async (workerRepository) => {
+        const createdWorker = await workerRepository.create(worker)
+        return this.createdSuccessfully(WorkerResponseMessages.createdSuccessfullyMessage, createdWorker)
+      })
     } catch (error) {
       return this.handleError(error, (dbError) => {
         return workerConstraintErrorMessages[dbError.constraint as WorkerConstraints]

@@ -10,7 +10,7 @@ const workerCreateQuery = readSqlFile(`${__dirname}/db/queries/insert_worker.sql
 const workerExistsQuery = readSqlFile(`${__dirname}/db/queries/worker_exists.sql`)
 
 export class WorkerRepository extends BaseRepository implements IWorker<[CreateWorkerDto], Promise<WorkerResponseDto>> {
-  constructor(protected readonly database: PoolClient | Pool = dbPool) {
+  constructor(protected readonly database: PoolClient) {
     super(database)
   }
 
