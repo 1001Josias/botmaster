@@ -15,11 +15,11 @@ export class WorkerController
     super(service)
   }
 
-  public async create(
+  public create = async (
     req: Request<CreateWorkerDto>,
     res: ResponseCustom<WorkerResponseDto, CreateWorkerDto>,
     next: NextFunction
-  ) {
+  ) => {
     try {
       return await this.context<WorkerResponseMessages>(req, async (workerService) => {
         const worker = await workerService.create(res.locals.validatedData.body as CreateWorkerDto)
