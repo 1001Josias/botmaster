@@ -38,7 +38,6 @@ export const WorkerBaseSchema = z.object({
     .openapi({
       example: 'example-worker',
     }),
-  folderKey: commonValidations.key.describe('The unique identifier of the folder'),
   scope: Scopes.optional().default('folder'),
   scopeRef: commonValidations.key
     .describe('The reference to the scope. See the documentation: https://docs.botmaster.dev/workers#scope-reference')
@@ -53,6 +52,7 @@ export const WorkerBaseSchema = z.object({
 export const WorkerResponseSchema = WorkerBaseSchema.extend({
   id: workerId,
   key: commonValidations.key.describe('The unique identifier of the worker'),
+  folderKey: commonValidations.key.describe('The unique identifier of the folder'),
   createdBy: userIdSchema.describe('The user id of the creator of the worker'),
   updatedBy: userIdSchema.describe('The user id of the last user to update the worker'),
   createdAt: timestamp.describe('The timestamp when the worker was created'),
@@ -60,7 +60,7 @@ export const WorkerResponseSchema = WorkerBaseSchema.extend({
 })
 export type WorkerResponseDto = z.infer<typeof WorkerResponseSchema>
 
-export const CreateWorkerSchema = WorkerBaseSchema.omit({ folderKey: true })
+export const CreateWorkerSchema = WorkerBaseSchema
 export type CreateWorkerDto = z.infer<typeof CreateWorkerSchema>
 
 export const WorkerRouteParamsSchema = z.object({
