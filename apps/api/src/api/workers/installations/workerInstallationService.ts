@@ -14,29 +14,28 @@ import {
 import { ServiceResponseObjectError } from '@/common/services/services'
 
 export class WorkerInstallationService
-  extends BaseService<WorkerInstallationRepository>
+  extends BaseService
   implements
     IWorkerInstallation<
       [WorkerInstallationDto],
       Promise<ServiceResponse<WorkerInstallationResponseDto | ServiceResponseObjectError | null>>
     >
 {
-  private workerInstallationRepository: WorkerInstallationRepository
-
-  constructor(repository: WorkerInstallationRepository = new WorkerInstallationRepository()) {
-    super(repository)
-    this.workerInstallationRepository = repository
+  constructor() {
+    super()
   }
 
   async install(
     workerInstallation: WorkerInstallationDto
   ): Promise<ServiceResponse<WorkerInstallationResponseDto | ServiceResponseObjectError | null>> {
     try {
-      const workerInstallationResponse = await this.workerInstallationRepository.install(workerInstallation)
-      return this.createdSuccessfully(
-        WorkerInstallationMessages.installedSuccessfullyMessage,
-        workerInstallationResponse
-      )
+      return await WorkerInstallationRepository.session(this.context, async (workerInstallationRepository) => {
+        const workerInstallationResponse = await workerInstallationRepository.install(workerInstallation)
+        return this.createdSuccessfully(
+          WorkerInstallationMessages.installedSuccessfullyMessage,
+          workerInstallationResponse
+        )
+      })
     } catch (error) {
       return this.handleError(error, (dbError) => {
         return workerInstallationConstraintErrorMessages[dbError.constraint as WorkerInstallationConstraints]
