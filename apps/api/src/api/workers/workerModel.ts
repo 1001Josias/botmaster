@@ -23,7 +23,7 @@ export type WorkerPriority = (typeof workerPriority)[keyof typeof workerPriority
 
 export const Scopes = z
   .enum(['folder', 'tenant', 'organization', 'public'])
-  .describe('The scope of the worker, determining its visibility and accessibility in the marketplace')
+  .describe('The scope where the worker is available. See the documentation: https://docs.botmaster.dev/workers#scopes')
 export type Scope = z.infer<typeof Scopes>
 
 export const WorkerBaseSchema = z.object({
@@ -41,7 +41,7 @@ export const WorkerBaseSchema = z.object({
   folderKey: commonValidations.key.describe('The unique identifier of the folder'),
   scope: Scopes.optional().default('folder'),
   scopeRef: commonValidations.key
-    .describe('The reference to the scope, such as a folder key, tenant key, or organization key')
+    .describe('The reference to the scope. See the documentation: https://docs.botmaster.dev/workers#scope-reference')
     .nullable()
     .optional()
     .default(null),
