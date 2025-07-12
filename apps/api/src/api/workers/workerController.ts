@@ -22,8 +22,9 @@ export class WorkerController
   ) => {
     try {
       return await this.context<WorkerResponseMessages>(req, async (workerService) => {
-        const worker = await workerService.create(res.locals.validatedData.body as CreateWorkerDto)
-        return handleServiceResponse(worker, res)
+        const worker = res.locals.validatedData.body as CreateWorkerDto
+        const createdWorker = await workerService.create(worker)
+        return handleServiceResponse(createdWorker, res)
       })
     } catch (err) {
       next(err)
