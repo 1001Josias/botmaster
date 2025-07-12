@@ -42,19 +42,19 @@ ALTER TABLE worker ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY folder_access_policy ON worker
   FOR INSERT, UPDATE, DELETE
-  USING (folder_key = current_setting('app.current_folder_key')::UUID);
+  USING (folder_key = current_setting('app.folder_key')::UUID);
 
 CREATE POLICY folder_scope_policy ON worker
   FOR SELECT 
-  USING (scope = 'folder' AND scope_ref = current_setting('app.current_folder_key')::UUID);
+  USING (scope = 'folder' AND scope_ref = current_setting('app.folder_key')::UUID);
 
 CREATE POLICY tenant_scope_policy ON worker
   FOR SELECT 
-  USING (scope = 'tenant' AND scope_ref = current_setting('app.current_tenant_key')::UUID);
+  USING (scope = 'tenant' AND scope_ref = current_setting('app.tenant_key')::UUID);
 
 CREATE POLICY organization_scope_policy ON worker
   FOR SELECT 
-  USING (scope = 'organization' AND scope_ref = current_setting('app.current_organization_key')::UUID);
+  USING (scope = 'organization' AND scope_ref = current_setting('app.organization')::UUID);
 
 CREATE POLICY public_scope_policy ON worker
   FOR SELECT 
