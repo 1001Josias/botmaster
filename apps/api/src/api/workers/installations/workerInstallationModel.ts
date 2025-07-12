@@ -68,7 +68,6 @@ export const WorkerInstallationBaseSchema = z.object({
     .describe('The priority level of the worker, from trivial (0) to critical (10)')
     .optional()
     .default(workerPriority.medium),
-  folderKey: commonValidations.key.describe('The unique identifier of the folder where the worker is installed'),
   defaultVersion: z
     .string()
     .describe(
@@ -90,6 +89,7 @@ export const WorkerInstallationSchema = WorkerInstallationBaseSchema
 export type WorkerInstallationDto = z.infer<typeof WorkerInstallationSchema>
 
 export const WorkerInstallationResponseSchema = WorkerInstallationBaseSchema.extend({
+  folderKey: commonValidations.key.describe('The unique identifier of the folder where the worker is installed'),
   installedAt: commonValidations.timestamp.describe('The timestamp when the worker was installed'),
 })
 export type WorkerInstallationResponseDto = z.infer<typeof WorkerInstallationResponseSchema>

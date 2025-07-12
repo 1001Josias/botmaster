@@ -23,7 +23,6 @@ export class WorkerInstallationRepository
     const values = [
       worker.workerKey,
       worker.priority,
-      worker.folderKey,
       worker.defaultVersion,
       worker.installedBy,
       worker.defaultProperties,
