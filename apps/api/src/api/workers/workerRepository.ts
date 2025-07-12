@@ -19,7 +19,6 @@ export class WorkerRepository extends BaseRepository implements IWorker<[CreateW
     const updated_by = 123 // TODO: Replace with actual user ID
     const values = [
       worker.name,
-      worker.folderKey,
       worker.description,
       worker.status,
       worker.tags,

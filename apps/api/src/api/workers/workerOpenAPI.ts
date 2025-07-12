@@ -3,6 +3,7 @@ import { CreateWorkerSchema, UpdateWorkerSchema, WorkerResponseSchema, WorkerRes
 import { createOpenApiResponse, OpenApiResponseConfig } from '@/api-docs/openAPIResponseBuilders'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
+import { contextSchema } from '@/common/utils/commonValidation'
 
 export const workerRegistryV1 = new OpenAPIRegistry()
 
@@ -23,6 +24,9 @@ const workerOpenApiResponseConflict: OpenApiResponseConfig<null> = {
 }
 
 workerRegistryV1.register('CreateWorker', CreateWorkerSchema)
+const contextHeaders = {
+  'x-folder-key': contextSchema.shape.folderKey.openapi({ description: 'Folder identifier (context)' }),
+}
 
 workerRegistryV1.registerPath({
   method: 'post',
@@ -36,6 +40,7 @@ workerRegistryV1.registerPath({
         },
       },
     },
+    headers: z.object(contextHeaders),
   },
   responses: createOpenApiResponse([workerOpenApiResponseSuccess, workerOpenApiResponseConflict]),
 })

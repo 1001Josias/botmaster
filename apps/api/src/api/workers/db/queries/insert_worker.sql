@@ -1,13 +1,13 @@
 INSERT INTO worker (
   name,
-  folder_key,
   description,
   status,
   tags,
   created_by,
   updated_by,
   scope,
-  scope_ref
+  scope_ref,
+  folder_key
 ) VALUES (
   $1,
   $2,
@@ -17,5 +17,5 @@ INSERT INTO worker (
   $6,
   $7,
   $8,
-  $9
+  current_setting('app.folder_key')::uuid
 ) RETURNING *;

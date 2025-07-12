@@ -60,7 +60,7 @@ export const WorkerResponseSchema = WorkerBaseSchema.extend({
 })
 export type WorkerResponseDto = z.infer<typeof WorkerResponseSchema>
 
-export const CreateWorkerSchema = WorkerBaseSchema
+export const CreateWorkerSchema = WorkerBaseSchema.omit({ folderKey: true })
 export type CreateWorkerDto = z.infer<typeof CreateWorkerSchema>
 
 export const WorkerRouteParamsSchema = z.object({
