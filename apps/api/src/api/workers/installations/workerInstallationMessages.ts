@@ -24,6 +24,7 @@ export class WorkerInstallationMessages {
 export const workerInstallationConstraintErrorMessages = {
   idx_worker_installation_unique: WorkerInstallationMessages.alreadyInstalledErrorMessage,
   worker_installation_worker_key_fkey: WorkerInstallationMessages.notFoundErrorMessage,
+  worker_installation_worker_ref_fkey: WorkerInstallationMessages.notAvailableToInstallErrorMessage,
 }
 
 export type WorkerInstallationConstraints = keyof typeof workerInstallationConstraintErrorMessages
