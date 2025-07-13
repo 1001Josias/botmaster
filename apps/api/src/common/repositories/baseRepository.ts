@@ -5,6 +5,7 @@ import { readSqlFile } from '../utils/sqlReader'
 import { ContextDto } from '../utils/commonValidation'
 
 const setSessionContextQuery = readSqlFile(`${__dirname}/../queries/set_session_context.sql`)
+const lockEntityQuery = readSqlFile(`${__dirname}/../queries/lock_entity.sql`)
 
 export abstract class BaseRepository {
   protected database: Pool | PoolClient
@@ -48,12 +49,11 @@ export abstract class BaseRepository {
     }
   }
 
-  async lockEntity(entityKey: string): Promise<void> {
-    const lockQuery = 'SELECT pg_advisory_xact_lock(hashtext($1));'
+  async lockEntity(key: string): Promise<void> {
     if (!this.isTransactionClient(this.database)) {
       throw new Error('Locking can only be done within a transaction context')
     }
-    await this.database.query(lockQuery, [entityKey])
+    await this.database.query(lockEntityQuery, [key])
   }
 
   private isTransactionClient(db: Pool | PoolClient): db is PoolClient {
