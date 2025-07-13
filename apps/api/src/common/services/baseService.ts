@@ -34,27 +34,33 @@ export abstract class BaseService {
   }
 
   protected conflictError(errorParams: ServiceResponseErrorParams) {
+    logger.warn(errorParams.responseObject, errorParams.message)
     return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.CONFLICT)
   }
 
   protected badRequestError(errorParams: ServiceResponseErrorParams) {
+    logger.warn(errorParams.responseObject, errorParams.message)
     return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.BAD_REQUEST)
   }
 
   protected notFoundError(errorParams: ServiceResponseErrorParams) {
+    logger.warn(errorParams.responseObject, errorParams.message)
     return ServiceResponse.failure(errorParams.message, errorParams.responseObject, StatusCodes.NOT_FOUND)
   }
 
   protected createdSuccessfully<T = null>(message: string, responseObject: T) {
+    logger.info(responseObject, message)
     return ServiceResponse.success(message, responseObject, StatusCodes.CREATED)
   }
 
   protected updatedSuccessfully<T = null>(message: string, responseObject: T) {
+    logger.info(responseObject, message)
     return ServiceResponse.success(message, responseObject, StatusCodes.OK)
   }
 
   protected deletedSuccessfully<T = null>(message: string, responseObject: T) {
-    return ServiceResponse.success(message, responseObject, StatusCodes.NO_CONTENT)
+    logger.info(responseObject, message)
+    return ServiceResponse.success(message, responseObject, StatusCodes.OK)
   }
 
   public setContext(context: ContextDto): void {
