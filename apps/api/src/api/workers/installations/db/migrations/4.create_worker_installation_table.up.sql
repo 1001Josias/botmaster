@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS worker_installation (
 
 ALTER TABLE worker_installation ENABLE ROW LEVEL SECURITY;
 
+CREATE UNIQUE INDEX idx_worker_installation_unique ON worker_installation(worker_key, folder_key);
 CREATE INDEX idx_worker_installation_worker_key ON worker_installation(worker_key);
 CREATE INDEX idx_worker_installation_folder_key ON worker_installation(folder_key);
 CREATE INDEX idx_worker_installation_priority ON worker_installation(priority DESC);
