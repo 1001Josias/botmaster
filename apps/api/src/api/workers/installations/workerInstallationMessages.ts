@@ -12,6 +12,13 @@ export class WorkerInstallationMessages {
     message: 'Worker not found',
     responseObject: null,
   }
+
+  static notAvailableToInstallErrorMessage: ServiceResponseErrorParams = {
+    message: 'Worker is not available to install in this folder',
+    responseObject: {
+      details: 'Verify that the worker scope is correct and that the worker ref allows installation in that folder',
+    },
+  }
 }
 
 export const workerInstallationConstraintErrorMessages = {
