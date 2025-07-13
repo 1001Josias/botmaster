@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS worker_installation (
     default_version VARCHAR(50) NOT NULL, -- default_version VARCHAR(50) NOT NULL REFERENCES worker_release(version),
     installed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     installed_by INT NOT NULL, -- installed_by INT REFERENCES users(id) NOT NULL,
-    default_properties JSONB NOT NULL,
+    default_properties JSONB NOT NULL
 );
 
 ALTER TABLE worker_installation ENABLE ROW LEVEL SECURITY;
