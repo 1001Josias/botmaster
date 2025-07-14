@@ -30,6 +30,7 @@ export class WorkerInstallationService
   ): Promise<ServiceResponse<WorkerInstallationResponseDto | ServiceResponseObjectError | null>> {
     try {
       return await WorkerInstallationRepository.session(this.context, async (workerInstallationRepository) => {
+        logger.info({ workerInstallation }, 'Installing worker:')
         const workerInstallationResponse = await workerInstallationRepository.install(workerInstallation)
         return this.createdSuccessfully(
           WorkerInstallationResponseMessages.installedSuccessfullyMessage,
