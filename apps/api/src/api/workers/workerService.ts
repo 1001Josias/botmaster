@@ -26,6 +26,9 @@ export class WorkerService
         return this.badRequestError(WorkerResponseMessages.invalidScopeRefPrivate(worker.scope))
       }
 
+      // TODO: if scope is 'folder', scopeRef should be set to the folder key from the context, in which case scopeRef should not be provided
+      // TODO: if scope is 'folder', worker should be installed automatically in the folder from the context
+
       return await WorkerRepository.session(this.context, async (workerRepository) => {
         const createdWorker = await workerRepository.create(worker)
         return this.createdSuccessfully(WorkerResponseMessages.createdSuccessfullyMessage, createdWorker)
