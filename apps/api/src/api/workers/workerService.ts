@@ -3,7 +3,7 @@ import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IWorker } from '@/api/workers/worker'
 import { WorkerResponseDto, CreateWorkerDto } from '@/api/workers/workerModel'
 import { BaseService } from '@/common/services/baseService'
-import { workerConstraintErrorMessages, WorkerConstraints, WorkerResponseMessages } from './workerResponseMessages'
+import { workerConstraintErrorMessages, WorkerResponseMessages } from './workerResponseMessages'
 import { ServiceResponseObjectError } from '@/common/services/services'
 
 export class WorkerService
@@ -31,9 +31,7 @@ export class WorkerService
         return this.createdSuccessfully(WorkerResponseMessages.createdSuccessfullyMessage, createdWorker)
       })
     } catch (error) {
-      return this.handleError(error, (dbError) => {
-        return workerConstraintErrorMessages[dbError.constraint as WorkerConstraints]
-      })
+      return this.handleError(error, workerConstraintErrorMessages, WorkerResponseMessages.notFoundErrorMessage)
     }
   }
 }

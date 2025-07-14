@@ -37,9 +37,11 @@ export class WorkerInstallationService
         )
       })
     } catch (error) {
-      return this.handleError(error, (dbError) => {
-        return workerInstallationConstraintErrorMessages[dbError.constraint as WorkerInstallationConstraints]
-      })
+      return this.handleError(
+        error,
+        workerInstallationConstraintErrorMessages,
+        WorkerInstallationMessages.notFoundErrorMessage
+      )
     }
   }
 }

@@ -3,6 +3,7 @@ import { dbPool } from '../utils/dbPool'
 import { logger } from '@/server'
 import { readSqlFile } from '../utils/sqlReader'
 import { ContextDto } from '../utils/commonValidation'
+import { ResourceNotFoundError } from '../utils/errorHandlers'
 
 const setSessionContextQuery = readSqlFile(`${__dirname}/../queries/set_session_context.sql`)
 const lockEntityQuery = readSqlFile(`${__dirname}/../queries/lock_entity.sql`)
@@ -62,7 +63,11 @@ export abstract class BaseRepository {
 
   async query<R extends QueryResultRow>(queryTextOrConfig: string | QueryConfig<any[]>, values?: any[]) {
     await this.ensureSessionContext()
-    return await this.database.query<R>(queryTextOrConfig, values)
+    const result = await this.database.query<R>(queryTextOrConfig, values)
+    if (result.rowCount === 0) {
+      throw new ResourceNotFoundError()
+    }
+    return result
   }
 
   protected async ensureSessionContext(): Promise<void> {

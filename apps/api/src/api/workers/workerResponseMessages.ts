@@ -9,6 +9,11 @@ export class WorkerResponseMessages {
     responseObject: null,
   }
 
+  static notFoundErrorMessage: ServiceResponseErrorParams = {
+    message: 'Worker not found',
+    responseObject: null,
+  }
+
   static invalidScopeRefPublic: ServiceResponseErrorParams = {
     message: 'ScopeRef must be null when scope is public',
     responseObject: null,
@@ -23,5 +28,3 @@ export class WorkerResponseMessages {
 export const workerConstraintErrorMessages = {
   worker_name_key: WorkerResponseMessages.alreadyExistsErrorMessage,
 }
-
-export type WorkerConstraints = keyof typeof workerConstraintErrorMessages

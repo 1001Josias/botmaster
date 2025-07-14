@@ -4,32 +4,36 @@ import { PostgresErrorCodes } from '../utils/dbStatusCode'
 import { StatusCodes } from 'http-status-codes'
 import { logger } from '@/server'
 import { ServiceResponseObjectError, ServiceResponseErrorParams } from './services'
-import { BaseRepository } from '../repositories/baseRepository'
 import { ContextDto } from '../utils/commonValidation'
+import { ResourceNotFoundError } from '../utils/errorHandlers'
 
 export abstract class BaseService {
   protected context!: ContextDto
 
   constructor() {}
 
-  protected handleError(
+  protected handleError<T extends { [key: string]: ServiceResponseErrorParams }>(
     error: unknown,
-    callback: (dbError: DatabaseError) => ServiceResponseErrorParams | undefined
+    constraintErrors: T,
+    notFoundError: ServiceResponseErrorParams
   ): ServiceResponse<ServiceResponseObjectError | null> {
-    if (!(error instanceof DatabaseError)) throw error
-
-    const serviceMessage = callback(error)
-    if (!serviceMessage) throw error
-    logger.warn(`${serviceMessage.message}: ${error.detail}`)
-
-    switch (error.code) {
-      case PostgresErrorCodes.UNIQUE_VIOLATION:
-        return this.conflictError(serviceMessage)
-      case PostgresErrorCodes.FOREIGN_KEY_VIOLATION:
-        return this.badRequestError(serviceMessage)
-      default:
-        logger.debug(`Error code: ${error.code}, message: ${error.message} in entity: ${error.table || 'unknown'}`)
-        throw new Error(`Not handled database error: ${error.message}, ${error}`)
+    try {
+      if (!(error instanceof DatabaseError)) throw error
+      const constraintErrorMessage = constraintErrors[error.constraint as string]
+      switch (error.code) {
+        case PostgresErrorCodes.UNIQUE_VIOLATION:
+          return this.conflictError(constraintErrorMessage)
+        case PostgresErrorCodes.FOREIGN_KEY_VIOLATION:
+          return this.badRequestError(constraintErrorMessage)
+        default:
+          logger.debug(`Error code: ${error.code}, message: ${error.message} in entity: ${error.table || 'unknown'}`)
+          throw new Error(`Not handled database error: ${error.message}, ${error}`)
+      }
+    } catch (error) {
+      if (error instanceof ResourceNotFoundError) {
+        return this.notFoundError(notFoundError)
+      }
+      throw error
     }
   }
 

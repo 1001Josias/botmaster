@@ -6,3 +6,10 @@ export class InternalError {
 export enum SystemErrorMessages {
   SYNTAX_ERROR = 'The request body contains malformed JSON. Correct the structure and try again.',
 }
+
+export class ResourceNotFoundError extends Error {
+  constructor(message: string = 'Resource not found') {
+    super(message)
+    this.name = 'ResourceNotFoundError'
+  }
+}
