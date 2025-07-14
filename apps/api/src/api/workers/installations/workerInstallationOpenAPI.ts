@@ -1,5 +1,9 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
-import { WorkerInstallationSchema, WorkerInstallationResponseSchema } from './workerInstallationModel'
+import {
+  WorkerInstallationSchema,
+  WorkerInstallationResponseSchema,
+  DeleteWorkerInstallationParamsSchema,
+} from './workerInstallationModel'
 import { createOpenApiResponse } from '@/api-docs/openAPIResponseBuilders'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
@@ -14,6 +18,13 @@ const workerInstallationOpenApiResponseSuccess = {
   description: 'Success',
   dataSchema: WorkerInstallationResponseSchema as z.ZodType,
   statusCode: StatusCodes.CREATED,
+}
+
+const workerUninstallationOpenApiResponseSuccess = {
+  success: true,
+  description: 'Worker uninstalled successfully',
+  dataSchema: z.null(),
+  statusCode: StatusCodes.OK,
 }
 
 const contextHeaders = {
@@ -35,4 +46,19 @@ workerInstallationRegistry.registerPath({
     headers: z.object(contextHeaders),
   },
   responses: createOpenApiResponse([workerInstallationOpenApiResponseSuccess]),
+})
+
+const contextHeadersWithoutWorkerKey = z.object({
+  'x-folder-key': contextSchema.shape.folderKey,
+})
+
+workerInstallationRegistry.registerPath({
+  method: 'delete',
+  path: `${workerInstallationPath}/{workerKey}`,
+  tags: ['Workers, installations'],
+  request: {
+    headers: contextHeadersWithoutWorkerKey,
+    params: DeleteWorkerInstallationParamsSchema,
+  },
+  responses: createOpenApiResponse([workerUninstallationOpenApiResponseSuccess]),
 })
