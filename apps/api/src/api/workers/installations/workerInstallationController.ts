@@ -7,7 +7,6 @@ import {
 } from './workerInstallationModel'
 import { IWorkerInstallation } from './workerInstallation'
 import { handleServiceResponse, ResponseCustom } from '@/common/utils/httpHandlers'
-import { logger } from '@/server'
 import { BaseController } from '@/common/controllers/baseController'
 import { WorkerInstallationResponseMessages } from './workerInstallationMessages'
 
