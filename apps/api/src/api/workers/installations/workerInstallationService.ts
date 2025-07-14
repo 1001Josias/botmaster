@@ -54,7 +54,7 @@ export class WorkerInstallationService
         logger.info(`Uninstalling worker ${workerKey}...`)
         const workerUninstalled = await workerInstallationRepository.uninstall(workerKey)
         return this.deletedSuccessfully(
-          WorkerInstallationResponseMessages.uninstalledSuccessfullyMessage(workerKey),
+          WorkerInstallationResponseMessages.uninstalledSuccessfullyMessage,
           workerUninstalled
         )
       })

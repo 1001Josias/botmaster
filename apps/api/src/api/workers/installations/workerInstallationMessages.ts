@@ -3,9 +3,7 @@ import { ServiceResponseErrorParams } from '@/common/services/services'
 export class WorkerInstallationResponseMessages {
   static installedSuccessfullyMessage: string = 'Worker installed successfully'
 
-  static uninstalledSuccessfullyMessage(workerKey: string): string {
-    return `Worker ${workerKey} uninstalled successfully`
-  }
+  static uninstalledSuccessfullyMessage: string = 'Worker uninstalled successfully'
 
   static alreadyInstalledErrorMessage: ServiceResponseErrorParams = {
     message: 'This worker is already installed',
