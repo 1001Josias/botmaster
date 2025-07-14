@@ -103,3 +103,10 @@ export type WorkerInstallationDatabaseResponseDto = {
   default_properties: PropertiesSchema
   installed_at: Date
 }
+
+const WorkerInstallationParamsBaseSchema = z.object({
+  workerKey: commonValidations.key.describe('The unique identifier of the worker to uninstall'),
+})
+
+export const DeleteWorkerInstallationParamsSchema = WorkerInstallationParamsBaseSchema
+export type DeleteWorkerInstallationDto = z.infer<typeof DeleteWorkerInstallationParamsSchema>
