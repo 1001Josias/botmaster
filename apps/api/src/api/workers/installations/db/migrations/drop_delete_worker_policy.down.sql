@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS delete_worker_policy ON worker_installation;
