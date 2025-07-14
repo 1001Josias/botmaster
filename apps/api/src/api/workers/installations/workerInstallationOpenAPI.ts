@@ -23,7 +23,7 @@ const workerInstallationOpenApiResponseSuccess = {
 const workerUninstallationOpenApiResponseSuccess = {
   success: true,
   description: 'Worker uninstalled successfully',
-  dataSchema: z.null(),
+  dataSchema: WorkerInstallationResponseSchema,
   statusCode: StatusCodes.OK,
 }
 
