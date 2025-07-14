@@ -11,6 +11,7 @@ import {
   workerInstallationConstraintErrorMessages,
 } from './workerInstallationMessages'
 import { ServiceResponseObjectError } from '@/common/services/services'
+import { logger } from '@/server'
 
 export class WorkerInstallationService
   extends BaseService
@@ -40,6 +41,27 @@ export class WorkerInstallationService
         error,
         workerInstallationConstraintErrorMessages,
         WorkerInstallationResponseMessages.notFoundErrorMessage
+      )
+    }
+  }
+
+  async uninstall(
+    workerKey: string
+  ): Promise<ServiceResponse<WorkerInstallationResponseDto | ServiceResponseObjectError | null>> {
+    try {
+      return await WorkerInstallationRepository.session(this.context, async (workerInstallationRepository) => {
+        logger.info(`Uninstalling worker ${workerKey}...`)
+        const workerUninstalled = await workerInstallationRepository.uninstall(workerKey)
+        return this.deletedSuccessfully(
+          WorkerInstallationResponseMessages.uninstalledSuccessfullyMessage(workerKey),
+          workerUninstalled
+        )
+      })
+    } catch (error) {
+      return this.handleError(
+        error,
+        workerInstallationConstraintErrorMessages,
+        WorkerInstallationResponseMessages.notInstalledErrorMessage
       )
     }
   }
