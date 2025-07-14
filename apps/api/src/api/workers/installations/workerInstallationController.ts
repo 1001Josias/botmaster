@@ -5,7 +5,7 @@ import { IWorkerInstallation } from './workerInstallation'
 import { handleServiceResponse, ResponseCustom } from '@/common/utils/httpHandlers'
 import { logger } from '@/server'
 import { BaseController } from '@/common/controllers/baseController'
-import { WorkerInstallationMessages } from './workerInstallationMessages'
+import { WorkerInstallationResponseMessages } from './workerInstallationMessages'
 
 export class WorkerInstallationController
   extends BaseController<WorkerInstallationService>
@@ -28,7 +28,7 @@ export class WorkerInstallationController
     next: NextFunction
   ) => {
     try {
-      this.context<WorkerInstallationMessages>(req, async (workerInstallationService) => {
+      this.context<WorkerInstallationResponseMessages>(req, async (workerInstallationService) => {
         const body = res.locals.validatedData.body as WorkerInstallationDto
         const workerInstallationServiceResponse = await workerInstallationService.install(body)
         return handleServiceResponse(workerInstallationServiceResponse, res)

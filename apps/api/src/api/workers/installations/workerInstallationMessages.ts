@@ -1,6 +1,6 @@
 import { ServiceResponseErrorParams } from '@/common/services/services'
 
-export class WorkerInstallationMessages {
+export class WorkerInstallationResponseMessages {
   static installedSuccessfullyMessage: string = 'Worker installed successfully'
 
   static alreadyInstalledErrorMessage: ServiceResponseErrorParams = {
@@ -22,9 +22,7 @@ export class WorkerInstallationMessages {
 }
 
 export const workerInstallationConstraintErrorMessages = {
-  idx_worker_installation_unique: WorkerInstallationMessages.alreadyInstalledErrorMessage,
-  worker_installation_worker_key_fkey: WorkerInstallationMessages.notFoundErrorMessage,
-  worker_installation_worker_ref_fkey: WorkerInstallationMessages.notAvailableToInstallErrorMessage,
+  idx_worker_installation_unique: WorkerInstallationResponseMessages.alreadyInstalledErrorMessage,
+  worker_installation_worker_key_fkey: WorkerInstallationResponseMessages.notFoundErrorMessage,
+  worker_installation_worker_ref_fkey: WorkerInstallationResponseMessages.notAvailableToInstallErrorMessage,
 }
-
-export type WorkerInstallationConstraints = keyof typeof workerInstallationConstraintErrorMessages

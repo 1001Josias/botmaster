@@ -7,8 +7,7 @@ import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IWorkerInstallation } from './workerInstallation'
 import { BaseService } from '@/common/services/baseService'
 import {
-  WorkerInstallationConstraints,
-  WorkerInstallationMessages,
+  WorkerInstallationResponseMessages,
   workerInstallationConstraintErrorMessages,
 } from './workerInstallationMessages'
 import { ServiceResponseObjectError } from '@/common/services/services'
@@ -32,7 +31,7 @@ export class WorkerInstallationService
       return await WorkerInstallationRepository.session(this.context, async (workerInstallationRepository) => {
         const workerInstallationResponse = await workerInstallationRepository.install(workerInstallation)
         return this.createdSuccessfully(
-          WorkerInstallationMessages.installedSuccessfullyMessage,
+          WorkerInstallationResponseMessages.installedSuccessfullyMessage,
           workerInstallationResponse
         )
       })
@@ -40,7 +39,7 @@ export class WorkerInstallationService
       return this.handleError(
         error,
         workerInstallationConstraintErrorMessages,
-        WorkerInstallationMessages.notFoundErrorMessage
+        WorkerInstallationResponseMessages.notFoundErrorMessage
       )
     }
   }
