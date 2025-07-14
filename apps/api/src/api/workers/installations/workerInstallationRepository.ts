@@ -1,10 +1,9 @@
-import { Pool, PoolClient } from 'pg'
+import { PoolClient } from 'pg'
 import {
   WorkerInstallationDto,
   WorkerInstallationDatabaseResponseDto,
   WorkerInstallationResponseDto,
 } from '@/api/workers/installations/workerInstallationModel'
-import { dbPool } from '@/common/utils/dbPool'
 import { BaseRepository } from '@/common/repositories/baseRepository'
 import { readSqlFile } from '@/common/utils/sqlReader'
 import { IWorkerInstallation } from './workerInstallation'
