@@ -49,6 +49,21 @@ export class WorkerInstallationController
       next(error)
     }
   }
+
+  public getAll = async (
+    req: Request,
+    res: ResponseCustom<WorkerInstallationResponseDto[], null>,
+    next: NextFunction
+  ) => {
+    try {
+      await this.context<void>(req, async (workerInstallationService) => {
+        const serviceResponse = await workerInstallationService.getAll()
+        handleServiceResponse(serviceResponse, res)
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 export const workerInstallationController = new WorkerInstallationController()

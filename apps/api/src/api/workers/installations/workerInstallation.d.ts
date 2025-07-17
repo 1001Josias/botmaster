@@ -38,4 +38,9 @@ export interface IWorkerInstallationController extends IWorkerInstallationBase {
     res: ResponseCustom<null, null>,
     next: NextFunction
   ) => Promise<void>
+  getAll: (
+    req: Request,
+    res: ResponseCustom<WorkerInstallationResponseDto[], null>,
+    next: NextFunction
+  ) => Promise<void>
 }
