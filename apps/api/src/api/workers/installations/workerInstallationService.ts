@@ -13,10 +13,7 @@ import {
 import { ServiceResponseObjectError } from '@/common/services/services'
 import { logger } from '@/server'
 
-export class WorkerInstallationService 
-  extends BaseService 
-  implements IWorkerInstallationService
-{
+export class WorkerInstallationService extends BaseService implements IWorkerInstallationService {
   constructor() {
     super()
   }

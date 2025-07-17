@@ -12,7 +12,7 @@ import { WorkerInstallationResponseMessages } from './workerInstallationMessages
 
 export class WorkerInstallationController
   extends BaseController<WorkerInstallationService>
-  implements IWorkerInstallationController 
+  implements IWorkerInstallationController
 {
   constructor(protected service: WorkerInstallationService = new WorkerInstallationService()) {
     super(service)

@@ -12,9 +12,7 @@ const installWorkerSql = readSqlFile(`${__dirname}/db/queries/install_worker.sql
 const uninstallWorkerSql = readSqlFile(`${__dirname}/db/queries/uninstall_worker.sql`)
 const getInstallationsSql = readSqlFile(`${__dirname}/db/queries/get_all_workers_installed.sql`)
 
-export class WorkerInstallationRepository
-  extends BaseRepository
-  implements IWorkerInstallationRepository {
+export class WorkerInstallationRepository extends BaseRepository implements IWorkerInstallationRepository {
   constructor(protected readonly database: PoolClient) {
     super(database)
   }
