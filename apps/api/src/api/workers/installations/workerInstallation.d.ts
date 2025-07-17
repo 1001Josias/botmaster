@@ -24,6 +24,7 @@ export interface IWorkerInstallationService extends IWorkerInstallationBase {
   uninstall: (
     workerKey: string
   ) => Promise<ServiceResponse<WorkerInstallationResponseDto | ServiceResponseObjectError | null>>
+  getAll: () => Promise<ServiceResponse<WorkerInstallationResponseDto[] | ServiceResponseObjectError | null>>
 }
 
 export interface IWorkerInstallationController extends IWorkerInstallationBase {

@@ -62,4 +62,23 @@ export class WorkerInstallationService
       )
     }
   }
+
+  async getAll(): Promise<ServiceResponse<WorkerInstallationResponseDto[] | ServiceResponseObjectError | null>> {
+    try {
+      return await WorkerInstallationRepository.session(this.context, async (workerInstallationRepository) => {
+        logger.info(`Fetching all installed workers in the folder ${this.context.folderKey}...`)
+        const installations = await workerInstallationRepository.getAll()
+        return this.fetchedSuccessfully(
+          WorkerInstallationResponseMessages.installedWorkersFetchedSuccessfullyMessage,
+          installations
+        )
+      })
+    } catch (error) {
+      return this.handleError(
+        error,
+        workerInstallationConstraintErrorMessages,
+        WorkerInstallationResponseMessages.notFoundErrorMessage
+      )
+    }
+  }
 }
