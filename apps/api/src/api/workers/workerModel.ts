@@ -68,7 +68,7 @@ export const WorkerRouteParamsSchema = z.object({
 })
 
 export const WorkerKeyRouteParamsSchema = z.object({
-  params: z.object({ key: commonValidations.key }),
+  key: commonValidations.key,
 })
 
 export const GetWorkersRouteQuerySchema = z.object({

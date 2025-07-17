@@ -68,7 +68,7 @@ workerRegistryV1.registerPath({
   path: `${workerPath}/{key}`,
   tags: ['Workers'],
   request: {
-    params: WorkerKeyRouteParamsSchema.shape.params,
+    params: WorkerKeyRouteParamsSchema,
     headers: z.object(contextHeaders),
   },
   responses: createOpenApiResponse([workerOpenApiResponseSuccessGet, workerOpenApiResponseNotFound]),
