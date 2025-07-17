@@ -55,16 +55,14 @@ workerInstallationRegistry.registerPath({
   responses: createOpenApiResponse([workerInstallationOpenApiResponseSuccess]),
 })
 
-const contextHeadersWithoutWorkerKey = z.object({
-  'x-folder-key': contextSchema.shape.folderKey,
-})
-
 workerInstallationRegistry.registerPath({
   method: 'delete',
   path: `${workerInstallationPath}/{workerKey}`,
   tags: ['Workers, installations'],
   request: {
-    headers: contextHeadersWithoutWorkerKey,
+    headers: z.object({
+      'x-folder-key': contextSchema.shape.folderKey,
+    }),
     params: DeleteWorkerInstallationParamsSchema,
   },
   responses: createOpenApiResponse([workerUninstallationOpenApiResponseSuccess]),
