@@ -48,7 +48,11 @@ Each resource in `src/api/` should contain the following components:
 4. **Model**: Defines Zod schemas for validation and TypeScript types.
 5. **Router**: Defines HTTP endpoints and applies validation middlewares.
 6. **OpenAPI**: Swagger documentation for endpoints.
-7. **Interface (.d.ts)**: Contracts that define the methods to be implemented.
+7. **Interface (.d.ts)**: Contracts that define the methods to be implemented, following the layer-specific interfaces approach:
+   - **IResourceBase**: Base interface with common methods.
+   - **IResourceRepository**: Specific interface for Repository.
+   - **IResourceService**: Specific interface for Service.
+   - **IResourceController**: Specific interface for Controller.
 8. **SQL Files**: SQL queries for database operations.
 9. **Tests**: Unit and integration tests.
 
@@ -116,45 +120,71 @@ src/api/example/
 
 ### Interface (\*.d.ts)
 
+To ensure better typing and data control in each application layer, use layer-specific interfaces:
+
+Layer-specific interfaces offer several benefits:
+
+1. **Type Safety**: Each layer has its own interface with specific types for its parameters and returns.
+2. **Clarity**: Makes explicit what data enters and exits each layer.
+3. **Maintenance**: Makes it easier to identify contract breaks during development.
+4. **Documentation**: Serves as living documentation of what each layer expects and returns.
+5. **Testability**: Facilitates the creation of mocks and stubs for testing.
+
 ```typescript
-export interface IExample<I extends unknown[] = unknown[], O = unknown> {
-  create: (...args: I) => O
-  // Other methods as needed
+// Base interface with common methods
+export interface IExampleBase {
+  create: (...args: any[]) => Promise<any>
+  getById: (...args: any[]) => Promise<any>
+  getAll: (...args: any[]) => Promise<any>
+  update: (...args: any[]) => Promise<any>
+  delete: (...args: any[]) => Promise<any>
 }
-```
 
-#### Comprehensive Interface Example
+// Interface específica para o Repository
+export interface IExampleRepository extends IExampleBase {
+  create: (example: CreateExampleDto) => Promise<ExampleResponseDto>
+  getById: (id: string) => Promise<ExampleResponseDto>
+  getAll: () => Promise<ExampleResponseDto[]>
+  update: (id: string, example: UpdateExampleDto) => Promise<ExampleResponseDto>
+  delete: (id: string) => Promise<ExampleResponseDto>
+}
 
-For a more complete resource with multiple operations:
+// Interface específica para o Service
+export interface IExampleService extends IExampleBase {
+  create: (example: CreateExampleDto) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
+  getById: (id: string) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
+  getAll: () => Promise<ServiceResponse<ExampleResponseDto[] | ServiceResponseObjectError | null>>
+  update: (id: string, example: UpdateExampleDto) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
+  delete: (id: string) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
+}
 
-```typescript
-export interface IExample<I extends unknown[] = unknown[], O = unknown> {
-  // Create operations
-  create: (...args: I) => O
-  createBatch?: (...args: I) => O
-
-  // Read operations
-  getById: (...args: I) => O
-  getAll: (...args: I) => O
-  getByFilter?: (...args: I) => O
-
-  // Update operations
-  update: (...args: I) => O
-  updatePartial?: (...args: I) => O
-  updateStatus?: (...args: I) => O
-
-  // Delete operations
-  delete: (...args: I) => O
-  softDelete?: (...args: I) => O
-
-  // Specialized operations
-  clone?: (...args: I) => O
-  archive?: (...args: I) => O
-  restore?: (...args: I) => O
-
-  // Relationship operations
-  addRelation?: (...args: I) => O
-  removeRelation?: (...args: I) => O
+// Interface específica para o Controller
+export interface IExampleController extends IExampleBase {
+  create: (
+    req: Request<CreateExampleDto>,
+    res: ResponseCustom<ExampleResponseDto, CreateExampleDto>,
+    next: NextFunction
+  ) => Promise<void>
+  getById: (
+    req: Request<{ id: string }>,
+    res: ResponseCustom<ExampleResponseDto, null>,
+    next: NextFunction
+  ) => Promise<void>
+  getAll: (
+    req: Request,
+    res: ResponseCustom<ExampleResponseDto[], null>,
+    next: NextFunction
+  ) => Promise<void>
+  update: (
+    req: Request<{ id: string }, null, UpdateExampleDto>,
+    res: ResponseCustom<ExampleResponseDto, UpdateExampleDto>,
+    next: NextFunction
+  ) => Promise<void>
+  delete: (
+    req: Request<{ id: string }>,
+    res: ResponseCustom<null, null>,
+    next: NextFunction
+  ) => Promise<void>
 }
 ```
 
