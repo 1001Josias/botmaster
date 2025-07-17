@@ -1,0 +1,4 @@
+SELECT 1
+FROM worker
+WHERE id = $1
+LIMIT 1;

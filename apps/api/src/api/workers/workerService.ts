@@ -8,10 +8,24 @@ import { ServiceResponseObjectError } from '@/common/services/services'
 
 export class WorkerService
   extends BaseService
-  implements IWorker<[CreateWorkerDto], Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>>>
+  implements IWorker<any, Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>>>
 {
   constructor() {
     super()
+  }
+
+  async getByKey(key: string): Promise<ServiceResponse<WorkerResponseDto | ServiceResponseObjectError | null>> {
+    try {
+      return await WorkerRepository.session(this.context, async (workerRepository) => {
+        const worker = await workerRepository.getByKey(key)
+        if (!worker) {
+          return this.notFoundError(WorkerResponseMessages.notFoundErrorMessage)
+        }
+        return this.updatedSuccessfully(WorkerResponseMessages.foundSuccessfullyMessage, worker)
+      })
+    } catch (error) {
+      return this.handleError(error, workerConstraintErrorMessages, WorkerResponseMessages.notFoundErrorMessage)
+    }
   }
 
   async create(

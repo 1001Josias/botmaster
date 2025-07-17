@@ -1,5 +1,5 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
-import { CreateWorkerSchema, UpdateWorkerSchema, WorkerResponseSchema, WorkerResponseDto } from './workerModel'
+import { CreateWorkerSchema, WorkerResponseSchema, WorkerResponseDto, WorkerKeyRouteParamsSchema } from './workerModel'
 import { createOpenApiResponse, OpenApiResponseConfig } from '@/api-docs/openAPIResponseBuilders'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
@@ -16,6 +16,20 @@ const workerOpenApiResponseSuccess: OpenApiResponseConfig<WorkerResponseDto> = {
   statusCode: StatusCodes.CREATED,
 }
 
+const workerOpenApiResponseSuccessGet: OpenApiResponseConfig<WorkerResponseDto> = {
+  success: true,
+  description: 'Success',
+  dataSchema: WorkerResponseSchema as z.ZodType,
+  statusCode: StatusCodes.OK,
+}
+
+const workerOpenApiResponseNotFound: OpenApiResponseConfig<null> = {
+  success: false,
+  description: 'Not Found',
+  dataSchema: z.null().openapi({ example: 'null' as unknown as null }),
+  statusCode: StatusCodes.NOT_FOUND,
+}
+
 const workerOpenApiResponseConflict: OpenApiResponseConfig<null> = {
   success: false,
   description: 'Conflict',
@@ -24,10 +38,13 @@ const workerOpenApiResponseConflict: OpenApiResponseConfig<null> = {
 }
 
 workerRegistryV1.register('CreateWorker', CreateWorkerSchema)
+workerRegistryV1.register('WorkerKeyRouteParams', WorkerKeyRouteParamsSchema)
+
 const contextHeaders = {
   'x-folder-key': contextSchema.shape.folderKey.openapi({ description: 'Folder identifier (context)' }),
 }
 
+// POST /workers
 workerRegistryV1.registerPath({
   method: 'post',
   path: workerPath,
@@ -43,4 +60,16 @@ workerRegistryV1.registerPath({
     headers: z.object(contextHeaders),
   },
   responses: createOpenApiResponse([workerOpenApiResponseSuccess, workerOpenApiResponseConflict]),
+})
+
+// GET /workers/{key}
+workerRegistryV1.registerPath({
+  method: 'get',
+  path: `${workerPath}/{key}`,
+  tags: ['Workers'],
+  request: {
+    params: WorkerKeyRouteParamsSchema.shape.params,
+    headers: z.object(contextHeaders),
+  },
+  responses: createOpenApiResponse([workerOpenApiResponseSuccessGet, workerOpenApiResponseNotFound]),
 })
