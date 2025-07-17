@@ -15,7 +15,7 @@ const workerInstallationPath = '/workers/installations'
 
 const workerInstallationOpenApiResponseSuccess = {
   success: true,
-  description: 'Success',
+  description: 'Worker installed successfully',
   dataSchema: WorkerInstallationResponseSchema as z.ZodType,
   statusCode: StatusCodes.CREATED,
 }
