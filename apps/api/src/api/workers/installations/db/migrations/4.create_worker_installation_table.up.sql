@@ -17,3 +17,10 @@ CREATE INDEX idx_worker_installation_folder_key ON worker_installation(folder_ke
 CREATE INDEX idx_worker_installation_priority ON worker_installation(priority DESC);
 CREATE INDEX idx_worker_installation_installed_at ON worker_installation(installed_at);
 CREATE INDEX idx_worker_installation_installed_by ON worker_installation(installed_by);
+
+
+CREATE POLICY folder_access_policy ON worker_installation
+  FOR ALL
+  USING (
+    folder_key = current_setting('app.folder_key')::UUID
+  );
