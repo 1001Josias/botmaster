@@ -16,3 +16,5 @@ workerInstallationRouterV1.delete(
   validateRequest(DeleteWorkerInstallationParamsSchema, 'params'),
   workerInstallationController.uninstall
 )
+
+workerInstallationRouterV1.get('/', workerInstallationController.getAll)
