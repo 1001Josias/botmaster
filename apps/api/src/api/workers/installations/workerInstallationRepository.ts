@@ -6,15 +6,14 @@ import {
 } from '@/api/workers/installations/workerInstallationModel'
 import { BaseRepository } from '@/common/repositories/baseRepository'
 import { readSqlFile } from '@/common/utils/sqlReader'
-import { IWorkerInstallation } from './workerInstallation'
+import { IWorkerInstallationRepository } from './workerInstallation'
 
 const installWorkerSql = readSqlFile(`${__dirname}/db/queries/install_worker.sql`)
 const uninstallWorkerSql = readSqlFile(`${__dirname}/db/queries/uninstall_worker.sql`)
 
 export class WorkerInstallationRepository
   extends BaseRepository
-  implements IWorkerInstallation<[WorkerInstallationDto], Promise<WorkerInstallationResponseDto>>
-{
+  implements IWorkerInstallationRepository {
   constructor(protected readonly database: PoolClient) {
     super(database)
   }

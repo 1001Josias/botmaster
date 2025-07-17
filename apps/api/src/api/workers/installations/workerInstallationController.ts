@@ -5,21 +5,14 @@ import {
   WorkerInstallationResponseDto,
   DeleteWorkerInstallationDto,
 } from './workerInstallationModel'
-import { IWorkerInstallation } from './workerInstallation'
+import { IWorkerInstallationController } from './workerInstallation'
 import { handleServiceResponse, ResponseCustom } from '@/common/utils/httpHandlers'
 import { BaseController } from '@/common/controllers/baseController'
 import { WorkerInstallationResponseMessages } from './workerInstallationMessages'
 
 export class WorkerInstallationController
   extends BaseController<WorkerInstallationService>
-  implements
-    IWorkerInstallation<
-      [
-        Request<WorkerInstallationDto>,
-        ResponseCustom<WorkerInstallationResponseDto, WorkerInstallationDto>,
-        NextFunction,
-      ]
-    >
+  implements IWorkerInstallationController 
 {
   constructor(protected service: WorkerInstallationService = new WorkerInstallationService()) {
     super(service)

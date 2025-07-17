@@ -4,7 +4,7 @@ import {
 } from '@/api/workers/installations/workerInstallationModel'
 import { WorkerInstallationRepository } from '@/api/workers/installations/workerInstallationRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
-import { IWorkerInstallation } from './workerInstallation'
+import { IWorkerInstallationService } from './workerInstallation'
 import { BaseService } from '@/common/services/baseService'
 import {
   WorkerInstallationResponseMessages,
@@ -13,13 +13,9 @@ import {
 import { ServiceResponseObjectError } from '@/common/services/services'
 import { logger } from '@/server'
 
-export class WorkerInstallationService
-  extends BaseService
-  implements
-    IWorkerInstallation<
-      [WorkerInstallationDto],
-      Promise<ServiceResponse<WorkerInstallationResponseDto | ServiceResponseObjectError | null>>
-    >
+export class WorkerInstallationService 
+  extends BaseService 
+  implements IWorkerInstallationService
 {
   constructor() {
     super()
