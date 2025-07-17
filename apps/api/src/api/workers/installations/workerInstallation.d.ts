@@ -8,11 +8,13 @@ import { ResponseCustom } from '@/common/utils/httpHandlers'
 export interface IWorkerInstallationBase {
   install: (...args: any[]) => Promise<any>
   uninstall: (...args: any[]) => Promise<any>
+  getAll: (...args: any[]) => Promise<any>
 }
 
 export interface IWorkerInstallationRepository extends IWorkerInstallationBase {
   install: (worker: WorkerInstallationDto) => Promise<WorkerInstallationResponseDto>
   uninstall: (workerKey: string) => Promise<WorkerInstallationResponseDto>
+  getAll: () => Promise<WorkerInstallationResponseDto[]>
 }
 
 export interface IWorkerInstallationService extends IWorkerInstallationBase {

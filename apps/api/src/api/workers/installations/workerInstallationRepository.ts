@@ -10,6 +10,7 @@ import { IWorkerInstallationRepository } from './workerInstallation'
 
 const installWorkerSql = readSqlFile(`${__dirname}/db/queries/install_worker.sql`)
 const uninstallWorkerSql = readSqlFile(`${__dirname}/db/queries/uninstall_worker.sql`)
+const getInstallationsSql = readSqlFile(`${__dirname}/db/queries/get_all_workers_installed.sql`)
 
 export class WorkerInstallationRepository
   extends BaseRepository
@@ -52,5 +53,18 @@ export class WorkerInstallationRepository
       defaultProperties: row.default_properties,
       installedAt: row.installed_at,
     }
+  }
+
+  async getAll(): Promise<WorkerInstallationResponseDto[]> {
+    const result = await this.query<WorkerInstallationDatabaseResponseDto>(getInstallationsSql)
+    return result.rows.map((row) => ({
+      workerKey: row.worker_key,
+      priority: row.priority,
+      folderKey: row.folder_key,
+      defaultVersion: row.default_version,
+      installedBy: row.installed_by,
+      defaultProperties: row.default_properties,
+      installedAt: row.installed_at,
+    }))
   }
 }
