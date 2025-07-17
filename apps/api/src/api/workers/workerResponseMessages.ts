@@ -3,6 +3,7 @@ import { Scope } from './workerModel'
 
 export class WorkerResponseMessages {
   static createdSuccessfullyMessage: string = 'Worker created successfully'
+  static foundSuccessfullyMessage: string = 'Worker found successfully'
 
   static alreadyExistsErrorMessage: ServiceResponseErrorParams = {
     message: 'Already exists a worker with this name',

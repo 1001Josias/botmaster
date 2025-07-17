@@ -7,12 +7,25 @@ import { ResponseCustom } from '@/common/utils/httpHandlers'
 import { BaseController } from '@/common/controllers/baseController'
 import { WorkerResponseMessages } from './workerResponseMessages'
 
-export class WorkerController
-  extends BaseController<WorkerService>
-  implements IWorker<[Request<CreateWorkerDto>, ResponseCustom<WorkerResponseDto, CreateWorkerDto>, NextFunction]>
-{
+export class WorkerController extends BaseController<WorkerService> {
   constructor(service: WorkerService = new WorkerService()) {
     super(service)
+  }
+
+  public getByKey = async (
+    req: Request<{ key: string }>,
+    res: ResponseCustom<WorkerResponseDto, { key: string }>,
+    next: NextFunction
+  ) => {
+    try {
+      return await this.context<WorkerResponseMessages>(req, async (workerService) => {
+        const { key } = req.params
+        const worker = await workerService.getByKey(key)
+        return handleServiceResponse(worker, res)
+      })
+    } catch (err) {
+      next(err)
+    }
   }
 
   public create = async (
