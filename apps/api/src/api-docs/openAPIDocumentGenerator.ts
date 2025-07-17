@@ -4,9 +4,15 @@ import { healthCheckRegistry } from '@/api/healthCheck/healthCheckRouter'
 import { userRegistry } from '@/api/user/userRouter'
 import { workerRegistryV1 } from '@/api/workers/workerOpenAPI'
 import { env } from '@/common/utils/envConfig'
+import { workerInstallationRegistry } from '@/api/workers/installations/workerInstallationOpenAPI'
 
 export function generateOpenAPIDocumentV1() {
-  const registryV1 = new OpenAPIRegistry([healthCheckRegistry, userRegistry, workerRegistryV1])
+  const registryV1 = new OpenAPIRegistry([
+    healthCheckRegistry,
+    userRegistry,
+    workerRegistryV1,
+    workerInstallationRegistry,
+  ])
   const generatorV1 = new OpenApiGeneratorV3(registryV1.definitions)
 
   const baseUrl = `${env.BASE_URL}/api/v1`
