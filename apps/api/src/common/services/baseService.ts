@@ -67,6 +67,11 @@ export abstract class BaseService {
     return ServiceResponse.success(message, responseObject, StatusCodes.OK)
   }
 
+  protected fetchedSuccessfully<T = null>(message: string, responseObject: T) {
+    logger.info(responseObject, message)
+    return ServiceResponse.success(message, responseObject, StatusCodes.OK)
+  }
+
   public setContext(context: ContextDto): void {
     this.context = context
   }

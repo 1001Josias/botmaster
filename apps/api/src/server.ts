@@ -31,8 +31,6 @@ app.use(requestLogger)
 // API Routes v1
 apiRouterV1.use('/health-check', healthCheckRouter)
 apiRouterV1.use('/workers', workersRouterV1)
-apiRouterV1.use('/users', userRouter)
-
 // Routes
 app.use('/api/v1', apiRouterV1)
 

@@ -5,6 +5,8 @@ export class WorkerInstallationResponseMessages {
 
   static uninstalledSuccessfullyMessage: string = 'Worker uninstalled successfully'
 
+  static installedWorkersFetchedSuccessfullyMessage: string = 'Installed workers fetched successfully'
+
   static alreadyInstalledErrorMessage: ServiceResponseErrorParams = {
     message: 'This worker is already installed',
     responseObject: null,

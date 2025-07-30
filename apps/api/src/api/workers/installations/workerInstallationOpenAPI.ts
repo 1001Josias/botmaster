@@ -15,7 +15,7 @@ const workerInstallationPath = '/workers/installations'
 
 const workerInstallationOpenApiResponseSuccess = {
   success: true,
-  description: 'Success',
+  description: 'Worker installed successfully',
   dataSchema: WorkerInstallationResponseSchema as z.ZodType,
   statusCode: StatusCodes.CREATED,
 }
@@ -24,6 +24,13 @@ const workerUninstallationOpenApiResponseSuccess = {
   success: true,
   description: 'Worker uninstalled successfully',
   dataSchema: WorkerInstallationResponseSchema,
+  statusCode: StatusCodes.OK,
+}
+
+const workerInstallationsListOpenApiResponseSuccess = {
+  success: true,
+  description: 'Installed workers fetched successfully',
+  dataSchema: z.array(WorkerInstallationResponseSchema),
   statusCode: StatusCodes.OK,
 }
 
@@ -48,17 +55,27 @@ workerInstallationRegistry.registerPath({
   responses: createOpenApiResponse([workerInstallationOpenApiResponseSuccess]),
 })
 
-const contextHeadersWithoutWorkerKey = z.object({
-  'x-folder-key': contextSchema.shape.folderKey,
-})
-
 workerInstallationRegistry.registerPath({
   method: 'delete',
   path: `${workerInstallationPath}/{workerKey}`,
   tags: ['Workers, installations'],
   request: {
-    headers: contextHeadersWithoutWorkerKey,
+    headers: z.object({
+      'x-folder-key': contextSchema.shape.folderKey,
+    }),
     params: DeleteWorkerInstallationParamsSchema,
   },
   responses: createOpenApiResponse([workerUninstallationOpenApiResponseSuccess]),
+})
+
+workerInstallationRegistry.registerPath({
+  method: 'get',
+  path: workerInstallationPath,
+  tags: ['Workers, installations'],
+  request: {
+    headers: z.object({
+      'x-folder-key': contextSchema.shape.folderKey,
+    }),
+  },
+  responses: createOpenApiResponse([workerInstallationsListOpenApiResponseSuccess]),
 })

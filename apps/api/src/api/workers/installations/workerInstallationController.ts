@@ -5,21 +5,14 @@ import {
   WorkerInstallationResponseDto,
   DeleteWorkerInstallationDto,
 } from './workerInstallationModel'
-import { IWorkerInstallation } from './workerInstallation'
+import { IWorkerInstallationController } from './workerInstallation'
 import { handleServiceResponse, ResponseCustom } from '@/common/utils/httpHandlers'
 import { BaseController } from '@/common/controllers/baseController'
 import { WorkerInstallationResponseMessages } from './workerInstallationMessages'
 
 export class WorkerInstallationController
   extends BaseController<WorkerInstallationService>
-  implements
-    IWorkerInstallation<
-      [
-        Request<WorkerInstallationDto>,
-        ResponseCustom<WorkerInstallationResponseDto, WorkerInstallationDto>,
-        NextFunction,
-      ]
-    >
+  implements IWorkerInstallationController
 {
   constructor(protected service: WorkerInstallationService = new WorkerInstallationService()) {
     super(service)
@@ -50,6 +43,21 @@ export class WorkerInstallationController
       await this.context<void>(req, async (workerInstallationService) => {
         const workerKey = req.params.workerKey
         const serviceResponse = await workerInstallationService.uninstall(workerKey)
+        handleServiceResponse(serviceResponse, res)
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public getAll = async (
+    req: Request,
+    res: ResponseCustom<WorkerInstallationResponseDto[], null>,
+    next: NextFunction
+  ) => {
+    try {
+      await this.context<void>(req, async (workerInstallationService) => {
+        const serviceResponse = await workerInstallationService.getAll()
         handleServiceResponse(serviceResponse, res)
       })
     } catch (error) {
