@@ -67,6 +67,10 @@ export const WorkerRouteParamsSchema = z.object({
   params: z.object({ id: workerId }),
 })
 
+export const WorkerKeyRouteParamsSchema = z.object({
+  key: commonValidations.key,
+})
+
 export const GetWorkersRouteQuerySchema = z.object({
   query: z.object({
     page: z.number().int().positive().describe('The page number to retrieve'),

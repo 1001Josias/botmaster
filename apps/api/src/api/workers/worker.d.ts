@@ -12,6 +12,9 @@
 //   // getByUpdatedBy(worker: I): O
 // }
 
+import { CreateWorkerDto } from './workerModel'
+
 export interface IWorker<I extends unknown[] = unknown[], O = unknown> {
-  create: (...args: I) => O
+  create: (worker: CreateWorkerDto) => O
+  getByKey?: (key: string) => O
 }
