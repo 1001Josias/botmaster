@@ -10,7 +10,7 @@ describe('Worker API Endpoints', () => {
       
       const response = await request(app)
         .get(`/api/v1/workers/${nonExistentKey}`)
-        .set('x-folder-key', 'test-folder-key')
+        .set('x-folder-key', 'a5b3c1d2-e4f6-7890-abcd-ef1234567890')
       
       expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND)
       expect(response.body.success).toBeFalsy()
