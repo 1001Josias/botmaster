@@ -18,7 +18,7 @@ export class WorkerService
     try {
       return await WorkerRepository.session(this.context, async (workerRepository) => {
         const paginatedWorkers = await workerRepository.getAll(query)
-        return this.updatedSuccessfully(WorkerResponseMessages.foundSuccessfullyMessage, paginatedWorkers)
+        return this.fetchedSuccessfully(WorkerResponseMessages.foundSuccessfullyMessage, paginatedWorkers)
       })
     } catch (error) {
       return this.handleError(error, workerConstraintErrorMessages, WorkerResponseMessages.notFoundErrorMessage)
