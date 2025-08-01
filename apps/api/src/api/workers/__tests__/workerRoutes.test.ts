@@ -75,6 +75,7 @@ describe('Worker API Endpoints', () => {
       expect(response.body.responseObject.items).toEqual([])
       expect(response.body.responseObject.pagination.totalItems).toBe(0)
       expect(response.body.responseObject.pagination.totalPages).toBe(0)
+      expect(response.body.responseObject.pagination.lastPage).toBe(1) // Always at least 1
       expect(response.body.responseObject.pagination.previousPages).toEqual([])
       expect(response.body.responseObject.pagination.nextPages).toEqual([])
     })

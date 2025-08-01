@@ -125,7 +125,7 @@ export class WorkerRepository extends BaseRepository implements IWorker<any, Pro
         previousPages,
         nextPages,
         firstPage: 1,
-        lastPage: totalPages,
+        lastPage: Math.max(1, totalPages),
       }
     }
   }

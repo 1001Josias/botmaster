@@ -1,5 +1,8 @@
 import { z } from 'zod'
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 import { commonValidations } from '../../common/utils/commonValidation'
+
+extendZodWithOpenApi(z)
 
 const workerId = commonValidations.id.describe('The unique identifier of the worker')
 const userIdSchema = commonValidations.id.describe('The unique identifier of the user')
@@ -87,7 +90,7 @@ export const PaginationMetaSchema = z.object({
   previousPages: z.array(z.number().int().positive()).describe('Array of up to 3 previous page numbers'),
   nextPages: z.array(z.number().int().positive()).describe('Array of up to 3 next page numbers'),
   firstPage: z.number().int().positive().describe('Always 1 - first page number'),
-  lastPage: z.number().int().positive().describe('Last page number (same as totalPages)'),
+  lastPage: z.number().int().positive().describe('Last page number (at least 1, even when no items)'),
 })
 
 export const PaginatedWorkersResponseSchema = z.object({
