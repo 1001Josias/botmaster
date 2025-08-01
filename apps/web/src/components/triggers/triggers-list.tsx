@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -30,106 +30,58 @@ import {
   Workflow,
   ArrowUpRight,
   Bot,
+  Loader2,
+  AlertTriangle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { Switch } from '@/components/ui/switch'
+import { toast } from 'sonner'
+import { triggersApi, type Trigger, type PaginatedTriggers, type GetTriggersQuery } from '@/lib/api/triggers'
 
-const triggers = [
-  {
-    id: 'TRG-001',
-    name: 'Relatório Diário',
-    type: 'schedule',
-    targetType: 'workflow',
-    workflow: 'Geração de Relatórios',
-    workflowId: 'WF-003',
-    status: 'active',
-    schedule: '0 8 * * 1-5', // Cron expression: 8:00 AM de segunda a sexta
-    lastRun: '2023-03-15T08:00:00',
-    nextRun: '2023-03-16T08:00:00',
-    executionCount: 245,
-  },
-  {
-    id: 'TRG-002',
-    name: 'Webhook de Pagamento',
-    type: 'webhook',
-    targetType: 'workflow',
-    workflow: 'Processamento de Pagamentos',
-    workflowId: 'WF-004',
-    status: 'active',
-    endpoint: '/api/webhooks/payment',
-    lastRun: '2023-03-15T14:25:00',
-    nextRun: null,
-    executionCount: 1245,
-  },
-  {
-    id: 'TRG-003',
-    name: 'Monitoramento de Estoque',
-    type: 'data',
-    targetType: 'worker',
-    worker: 'Estoque Worker',
-    workerId: 'W-002',
-    status: 'active',
-    condition: 'quantity < threshold',
-    lastRun: '2023-03-15T10:15:00',
-    nextRun: null,
-    executionCount: 56,
-  },
-  {
-    id: 'TRG-004',
-    name: 'Backup Semanal',
-    type: 'schedule',
-    targetType: 'workflow',
-    workflow: 'Backup de Dados',
-    workflowId: 'WF-007',
-    status: 'active',
-    schedule: '0 0 * * 0', // Cron expression: meia-noite de domingo
-    lastRun: '2023-03-12T00:00:00',
-    nextRun: '2023-03-19T00:00:00',
-    executionCount: 52,
-  },
-  {
-    id: 'TRG-005',
-    name: 'Evento de Novo Usuário',
-    type: 'event',
-    targetType: 'worker',
-    worker: 'Notificação Worker',
-    workerId: 'W-003',
-    status: 'inactive',
-    event: 'user.created',
-    lastRun: '2023-03-14T16:45:00',
-    nextRun: null,
-    executionCount: 328,
-  },
-  {
-    id: 'TRG-006',
-    name: 'Sincronização com CRM',
-    type: 'schedule',
-    targetType: 'workflow',
-    workflow: 'Integração CRM',
-    workflowId: 'WF-004',
-    status: 'active',
-    schedule: '*/30 * * * *', // Cron expression: a cada 30 minutos
-    lastRun: '2023-03-15T14:30:00',
-    nextRun: '2023-03-15T15:00:00',
-    executionCount: 4562,
-  },
-  {
-    id: 'TRG-007',
-    name: 'Alerta de Temperatura',
-    type: 'data',
-    targetType: 'worker',
-    worker: 'Alerta Worker',
-    workerId: 'W-005',
-    status: 'active',
-    condition: 'temperature > 30',
-    lastRun: '2023-03-15T13:12:00',
-    nextRun: null,
-    executionCount: 18,
-  },
-]
+interface TriggersListProps {
+  filters?: {
+    search: string
+    type: string
+  }
+}
 
-export function TriggersList() {
+export function TriggersList({ filters }: TriggersListProps) {
+  const [triggers, setTriggers] = useState<PaginatedTriggers | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
+  const [limit] = useState(10)
+
+  const fetchTriggers = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const query: GetTriggersQuery = { 
+        page, 
+        limit,
+        ...(filters?.search && { search: filters.search }),
+        ...(filters?.type && { type: filters.type as any }),
+      }
+      
+      const data = await triggersApi.getTriggers(query)
+      setTriggers(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch triggers')
+      console.error('Failed to fetch triggers:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [page, filters])
+
+  useEffect(() => {
+    fetchTriggers()
+  }, [fetchTriggers])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1)
+  }, [filters])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -186,7 +138,7 @@ export function TriggersList() {
     }
   }
 
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '-'
     const date = new Date(dateString)
     return new Intl.DateTimeFormat('pt-BR', {
@@ -198,26 +150,152 @@ export function TriggersList() {
     }).format(date)
   }
 
-  const formatSchedule = (schedule: string) => {
-    // Simplificação para exibição - em uma aplicação real, você pode usar uma biblioteca para converter cron para texto legível
-    const cronMap: Record<string, string> = {
-      '0 8 * * 1-5': 'Diariamente às 8:00 (Seg-Sex)',
-      '0 0 * * 0': 'Semanalmente aos domingos à meia-noite',
-      '*/30 * * * *': 'A cada 30 minutos',
+  const formatConfiguration = (trigger: Trigger) => {
+    switch (trigger.type) {
+      case 'schedule':
+        if (trigger.cronExpression) {
+          return (
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-muted-foreground" />
+              <span className="text-sm font-mono">{trigger.cronExpression}</span>
+            </div>
+          )
+        }
+        if (trigger.scheduleFrequency) {
+          return (
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-muted-foreground" />
+              <span className="text-sm">{trigger.scheduleFrequency}</span>
+            </div>
+          )
+        }
+        break
+      case 'webhook':
+        return (
+          <div className="flex items-center gap-1">
+            <Globe className="h-3 w-3 text-muted-foreground" />
+            <span className="text-sm font-mono">{trigger.webhookEndpoint}</span>
+          </div>
+        )
+      case 'event':
+        return (
+          <div className="flex items-center gap-1">
+            <Zap className="h-3 w-3 text-muted-foreground" />
+            <span className="text-sm font-mono">{trigger.eventSource}.{trigger.eventName}</span>
+          </div>
+        )
+      case 'data':
+        return (
+          <div className="flex items-center gap-1">
+            <Database className="h-3 w-3 text-muted-foreground" />
+            <span className="text-sm font-mono">{trigger.dataCondition}</span>
+          </div>
+        )
     }
-
-    return cronMap[schedule] || schedule
+    return '-'
   }
 
-  const toggleTriggerStatus = (triggerId: string) => {
-    // Em uma aplicação real, isso enviaria uma requisição para a API
-    console.log(`Alterando status do trigger ${triggerId}`)
+  const handleToggleStatus = async (trigger: Trigger) => {
+    try {
+      const newStatus = !trigger.isActive
+      await triggersApi.toggleTriggerStatus(trigger.id, newStatus)
+      toast.success(`Trigger ${newStatus ? 'ativado' : 'desativado'} com sucesso`)
+      fetchTriggers() // Refresh the list
+    } catch (err) {
+      toast.error('Erro ao alterar status do trigger')
+      console.error('Failed to toggle trigger status:', err)
+    }
+  }
+
+  const handleExecuteTrigger = async (trigger: Trigger) => {
+    try {
+      const result = await triggersApi.executeTrigger(trigger.id)
+      toast.success(result.message)
+      fetchTriggers() // Refresh to update execution count
+    } catch (err) {
+      toast.error('Erro ao executar trigger')
+      console.error('Failed to execute trigger:', err)
+    }
+  }
+
+  const handleDeleteTrigger = async (trigger: Trigger) => {
+    if (!confirm(`Tem certeza que deseja excluir o trigger "${trigger.name}"?`)) {
+      return
+    }
+
+    try {
+      await triggersApi.deleteTrigger(trigger.id)
+      toast.success('Trigger excluído com sucesso')
+      fetchTriggers() // Refresh the list
+    } catch (err) {
+      toast.error('Erro ao excluir trigger')
+      console.error('Failed to delete trigger:', err)
+    }
+  }
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Triggers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Carregando triggers...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Triggers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center">
+              <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Erro ao carregar triggers: {error}
+              </p>
+              <Button variant="outline" className="mt-2" onClick={fetchTriggers}>
+                Tentar novamente
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!triggers || triggers.data.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Triggers</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center">
+              <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Nenhum trigger encontrado
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Lista de Triggers</CardTitle>
+        <CardTitle>Lista de Triggers ({triggers.pagination.total})</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -234,11 +312,11 @@ export function TriggersList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {triggers.map((trigger) => (
+            {triggers.data.map((trigger) => (
               <TableRow key={trigger.id}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-muted-foreground">{trigger.id}</span>
+                    <span className="font-mono text-xs text-muted-foreground">TRG-{trigger.id.toString().padStart(3, '0')}</span>
                     <span>{trigger.name}</span>
                   </div>
                 </TableCell>
@@ -256,7 +334,7 @@ export function TriggersList() {
                         <Button variant="link" className="p-0 h-auto" asChild>
                           <Link href={`/workflows/${trigger.workflowId}`}>
                             <span className="flex items-center gap-1">
-                              {trigger.workflow}
+                              {trigger.workflowId}
                               <ArrowUpRight className="h-3 w-3" />
                             </span>
                           </Link>
@@ -268,7 +346,7 @@ export function TriggersList() {
                         <Button variant="link" className="p-0 h-auto" asChild>
                           <Link href={`/workers/${trigger.workerId}`}>
                             <span className="flex items-center gap-1">
-                              {trigger.worker}
+                              {trigger.workerId}
                               <ArrowUpRight className="h-3 w-3" />
                             </span>
                           </Link>
@@ -280,48 +358,35 @@ export function TriggersList() {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Switch
-                      checked={trigger.status === 'active'}
-                      onCheckedChange={() => toggleTriggerStatus(trigger.id)}
+                      checked={trigger.isActive}
+                      onCheckedChange={() => handleToggleStatus(trigger)}
                     />
                     {getStatusBadge(trigger.status)}
                   </div>
                 </TableCell>
                 <TableCell>
-                  {trigger.type === 'schedule' && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-sm">{formatSchedule(trigger.schedule || '')}</span>
-                    </div>
-                  )}
-                  {trigger.type === 'webhook' && (
-                    <div className="flex items-center gap-1">
-                      <Globe className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-sm font-mono">{trigger.endpoint}</span>
-                    </div>
-                  )}
-                  {trigger.type === 'event' && (
-                    <div className="flex items-center gap-1">
-                      <Zap className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-sm font-mono">{trigger.event}</span>
-                    </div>
-                  )}
-                  {trigger.type === 'data' && (
-                    <div className="flex items-center gap-1">
-                      <Database className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-sm font-mono">{trigger.condition}</span>
-                    </div>
-                  )}
+                  {formatConfiguration(trigger)}
                 </TableCell>
-                <TableCell>{formatDate(trigger.lastRun)}</TableCell>
-                <TableCell>{formatDate(trigger.nextRun)}</TableCell>
+                <TableCell>{formatDate(trigger.lastRunAt)}</TableCell>
+                <TableCell>{formatDate(trigger.nextRunAt)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
-                    {trigger.status === 'active' ? (
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                    {trigger.isActive ? (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleToggleStatus(trigger)}
+                      >
                         <PauseCircle className="h-4 w-4" />
                       </Button>
                     ) : (
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleToggleStatus(trigger)}
+                      >
                         <PlayCircle className="h-4 w-4" />
                       </Button>
                     )}
@@ -341,11 +406,14 @@ export function TriggersList() {
                             Editar
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleExecuteTrigger(trigger)}>
                           <PlayCircle className="mr-2 h-4 w-4" />
                           Executar Agora
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleDeleteTrigger(trigger)}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Excluir
                         </DropdownMenuItem>
@@ -357,32 +425,49 @@ export function TriggersList() {
             ))}
           </TableBody>
         </Table>
-        <div className="mt-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">3</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        
+        {triggers.pagination.totalPages > 1 && (
+          <div className="mt-4">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setPage(Math.max(1, page - 1))}
+                    className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: Math.min(5, triggers.pagination.totalPages) }, (_, i) => {
+                  const pageNum = i + 1
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink 
+                        onClick={() => setPage(pageNum)}
+                        isActive={page === pageNum}
+                        className="cursor-pointer"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                })}
+                
+                {triggers.pagination.totalPages > 5 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setPage(Math.min(triggers.pagination.totalPages, page + 1))}
+                    className={page === triggers.pagination.totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
