@@ -6,6 +6,8 @@ import { pino } from 'pino'
 import { openAPIRouterV1 } from '@/api-docs/openAPIRouter'
 import { healthCheckRouter } from '@/api/healthCheck/healthCheckRouter'
 import { userRouter } from '@/api/user/userRouter'
+import { tenantRouter } from '@/api/tenant/tenantRouter'
+import { folderRouter } from '@/api/folder/folderRouter'
 import errorHandler from '@/common/middleware/errorHandler'
 import rateLimiter from '@/common/middleware/rateLimiter'
 import requestLogger from '@/common/middleware/requestLogger'
@@ -31,6 +33,8 @@ app.use(requestLogger)
 // API Routes v1
 apiRouterV1.use('/health-check', healthCheckRouter)
 apiRouterV1.use('/workers', workersRouterV1)
+apiRouterV1.use('/tenants', tenantRouter)
+apiRouterV1.use('/folders', folderRouter)
 // Routes
 app.use('/api/v1', apiRouterV1)
 
