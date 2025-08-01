@@ -63,8 +63,16 @@ export type WorkerResponseDto = z.infer<typeof WorkerResponseSchema>
 export const CreateWorkerSchema = WorkerBaseSchema
 export type CreateWorkerDto = z.infer<typeof CreateWorkerSchema>
 
+export const UpdateWorkerSchema = WorkerBaseSchema.partial().omit({ scope: true, scopeRef: true })
+export type UpdateWorkerDto = z.infer<typeof UpdateWorkerSchema>
+
+export const UpdateWorkerStatusSchema = z.object({
+  status: z.enum(['active', 'inactive', 'archived']).describe('The new status of the worker')
+})
+export type UpdateWorkerStatusDto = z.infer<typeof UpdateWorkerStatusSchema>
+
 export const WorkerRouteParamsSchema = z.object({
-  params: z.object({ id: workerId }),
+  id: workerId,
 })
 
 export const WorkerKeyRouteParamsSchema = z.object({
@@ -72,10 +80,14 @@ export const WorkerKeyRouteParamsSchema = z.object({
 })
 
 export const GetWorkersRouteQuerySchema = z.object({
-  query: z.object({
-    page: z.number().int().positive().describe('The page number to retrieve'),
-    limit: z.number().int().positive(),
-  }),
+  page: z.coerce.number().int().positive().default(1).describe('The page number to retrieve'),
+  limit: z.coerce.number().int().positive().max(100).default(20).describe('The number of items per page'),
+  search: z.string().optional().describe('Search term to filter workers by name or description'),
+  status: z.enum(['active', 'inactive', 'archived']).optional().describe('Filter workers by status'),
+  scope: z.enum(['folder', 'tenant', 'organization', 'public']).optional().describe('Filter workers by scope'),
+  folderKey: commonValidations.key.optional().describe('Filter workers by folder key'),
+  sortBy: z.enum(['name', 'createdAt', 'updatedAt', 'status']).default('createdAt').describe('Field to sort by'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc').describe('Sort order'),
 })
 
 export type WorkerDatabaseDto = {
