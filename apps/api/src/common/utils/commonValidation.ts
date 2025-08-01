@@ -16,6 +16,9 @@ export const commonValidations = {
 export const contextSchema = z.object({
   folderKey: z.string({ required_error: 'x-folder-key header is required' }).uuid(),
   tenantKey: z.string({ required_error: 'x-tenant-key is required' }).uuid().optional(),
-  organization: z.string({ required_error: 'x-organization is required' }).default('community'),
+  organization: z
+    .string({ required_error: 'x-organization is required' })
+    .uuid()
+    .default('3fa85f64-5717-4562-b3fc-2c963f66afa6'),
 })
 export type ContextDto = z.infer<typeof contextSchema>
