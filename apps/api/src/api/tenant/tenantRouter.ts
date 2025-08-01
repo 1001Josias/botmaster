@@ -1,5 +1,6 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
 import express, { type Router } from 'express'
+import { z } from 'zod'
 
 import { createOpenApiResponse } from '@/api-docs/openAPIResponseBuilders'
 import { 
@@ -31,7 +32,7 @@ const openApiResponseCreated = {
 const openApiResponseDeleted = {
   success: true,
   description: 'Deleted',
-  dataSchema: null,
+  dataSchema: z.null(),
   statusCode: 200,
 }
 
@@ -61,7 +62,7 @@ tenantRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseSuccess]),
 })
 
-tenantRouter.get('/:id', validateRequest(GetTenantSchema), tenantController.getTenant)
+tenantRouter.get('/:id', validateRequest(GetTenantSchema, 'params'), tenantController.getTenant)
 
 // POST /tenants
 tenantRegistry.registerPath({
@@ -73,7 +74,7 @@ tenantRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseCreated]),
 })
 
-tenantRouter.post('/', validateRequest(CreateTenantSchema), tenantController.createTenant)
+tenantRouter.post('/', validateRequest(CreateTenantSchema, 'body'), tenantController.createTenant)
 
 // PUT /tenants/:id
 tenantRegistry.registerPath({
@@ -88,7 +89,7 @@ tenantRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseSuccess]),
 })
 
-tenantRouter.put('/:id', validateRequest(UpdateTenantSchema), tenantController.updateTenant)
+tenantRouter.put('/:id', validateRequest(UpdateTenantSchema, 'params'), tenantController.updateTenant)
 
 // DELETE /tenants/:id
 tenantRegistry.registerPath({
@@ -100,4 +101,4 @@ tenantRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseDeleted]),
 })
 
-tenantRouter.delete('/:id', validateRequest(GetTenantSchema), tenantController.deleteTenant)
+tenantRouter.delete('/:id', validateRequest(GetTenantSchema, 'params'), tenantController.deleteTenant)

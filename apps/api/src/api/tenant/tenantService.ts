@@ -1,5 +1,6 @@
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { BaseService } from '@/common/services/baseService'
+import { ServiceResponseObjectError } from '@/common/services/services'
 import { TenantRepository } from './tenantRepository'
 import { Tenant, CreateTenantDto, TenantDatabaseDto } from './tenantModel'
 
@@ -8,7 +9,7 @@ export class TenantService extends BaseService {
     super()
   }
 
-  async findAll(): Promise<ServiceResponse<Tenant[] | null>> {
+  async findAll(): Promise<ServiceResponse<Tenant[] | ServiceResponseObjectError | null>> {
     try {
       const tenants = await TenantRepository.session(this.context, async (repository) => {
         const dbTenants = await repository.findAll()
@@ -27,7 +28,7 @@ export class TenantService extends BaseService {
     }
   }
 
-  async findById(id: number): Promise<ServiceResponse<Tenant | null>> {
+  async findById(id: number): Promise<ServiceResponse<Tenant | ServiceResponseObjectError | null>> {
     try {
       const tenant = await TenantRepository.session(this.context, async (repository) => {
         const dbTenant = await repository.findById(id)
@@ -46,7 +47,7 @@ export class TenantService extends BaseService {
     }
   }
 
-  async create(tenantData: CreateTenantDto): Promise<ServiceResponse<Tenant | null>> {
+  async create(tenantData: CreateTenantDto): Promise<ServiceResponse<Tenant | ServiceResponseObjectError | null>> {
     try {
       const tenant = await TenantRepository.session(this.context, async (repository) => {
         const dbTenant = await repository.create(tenantData, 1) // TODO: Get actual user ID from context
@@ -70,7 +71,7 @@ export class TenantService extends BaseService {
     }
   }
 
-  async update(id: number, tenantData: Partial<CreateTenantDto>): Promise<ServiceResponse<Tenant | null>> {
+  async update(id: number, tenantData: Partial<CreateTenantDto>): Promise<ServiceResponse<Tenant | ServiceResponseObjectError | null>> {
     try {
       const tenant = await TenantRepository.session(this.context, async (repository) => {
         const dbTenant = await repository.update(id, tenantData, 1) // TODO: Get actual user ID from context
@@ -94,7 +95,7 @@ export class TenantService extends BaseService {
     }
   }
 
-  async delete(id: number): Promise<ServiceResponse<null>> {
+  async delete(id: number): Promise<ServiceResponse<ServiceResponseObjectError | null>> {
     try {
       await TenantRepository.session(this.context, async (repository) => {
         await repository.delete(id)
@@ -117,7 +118,7 @@ export class TenantService extends BaseService {
       id: dbTenant.id,
       key: dbTenant.key,
       name: dbTenant.name,
-      subdomain: dbTenant.subdomain,
+      subdomain: dbTenant.subdomain || undefined,
       description: dbTenant.description,
       createdBy: dbTenant.created_by,
       updatedBy: dbTenant.updated_by,

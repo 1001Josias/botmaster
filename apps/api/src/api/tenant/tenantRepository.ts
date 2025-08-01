@@ -52,20 +52,4 @@ export class TenantRepository extends BaseRepository {
   async delete(id: number): Promise<void> {
     await this.query(deleteTenantQuery, [id])
   }
-
-  private mapDatabaseToTenant(dbTenant: TenantDatabaseDto): Tenant {
-    return {
-      id: dbTenant.id,
-      key: dbTenant.key,
-      name: dbTenant.name,
-      subdomain: dbTenant.subdomain,
-      description: dbTenant.description,
-      createdBy: dbTenant.created_by,
-      updatedBy: dbTenant.updated_by,
-      createdAt: dbTenant.created_at,
-      updatedAt: dbTenant.updated_at,
-      enabled: dbTenant.enabled,
-      settings: dbTenant.settings,
-    }
-  }
 }

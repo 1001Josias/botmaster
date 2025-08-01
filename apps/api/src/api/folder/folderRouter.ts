@@ -1,5 +1,6 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
 import express, { type Router } from 'express'
+import { z } from 'zod'
 
 import { createOpenApiResponse } from '@/api-docs/openAPIResponseBuilders'
 import { 
@@ -31,7 +32,7 @@ const openApiResponseCreated = {
 const openApiResponseDeleted = {
   success: true,
   description: 'Deleted',
-  dataSchema: null,
+  dataSchema: z.null(),
   statusCode: 200,
 }
 
@@ -61,7 +62,7 @@ folderRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseSuccess]),
 })
 
-folderRouter.get('/:id', validateRequest(GetFolderSchema), folderController.getFolder)
+folderRouter.get('/:id', validateRequest(GetFolderSchema, 'params'), folderController.getFolder)
 
 // POST /folders
 folderRegistry.registerPath({
@@ -73,7 +74,7 @@ folderRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseCreated]),
 })
 
-folderRouter.post('/', validateRequest(CreateFolderSchema), folderController.createFolder)
+folderRouter.post('/', validateRequest(CreateFolderSchema, 'body'), folderController.createFolder)
 
 // PUT /folders/:id
 folderRegistry.registerPath({
@@ -88,7 +89,7 @@ folderRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseSuccess]),
 })
 
-folderRouter.put('/:id', validateRequest(UpdateFolderSchema), folderController.updateFolder)
+folderRouter.put('/:id', validateRequest(UpdateFolderSchema, 'params'), folderController.updateFolder)
 
 // DELETE /folders/:id
 folderRegistry.registerPath({
@@ -100,4 +101,4 @@ folderRegistry.registerPath({
   responses: createOpenApiResponse([openApiResponseDeleted]),
 })
 
-folderRouter.delete('/:id', validateRequest(GetFolderSchema), folderController.deleteFolder)
+folderRouter.delete('/:id', validateRequest(GetFolderSchema, 'params'), folderController.deleteFolder)
