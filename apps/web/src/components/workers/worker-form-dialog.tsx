@@ -2,7 +2,7 @@
 
 import type React from 'react'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -16,282 +16,264 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Slider } from '@/components/ui/slider'
+import { Badge } from '@/components/ui/badge'
+import { X } from 'lucide-react'
+import { Worker, CreateWorkerDto, UpdateWorkerDto, createWorker, updateWorker } from '@/lib/api/workers'
+import { useToast } from '@/hooks/use-toast'
 
 interface WorkerFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  worker?: Worker
-  onSave: (worker: Worker) => void
-}
-
-interface Worker {
-  id?: string
-  name: string
-  description: string
-  type: string
-  status: string
-  folder: string
-  concurrency: number
-  timeout: number
-  retries: number
-  autoScale: boolean
-  minInstances: number
-  maxInstances: number
-  customOptions?: string // Campo para opções personalizadas
-  selectedVersion?: string // Campo para selecionar a versão do worker
+  worker?: Worker | null
+  onSave: () => void
 }
 
 export function WorkerFormDialog({ open, onOpenChange, worker, onSave }: WorkerFormDialogProps) {
+  const { toast } = useToast()
   const isEditing = !!worker?.id
+  const [loading, setLoading] = useState(false)
 
-  const [formData, setFormData] = useState<Worker>(
-    worker || {
-      name: '',
-      description: '',
-      type: 'processing',
-      status: 'active',
-      folder: 'Produção',
-      concurrency: 5,
-      timeout: 30,
-      retries: 3,
-      autoScale: false,
-      minInstances: 1,
-      maxInstances: 5,
-      customOptions: '', // Inicializa o campo de opções personalizadas
-      selectedVersion: 'latest', // Inicializa o campo de seleção de versão
+  const [formData, setFormData] = useState<CreateWorkerDto & { tags: string[] }>({
+    name: '',
+    description: '',
+    status: 'active',
+    tags: [],
+    scope: 'folder',
+    scopeRef: null,
+  })
+
+  const [tagInput, setTagInput] = useState('')
+
+  // Update form data when worker changes
+  useEffect(() => {
+    if (worker) {
+      setFormData({
+        name: worker.name,
+        description: worker.description,
+        status: worker.status,
+        tags: worker.tags || [],
+        scope: worker.scope,
+        scopeRef: worker.scopeRef,
+      })
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        status: 'active',
+        tags: [],
+        scope: 'folder',
+        scopeRef: null,
+      })
     }
-  )
+    setTagInput('')
+  }, [worker])
 
-  const handleChange = (field: keyof Worker, value: any) => {
+  const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSave(formData)
-    onOpenChange(false)
+  const handleAddTag = () => {
+    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, tagInput.trim()]
+      }))
+      setTagInput('')
+    }
   }
 
-  const workerVersions = ['latest', '1.0.0', '1.1.0', '1.2.0']
+  const handleRemoveTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }))
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAddTag()
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.name.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Worker name is required',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setLoading(true)
+    try {
+      if (isEditing && worker) {
+        const updateData: UpdateWorkerDto = {
+          name: formData.name,
+          description: formData.description,
+          status: formData.status,
+          tags: formData.tags,
+        }
+        await updateWorker(worker.id, updateData)
+        toast({
+          title: 'Success',
+          description: 'Worker updated successfully',
+        })
+      } else {
+        const createData: CreateWorkerDto = {
+          name: formData.name,
+          description: formData.description,
+          status: formData.status,
+          tags: formData.tags,
+          scope: formData.scope,
+          scopeRef: formData.scopeRef,
+        }
+        await createWorker(createData)
+        toast({
+          title: 'Success',
+          description: 'Worker created successfully',
+        })
+      }
+      
+      onSave()
+      onOpenChange(false)
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: isEditing ? 'Failed to update worker' : 'Failed to create worker',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Editar Worker' : 'Novo Worker'}</DialogTitle>
+          <DialogTitle>{isEditing ? 'Edit Worker' : 'New Worker'}</DialogTitle>
           <DialogDescription>
             {isEditing
-              ? 'Edite as informações do worker existente.'
-              : 'Preencha as informações para criar um novo worker.'}
+              ? 'Update the worker information.'
+              : 'Fill in the information to create a new worker.'}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid grid-cols-3 mb-4">
-              <TabsTrigger value="basic">Básico</TabsTrigger>
-              <TabsTrigger value="resources">Recursos</TabsTrigger>
-              <TabsTrigger value="advanced">Avançado</TabsTrigger>
-            </TabsList>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleChange('name', e.target.value)}
+                placeholder="Worker name"
+                required
+              />
+            </div>
 
-            <TabsContent value="basic" className="space-y-4">
-              <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description || ''}
+                onChange={(e) => handleChange('description', e.target.value)}
+                placeholder="Worker description"
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {!isEditing && (
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Nome</Label>
+                  <Label htmlFor="scope">Scope</Label>
+                  <Select value={formData.scope} onValueChange={(value) => handleChange('scope', value)}>
+                    <SelectTrigger id="scope">
+                      <SelectValue placeholder="Select scope" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="folder">Folder</SelectItem>
+                      <SelectItem value="tenant">Tenant</SelectItem>
+                      <SelectItem value="organization">Organization</SelectItem>
+                      <SelectItem value="public">Public</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+
+            {!isEditing && formData.scope !== 'public' && (
+              <div className="grid gap-2">
+                <Label htmlFor="scopeRef">Scope Reference</Label>
+                <Input
+                  id="scopeRef"
+                  value={formData.scopeRef || ''}
+                  onChange={(e) => handleChange('scopeRef', e.target.value)}
+                  placeholder="Scope reference key"
+                />
+              </div>
+            )}
+
+            <div className="grid gap-2">
+              <Label htmlFor="tags">Tags</Label>
+              <div className="space-y-2">
+                <div className="flex gap-2">
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleChange('name', e.target.value)}
-                    placeholder="Nome do worker"
-                    required
+                    id="tags"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Add a tag"
                   />
+                  <Button type="button" onClick={handleAddTag} variant="outline">
+                    Add
+                  </Button>
                 </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Descrição</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => handleChange('description', e.target.value)}
-                    placeholder="Descrição do worker"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="type">Tipo</Label>
-                    <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
-                      <SelectTrigger id="type">
-                        <SelectValue placeholder="Selecione o tipo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="notification">Notificação</SelectItem>
-                        <SelectItem value="processing">Processamento</SelectItem>
-                      </SelectContent>
-                    </Select>
+                {formData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
                   </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="folder">Pasta</Label>
-                    <Select value={formData.folder} onValueChange={(value) => handleChange('folder', value)}>
-                      <SelectTrigger id="folder">
-                        <SelectValue placeholder="Selecione a pasta" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Produção">Produção</SelectItem>
-                        <SelectItem value="Desenvolvimento">Desenvolvimento</SelectItem>
-                        <SelectItem value="Testes">Testes</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
-                    <SelectTrigger id="status">
-                      <SelectValue placeholder="Selecione o status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Ativo</SelectItem>
-                      <SelectItem value="paused">Pausado</SelectItem>
-                      <SelectItem value="error">Erro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="resources" className="space-y-4">
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <div className="flex justify-between">
-                    <Label htmlFor="concurrency">Concorrência: {formData.concurrency}</Label>
-                  </div>
-                  <Slider
-                    id="concurrency"
-                    min={1}
-                    max={20}
-                    step={1}
-                    value={[formData.concurrency]}
-                    onValueChange={(value) => handleChange('concurrency', value[0])}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="flex justify-between">
-                    <Label htmlFor="timeout">Timeout (segundos): {formData.timeout}</Label>
-                  </div>
-                  <Slider
-                    id="timeout"
-                    min={5}
-                    max={300}
-                    step={5}
-                    value={[formData.timeout]}
-                    onValueChange={(value) => handleChange('timeout', value[0])}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <div className="flex justify-between">
-                    <Label htmlFor="retries">Tentativas de Retry: {formData.retries}</Label>
-                  </div>
-                  <Slider
-                    id="retries"
-                    min={0}
-                    max={10}
-                    step={1}
-                    value={[formData.retries]}
-                    onValueChange={(value) => handleChange('retries', value[0])}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="advanced" className="space-y-4">
-              <div className="grid gap-4">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="autoScale">Auto Scaling</Label>
-                  <Switch
-                    id="autoScale"
-                    checked={formData.autoScale}
-                    onCheckedChange={(checked) => handleChange('autoScale', checked)}
-                  />
-                </div>
-
-                {formData.autoScale && (
-                  <>
-                    <div className="grid gap-2">
-                      <div className="flex justify-between">
-                        <Label htmlFor="minInstances">Instâncias Mínimas: {formData.minInstances}</Label>
-                      </div>
-                      <Slider
-                        id="minInstances"
-                        min={1}
-                        max={10}
-                        step={1}
-                        value={[formData.minInstances]}
-                        onValueChange={(value) => handleChange('minInstances', value[0])}
-                      />
-                    </div>
-
-                    <div className="grid gap-2">
-                      <div className="flex justify-between">
-                        <Label htmlFor="maxInstances">Instâncias Máximas: {formData.maxInstances}</Label>
-                      </div>
-                      <Slider
-                        id="maxInstances"
-                        min={1}
-                        max={20}
-                        step={1}
-                        value={[formData.maxInstances]}
-                        onValueChange={(value) => handleChange('maxInstances', value[0])}
-                      />
-                    </div>
-                  </>
                 )}
-                <div className="grid gap-2">
-                  <Label htmlFor="selectedVersion">Versão do Worker</Label>
-                  <Select
-                    value={formData.selectedVersion}
-                    onValueChange={(value) => handleChange('selectedVersion', value)}
-                  >
-                    <SelectTrigger id="selectedVersion">
-                      <SelectValue placeholder="Selecione a versão" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {workerVersions.map((version) => (
-                        <SelectItem key={version} value={version}>
-                          {version}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="customOptions">Opções Personalizadas (JSON)</Label>
-                  <Textarea
-                    id="customOptions"
-                    placeholder="Ex: { 'param1': 'value1', 'param2': 123 }"
-                    value={formData.customOptions}
-                    onChange={(e) => handleChange('customOptions', e.target.value)}
-                    rows={3}
-                  />
-                </div>
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
+              Cancel
             </Button>
-            <Button type="submit">{isEditing ? 'Salvar Alterações' : 'Criar Worker'}</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Worker'}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
