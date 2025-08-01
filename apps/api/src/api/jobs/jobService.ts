@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import type { ServiceResponse } from '@/common/models/serviceResponse'
-import { ResponseStatus, ServiceResponse as ServiceResponseClass } from '@/common/models/serviceResponse'
+import { ServiceResponse as ServiceResponseClass } from '@/common/models/serviceResponse'
 import { logger } from '@/server'
 import { CreateJobDto, JobResponseDto, JobStatsResponseDto, JobStatus, UpdateJobDto } from './jobModel'
 import { JobRepository } from './jobRepository'
@@ -23,7 +23,7 @@ export class JobService extends BaseService {
       workerKey?: string
       flowKey?: string
     } = {}
-  ): Promise<ServiceResponse<{ jobs: JobResponseDto[]; total: number; page: number; limit: number }>> {
+  ): Promise<ServiceResponse<any>> {
     try {
       const result = await JobRepository.session(this.context, async (repository) => {
         return await repository.findAll(page, limit, filters)
@@ -45,17 +45,14 @@ export class JobService extends BaseService {
     }
   }
 
-  async findByKey(key: string): Promise<ServiceResponse<JobResponseDto | null>> {
+  async findByKey(key: string): Promise<ServiceResponse<any>> {
     try {
       const job = await JobRepository.session(this.context, async (repository) => {
         return await repository.findByKey(key)
       })
       
       if (!job) {
-        return this.notFoundError({
-          message: this.responseMessages.jobNotFound,
-          responseObject: null,
-        })
+        return ServiceResponseClass.failure(this.responseMessages.jobNotFound, null, StatusCodes.NOT_FOUND)
       }
       
       return this.fetchedSuccessfully('Job found', job)
@@ -70,7 +67,7 @@ export class JobService extends BaseService {
     }
   }
 
-  async create(jobData: CreateJobDto, userId: number): Promise<ServiceResponse<JobResponseDto | null>> {
+  async create(jobData: CreateJobDto, userId: number): Promise<ServiceResponse<any>> {
     try {
       const job = await JobRepository.session(this.context, async (repository) => {
         return await repository.create(jobData, userId)
@@ -88,7 +85,7 @@ export class JobService extends BaseService {
     }
   }
 
-  async update(key: string, updates: UpdateJobDto, userId: number): Promise<ServiceResponse<JobResponseDto | null>> {
+  async update(key: string, updates: UpdateJobDto, userId: number): Promise<ServiceResponse<any>> {
     try {
       // Special handling for status changes
       if (updates.status) {
@@ -100,10 +97,7 @@ export class JobService extends BaseService {
       })
       
       if (!job) {
-        return this.notFoundError({
-          message: this.responseMessages.jobNotFound,
-          responseObject: null,
-        })
+        return ServiceResponseClass.failure(this.responseMessages.jobNotFound, null, StatusCodes.NOT_FOUND)
       }
 
       return this.updatedSuccessfully(this.responseMessages.jobUpdated, job)
@@ -118,17 +112,14 @@ export class JobService extends BaseService {
     }
   }
 
-  async delete(key: string): Promise<ServiceResponse<null>> {
+  async delete(key: string): Promise<ServiceResponse<any>> {
     try {
       const deleted = await JobRepository.session(this.context, async (repository) => {
         return await repository.delete(key)
       })
       
       if (!deleted) {
-        return this.notFoundError({
-          message: this.responseMessages.jobNotFound,
-          responseObject: null,
-        })
+        return ServiceResponseClass.failure(this.responseMessages.jobNotFound, null, StatusCodes.NOT_FOUND)
       }
 
       return this.deletedSuccessfully(this.responseMessages.jobDeleted, null)
@@ -143,7 +134,7 @@ export class JobService extends BaseService {
     }
   }
 
-  async getStats(): Promise<ServiceResponse<JobStatsResponseDto>> {
+  async getStats(): Promise<ServiceResponse<any>> {
     try {
       const stats = await JobRepository.session(this.context, async (repository) => {
         return await repository.getStats()
@@ -161,7 +152,7 @@ export class JobService extends BaseService {
     }
   }
 
-  async startJob(key: string, userId: number): Promise<ServiceResponse<JobResponseDto | null>> {
+  async startJob(key: string, userId: number): Promise<ServiceResponse<any>> {
     try {
       const updates: UpdateJobDto = {
         status: 'running',
@@ -174,10 +165,7 @@ export class JobService extends BaseService {
       })
       
       if (!job) {
-        return this.notFoundError({
-          message: this.responseMessages.jobNotFound,
-          responseObject: null,
-        })
+        return ServiceResponseClass.failure(this.responseMessages.jobNotFound, null, StatusCodes.NOT_FOUND)
       }
 
       return this.updatedSuccessfully(this.responseMessages.jobStarted, job)
@@ -196,7 +184,7 @@ export class JobService extends BaseService {
     key: string, 
     result: Record<string, any>,
     userId: number
-  ): Promise<ServiceResponse<JobResponseDto | null>> {
+  ): Promise<ServiceResponse<any>> {
     try {
       // Get current job to calculate duration
       const currentJob = await JobRepository.session(this.context, async (repository) => {
@@ -204,10 +192,7 @@ export class JobService extends BaseService {
       })
       
       if (!currentJob) {
-        return this.notFoundError({
-          message: this.responseMessages.jobNotFound,
-          responseObject: null,
-        })
+        return ServiceResponseClass.failure(this.responseMessages.jobNotFound, null, StatusCodes.NOT_FOUND)
       }
 
       const completedAt = new Date()
@@ -245,7 +230,7 @@ export class JobService extends BaseService {
     key: string, 
     error: string,
     userId: number
-  ): Promise<ServiceResponse<JobResponseDto | null>> {
+  ): Promise<ServiceResponse<any>> {
     try {
       // Get current job to calculate duration
       const currentJob = await JobRepository.session(this.context, async (repository) => {
@@ -253,10 +238,7 @@ export class JobService extends BaseService {
       })
       
       if (!currentJob) {
-        return this.notFoundError({
-          message: this.responseMessages.jobNotFound,
-          responseObject: null,
-        })
+        return ServiceResponseClass.failure(this.responseMessages.jobNotFound, null, StatusCodes.NOT_FOUND)
       }
 
       const completedAt = new Date()
