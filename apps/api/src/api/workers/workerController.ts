@@ -2,7 +2,7 @@ import { NextFunction, Request } from 'express'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { WorkerService } from '@/api/workers/workerService'
 import { IWorker } from '@/api/workers/worker'
-import { CreateWorkerDto, WorkerResponseDto } from '@/api/workers/workerModel'
+import { CreateWorkerDto, WorkerResponseDto, GetWorkersQueryDto, PaginatedWorkersResponseDto } from '@/api/workers/workerModel'
 import { ResponseCustom } from '@/common/utils/httpHandlers'
 import { BaseController } from '@/common/controllers/baseController'
 import { WorkerResponseMessages } from './workerResponseMessages'
@@ -10,6 +10,22 @@ import { WorkerResponseMessages } from './workerResponseMessages'
 export class WorkerController extends BaseController<WorkerService> {
   constructor(service: WorkerService = new WorkerService()) {
     super(service)
+  }
+
+  public getAll = async (
+    req: Request,
+    res: ResponseCustom<PaginatedWorkersResponseDto>,
+    next: NextFunction
+  ) => {
+    try {
+      return await this.context<WorkerResponseMessages>(req, async (workerService) => {
+        const query = res.locals.validatedData.query as GetWorkersQueryDto
+        const workers = await workerService.getAll(query)
+        return handleServiceResponse(workers, res)
+      })
+    } catch (err) {
+      next(err)
+    }
   }
 
   public getByKey = async (

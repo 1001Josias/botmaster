@@ -72,11 +72,32 @@ export const WorkerKeyRouteParamsSchema = z.object({
 })
 
 export const GetWorkersRouteQuerySchema = z.object({
-  query: z.object({
-    page: z.number().int().positive().describe('The page number to retrieve'),
-    limit: z.number().int().positive(),
-  }),
+  page: z.coerce.number().int().positive().default(1).optional().describe('The page number to retrieve, starting from 1'),
+  limit: z.coerce.number().int().positive().max(100).default(10).optional().describe('Maximum number of items per page (max 100)'),
+}).transform(data => ({
+  page: data.page ?? 1,
+  limit: data.limit ?? 10
+}))
+
+export const PaginationMetaSchema = z.object({
+  page: z.number().int().positive().describe('Current page number'),
+  limit: z.number().int().positive().describe('Number of items per page'),
+  totalPages: z.number().int().min(0).describe('Total number of pages available'),
+  totalItems: z.number().int().min(0).describe('Total number of items'),
+  previousPages: z.array(z.number().int().positive()).describe('Array of up to 3 previous page numbers'),
+  nextPages: z.array(z.number().int().positive()).describe('Array of up to 3 next page numbers'),
+  firstPage: z.number().int().positive().describe('Always 1 - first page number'),
+  lastPage: z.number().int().positive().describe('Last page number (same as totalPages)'),
 })
+
+export const PaginatedWorkersResponseSchema = z.object({
+  items: z.array(WorkerResponseSchema).describe('Array of workers for the current page'),
+  pagination: PaginationMetaSchema.describe('Pagination metadata'),
+})
+
+export type PaginationMetaDto = z.infer<typeof PaginationMetaSchema>
+export type PaginatedWorkersResponseDto = z.infer<typeof PaginatedWorkersResponseSchema>
+export type GetWorkersQueryDto = z.infer<typeof GetWorkersRouteQuerySchema>
 
 export type WorkerDatabaseDto = {
   id: number
