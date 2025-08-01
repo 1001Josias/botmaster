@@ -20,9 +20,12 @@ import {
   ExternalLink,
   Loader2,
   AlertCircle,
+  Download,
+  DownloadX,
 } from 'lucide-react'
 import { WorkerFormDialog } from './worker-form-dialog'
-import { fetchWorkers, deleteWorker, updateWorkerStatus, Worker, GetWorkersParams } from '@/lib/api/workers'
+import { WorkerInstallationDialog } from './worker-installation-dialog'
+import { fetchWorkers, deleteWorker, updateWorkerStatus, uninstallWorker, Worker, GetWorkersParams } from '@/lib/api/workers'
 import { useToast } from '@/hooks/use-toast'
 
 interface WorkersGridRef {
@@ -37,6 +40,8 @@ export const WorkersGrid = forwardRef<WorkersGridRef>((props, ref) => {
   const [error, setError] = useState<string | null>(null)
   const [editingWorker, setEditingWorker] = useState<Worker | null>(null)
   const [openEditDialog, setOpenEditDialog] = useState(false)
+  const [installingWorker, setInstallingWorker] = useState<Worker | null>(null)
+  const [openInstallDialog, setOpenInstallDialog] = useState(false)
   
   // Filtering and pagination state
   const [filters, setFilters] = useState<GetWorkersParams>({
@@ -202,6 +207,38 @@ export const WorkersGrid = forwardRef<WorkersGridRef>((props, ref) => {
     }
   }
 
+  const handleInstallWorker = (worker: Worker) => {
+    setInstallingWorker(worker)
+    setOpenInstallDialog(true)
+  }
+
+  const handleWorkerInstalled = () => {
+    setOpenInstallDialog(false)
+    setInstallingWorker(null)
+    toast({
+      title: 'Success',
+      description: 'Worker installed successfully',
+    })
+  }
+
+  const handleUninstallWorker = async (worker: Worker) => {
+    if (confirm(`Are you sure you want to uninstall "${worker.name}"?`)) {
+      try {
+        await uninstallWorker(worker.key)
+        toast({
+          title: 'Success',
+          description: 'Worker uninstalled successfully',
+        })
+      } catch (err) {
+        toast({
+          title: 'Error',
+          description: 'Failed to uninstall worker',
+          variant: 'destructive',
+        })
+      }
+    }
+  }
+
   const handleViewDetails = (worker: Worker) => {
     router.push(`/workers/${worker.id}`)
   }
@@ -319,6 +356,14 @@ export const WorkersGrid = forwardRef<WorkersGridRef>((props, ref) => {
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleInstallWorker(worker)}>
+                            <Download className="mr-2 h-4 w-4" />
+                            Install
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUninstallWorker(worker)}>
+                            <DownloadX className="mr-2 h-4 w-4" />
+                            Uninstall
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteWorker(worker)}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
@@ -414,6 +459,13 @@ export const WorkersGrid = forwardRef<WorkersGridRef>((props, ref) => {
         onOpenChange={setOpenEditDialog}
         worker={editingWorker}
         onSave={handleSaveWorker}
+      />
+      
+      <WorkerInstallationDialog
+        open={openInstallDialog}
+        onOpenChange={setOpenInstallDialog}
+        worker={installingWorker}
+        onInstalled={handleWorkerInstalled}
       />
     </>
   )

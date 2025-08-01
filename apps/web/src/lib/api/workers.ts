@@ -59,6 +59,51 @@ export interface PaginatedWorkersResponse {
   }
 }
 
+// Worker Installation types
+export interface WorkerInstallation {
+  workerKey: string
+  folderKey: string
+  priority: number
+  defaultVersion: string
+  installedBy: number
+  installedAt: string
+  defaultProperties: {
+    settings: Record<string, any>
+    parameters: Record<string, any>
+    options: {
+      maxConcurrent?: number
+      retryPolicy?: {
+        maxRetries: number
+        retryDelay: number
+        strategy: 'exponential' | 'linear'
+      }
+      timeout?: number
+      processingMode?: 'single' | 'batch'
+    }
+  }
+}
+
+export interface CreateWorkerInstallationDto {
+  workerKey: string
+  priority?: number
+  defaultVersion?: string
+  installedBy: number
+  defaultProperties?: {
+    settings?: Record<string, any>
+    parameters?: Record<string, any>
+    options?: {
+      maxConcurrent?: number
+      retryPolicy?: {
+        maxRetries: number
+        retryDelay: number
+        strategy: 'exponential' | 'linear'
+      }
+      timeout?: number
+      processingMode?: 'single' | 'batch'
+    }
+  }
+}
+
 export interface ApiResponse<T> {
   success: boolean
   message: string
@@ -154,6 +199,26 @@ export async function deleteWorker(id: number): Promise<Worker> {
     method: 'DELETE',
   })
   return response.data
+}
+
+// Worker Installation functions
+export async function fetchWorkerInstallations(): Promise<WorkerInstallation[]> {
+  const response = await apiRequest<WorkerInstallation[]>('/workers/installations')
+  return response.data
+}
+
+export async function installWorker(installationData: CreateWorkerInstallationDto): Promise<WorkerInstallation> {
+  const response = await apiRequest<WorkerInstallation>('/workers/installations', {
+    method: 'POST',
+    body: JSON.stringify(installationData),
+  })
+  return response.data
+}
+
+export async function uninstallWorker(workerKey: string): Promise<void> {
+  await apiRequest<void>(`/workers/installations/${workerKey}`, {
+    method: 'DELETE',
+  })
 }
 
 // Mock data for fallback during development
