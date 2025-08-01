@@ -1,7 +1,12 @@
 import { WorkerRepository } from '@/api/workers/workerRepository'
 import { ServiceResponse } from '@/common/models/serviceResponse'
 import { IWorker } from '@/api/workers/worker'
-import { WorkerResponseDto, CreateWorkerDto, GetWorkersQueryDto, PaginatedWorkersResponseDto } from '@/api/workers/workerModel'
+import {
+  WorkerResponseDto,
+  CreateWorkerDto,
+  GetWorkersQueryDto,
+  PaginatedWorkersResponseDto,
+} from '@/api/workers/workerModel'
 import { BaseService } from '@/common/services/baseService'
 import { workerConstraintErrorMessages, WorkerResponseMessages } from './workerResponseMessages'
 import { ServiceResponseObjectError } from '@/common/services/services'
@@ -14,7 +19,9 @@ export class WorkerService
     super()
   }
 
-  async getAll(query: GetWorkersQueryDto): Promise<ServiceResponse<PaginatedWorkersResponseDto | ServiceResponseObjectError | null>> {
+  async getAll(
+    query: GetWorkersQueryDto
+  ): Promise<ServiceResponse<PaginatedWorkersResponseDto | ServiceResponseObjectError | null>> {
     try {
       return await WorkerRepository.session(this.context, async (workerRepository) => {
         const paginatedWorkers = await workerRepository.getAll(query)
