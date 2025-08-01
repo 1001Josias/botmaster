@@ -4,6 +4,9 @@ import { Scope } from './workerModel'
 export class WorkerResponseMessages {
   static createdSuccessfullyMessage: string = 'Worker created successfully'
   static foundSuccessfullyMessage: string = 'Worker found successfully'
+  static updatedSuccessfullyMessage: string = 'Worker updated successfully'
+  static statusUpdatedSuccessfullyMessage: string = 'Worker status updated successfully'
+  static deletedSuccessfullyMessage: string = 'Worker deleted successfully'
 
   static alreadyExistsErrorMessage: ServiceResponseErrorParams = {
     message: 'Already exists a worker with this name',
@@ -12,6 +15,21 @@ export class WorkerResponseMessages {
 
   static notFoundErrorMessage: ServiceResponseErrorParams = {
     message: 'Worker not found',
+    responseObject: null,
+  }
+
+  static updateErrorMessage: ServiceResponseErrorParams = {
+    message: 'Failed to update worker',
+    responseObject: null,
+  }
+
+  static statusUpdateErrorMessage: ServiceResponseErrorParams = {
+    message: 'Failed to update worker status',
+    responseObject: null,
+  }
+
+  static deleteErrorMessage: ServiceResponseErrorParams = {
+    message: 'Failed to delete worker',
     responseObject: null,
   }
 
