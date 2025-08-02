@@ -85,9 +85,9 @@ The RFC goes through several review stages:
 
 RFCs can have the following outcomes:
 
-- **Accepted**: The RFC is approved for implementation
-- **Rejected**: The RFC is not approved (with reasons documented)
-- **Deferred**: The RFC is postponed for future consideration
+- **Accepted**: The RFC is approved for implementation and merged
+- **Rejected**: The RFC PR is closed without merging (with reasons documented in PR comments)
+- **Deferred**: The RFC is postponed for future consideration and merged with "Deferred" status
 - **Superseded**: The RFC is replaced by a newer RFC
 
 ### 5. Implementation Phase
@@ -108,9 +108,9 @@ Once accepted:
 ## RFC Lifecycle
 
 ```
-Draft → In Review → [Accepted|Rejected|Deferred] → Implemented
-                      ↓
-                  Superseded (if replaced by newer RFC)
+Draft → In Review → [Accepted|Deferred] → Implemented
+                      ↓         ↓
+                  Superseded   Rejected (PR closed)
 ```
 
 ## RFC Status Definitions
@@ -120,10 +120,12 @@ Each RFC progresses through clearly defined statuses:
 - **Draft**: Initial RFC proposal submitted as a Pull Request, open for discussion and iteration
 - **In Review**: RFC is undergoing formal technical and stakeholder review process
 - **Accepted**: RFC has been approved for implementation after review process
-- **Rejected**: RFC was not approved for implementation (with documented reasons)
-- **Deferred**: RFC is postponed for future consideration (not rejected, but not current priority)
+- **Rejected**: RFC PR is closed without merging (reasons documented in PR discussion)
+- **Deferred**: RFC is postponed for future consideration and merged with this status
 - **Implemented**: Accepted RFC has been fully implemented and deployed
 - **Superseded**: RFC has been replaced by a newer, more comprehensive RFC
+
+**Note**: Rejected RFCs are handled by closing the Pull Request rather than merging. This keeps RFC directories clean while preserving the discussion history in the closed PR.
 
 ### Status Tracking
 
@@ -155,9 +157,10 @@ botmaster/
 ## RFC Numbering
 
 - RFCs are numbered sequentially starting from `0001`
-- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`)
+- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`)  
 - Numbers are assigned when the RFC PR is created
-- Rejected RFCs keep their numbers (to avoid conflicts)
+- Only merged RFCs (Accepted, Deferred, Implemented, Superseded) consume numbers
+- Rejected RFCs don't consume numbers as they are closed without merging
 
 ## Writing Guidelines
 
@@ -237,7 +240,7 @@ A: Yes, but prefer creating a new RFC for major changes. Minor updates (clarific
 
 ### Q: What if my RFC is rejected?
 
-A: Document the reasons in the RFC and close the PR. You can create a new RFC addressing the concerns later.
+A: The RFC PR will be closed without merging, with detailed feedback provided in the PR discussion. The conversation history is preserved, and you can create a new RFC addressing the concerns later if desired.
 
 ### Q: How long should the review process take?
 
