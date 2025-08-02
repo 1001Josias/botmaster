@@ -1,5 +1,13 @@
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi'
-import { CreateWorkerSchema, WorkerResponseSchema, WorkerResponseDto, WorkerKeyRouteParamsSchema, GetWorkersRouteQuerySchema, PaginatedWorkersResponseSchema, PaginatedWorkersResponseDto } from './workerModel'
+import {
+  CreateWorkerSchema,
+  WorkerResponseSchema,
+  WorkerResponseDto,
+  WorkerKeyRouteParamsSchema,
+  GetWorkersRouteQuerySchema,
+  PaginatedWorkersResponseSchema,
+  PaginatedWorkersResponseDto,
+} from './workerModel'
 import { createOpenApiResponse, OpenApiResponseConfig } from '@/api-docs/openAPIResponseBuilders'
 import { StatusCodes } from 'http-status-codes'
 import { z } from 'zod'
@@ -59,7 +67,8 @@ workerRegistryV1.registerPath({
   path: workerPath,
   tags: ['Workers'],
   summary: 'List workers with pagination',
-  description: 'Retrieve a paginated list of workers available in the current context. Supports up to 100 items per page.',
+  description:
+    'Retrieve a paginated list of workers available in the current context. Supports up to 100 items per page.',
   request: {
     query: GetWorkersRouteQuerySchema,
     headers: z.object(contextHeaders),

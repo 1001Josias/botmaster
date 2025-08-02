@@ -1,12 +1,12 @@
-import { Handle, Position } from "reactflow"
-import { Workflow } from "lucide-react"
+import { Handle, Position } from 'reactflow'
+import { Workflow } from 'lucide-react'
 
 export function BpmnServiceTask({ data, selected }: { data: any; selected: boolean }) {
   return (
     <div className="relative">
       <div
         className={`flex h-14 w-36 items-center justify-center rounded-md border-2 bg-cyan-100 ${
-          selected ? "border-blue-500" : "border-cyan-300"
+          selected ? 'border-blue-500' : 'border-cyan-300'
         }`}
       >
         <Workflow className="mr-2 h-4 w-4" />
@@ -17,4 +17,3 @@ export function BpmnServiceTask({ data, selected }: { data: any; selected: boole
     </div>
   )
 }
-

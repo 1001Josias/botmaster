@@ -1,69 +1,69 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Filter, RefreshCw } from "lucide-react"
+import { useState } from 'react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Search, Filter, RefreshCw } from 'lucide-react'
 
 // Mock data for process execution logs
 const executionLogs = [
   {
-    id: "exec1",
-    startedAt: "2023-05-25T10:30:00Z",
-    completedAt: "2023-05-25T10:35:00Z",
-    status: "completed",
-    initiatedBy: "System",
-    duration: "5m",
+    id: 'exec1',
+    startedAt: '2023-05-25T10:30:00Z',
+    completedAt: '2023-05-25T10:35:00Z',
+    status: 'completed',
+    initiatedBy: 'System',
+    duration: '5m',
   },
   {
-    id: "exec2",
-    startedAt: "2023-05-24T14:45:00Z",
-    completedAt: "2023-05-24T14:50:00Z",
-    status: "completed",
-    initiatedBy: "John Doe",
-    duration: "5m",
+    id: 'exec2',
+    startedAt: '2023-05-24T14:45:00Z',
+    completedAt: '2023-05-24T14:50:00Z',
+    status: 'completed',
+    initiatedBy: 'John Doe',
+    duration: '5m',
   },
   {
-    id: "exec3",
-    startedAt: "2023-05-23T09:15:00Z",
-    completedAt: "2023-05-23T09:18:00Z",
-    status: "failed",
-    initiatedBy: "System",
-    duration: "3m",
+    id: 'exec3',
+    startedAt: '2023-05-23T09:15:00Z',
+    completedAt: '2023-05-23T09:18:00Z',
+    status: 'failed',
+    initiatedBy: 'System',
+    duration: '3m',
   },
   {
-    id: "exec4",
-    startedAt: "2023-05-22T16:20:00Z",
-    completedAt: "2023-05-22T16:25:00Z",
-    status: "completed",
-    initiatedBy: "Jane Smith",
-    duration: "5m",
+    id: 'exec4',
+    startedAt: '2023-05-22T16:20:00Z',
+    completedAt: '2023-05-22T16:25:00Z',
+    status: 'completed',
+    initiatedBy: 'Jane Smith',
+    duration: '5m',
   },
 ]
 
 export function ProcessLogs({ id }: { id: string }) {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState('')
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     })
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "completed":
+      case 'completed':
         return <Badge className="bg-green-500">Completed</Badge>
-      case "failed":
+      case 'failed':
         return <Badge className="bg-red-500">Failed</Badge>
-      case "running":
+      case 'running':
         return <Badge className="bg-blue-500">Running</Badge>
       default:
         return <Badge className="bg-gray-500">Unknown</Badge>
@@ -73,7 +73,7 @@ export function ProcessLogs({ id }: { id: string }) {
   const filteredLogs = executionLogs.filter(
     (log) =>
       log.initiatedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.status.toLowerCase().includes(searchTerm.toLowerCase()),
+      log.status.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
@@ -131,4 +131,3 @@ export function ProcessLogs({ id }: { id: string }) {
     </Card>
   )
 }
-

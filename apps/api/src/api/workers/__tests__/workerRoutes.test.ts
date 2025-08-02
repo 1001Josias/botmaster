@@ -8,10 +8,7 @@ describe('Worker API Endpoints', () => {
 
   describe('GET /workers', () => {
     it('should return paginated workers list with default pagination', async () => {
-      const response = await request(app)
-        .get('/api/v1/workers')
-        .set('x-folder-key', folderKey)
-        .query({}) // No pagination params, should use defaults
+      const response = await request(app).get('/api/v1/workers').set('x-folder-key', folderKey).query({}) // No pagination params, should use defaults
 
       expect(response.statusCode).toEqual(StatusCodes.OK)
       expect(response.body.success).toBeTruthy()
@@ -67,9 +64,7 @@ describe('Worker API Endpoints', () => {
     })
 
     it('should return empty list with proper pagination when no workers exist', async () => {
-      const response = await request(app)
-        .get('/api/v1/workers')
-        .set('x-folder-key', 'non-existent-folder-key')
+      const response = await request(app).get('/api/v1/workers').set('x-folder-key', 'non-existent-folder-key')
 
       expect(response.statusCode).toEqual(StatusCodes.OK)
       expect(response.body.responseObject.items).toEqual([])
@@ -81,8 +76,7 @@ describe('Worker API Endpoints', () => {
     })
 
     it('should require folder key header', async () => {
-      const response = await request(app)
-        .get('/api/v1/workers')
+      const response = await request(app).get('/api/v1/workers')
 
       expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST)
     })
@@ -92,9 +86,7 @@ describe('Worker API Endpoints', () => {
     it('should return 404 for non-existent worker key', async () => {
       const nonExistentKey = 'a5b3c1d2-e4f6-7890-abcd-ef1234567890'
 
-      const response = await request(app)
-        .get(`/api/v1/workers/${nonExistentKey}`)
-        .set('x-folder-key', folderKey)
+      const response = await request(app).get(`/api/v1/workers/${nonExistentKey}`).set('x-folder-key', folderKey)
 
       expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND)
       expect(response.body.success).toBeFalsy()

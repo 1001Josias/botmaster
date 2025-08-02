@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AuditLogs } from "@/components/audit/audit-logs"
-import { AuditFilters } from "@/components/audit/audit-filters"
-import { AuditStats } from "@/components/audit/audit-stats"
-import { Download, Filter, Search } from "lucide-react"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AuditLogs } from '@/components/audit/audit-logs'
+import { AuditFilters } from '@/components/audit/audit-filters'
+import { AuditStats } from '@/components/audit/audit-stats'
+import { Download, Filter, Search } from 'lucide-react'
 
 export default function AuditPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState("all")
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeTab, setActiveTab] = useState('all')
   const [showFilters, setShowFilters] = useState(false)
 
   return (
@@ -120,60 +120,59 @@ const formatTimeAgo = (timestamp: string) => {
 
 const getActivityColor = (category: string) => {
   switch (category) {
-    case "user":
-      return "bg-blue-500"
-    case "workflow":
-      return "bg-purple-500"
-    case "process":
-      return "bg-green-500"
-    case "worker":
-      return "bg-orange-500"
-    case "queue":
-      return "bg-yellow-500"
-    case "settings":
-      return "bg-gray-500"
+    case 'user':
+      return 'bg-blue-500'
+    case 'workflow':
+      return 'bg-purple-500'
+    case 'process':
+      return 'bg-green-500'
+    case 'worker':
+      return 'bg-orange-500'
+    case 'queue':
+      return 'bg-yellow-500'
+    case 'settings':
+      return 'bg-gray-500'
     default:
-      return "bg-primary"
+      return 'bg-primary'
   }
 }
 
 // Dados de exemplo
 const recentActivities = [
   {
-    action: "Criou um novo workflow",
-    user: "João Silva",
+    action: 'Criou um novo workflow',
+    user: 'João Silva',
     timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    category: "workflow",
+    category: 'workflow',
   },
   {
-    action: "Atualizou configurações de segurança",
-    user: "Maria Oliveira",
+    action: 'Atualizou configurações de segurança',
+    user: 'Maria Oliveira',
     timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-    category: "settings",
+    category: 'settings',
   },
   {
-    action: "Executou processo de aprovação",
-    user: "Carlos Santos",
+    action: 'Executou processo de aprovação',
+    user: 'Carlos Santos',
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    category: "process",
+    category: 'process',
   },
   {
-    action: "Adicionou novo usuário",
-    user: "Ana Costa",
+    action: 'Adicionou novo usuário',
+    user: 'Ana Costa',
     timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    category: "user",
+    category: 'user',
   },
   {
-    action: "Modificou worker de processamento",
-    user: "Pedro Almeida",
+    action: 'Modificou worker de processamento',
+    user: 'Pedro Almeida',
     timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    category: "worker",
+    category: 'worker',
   },
   {
-    action: "Criou nova fila de prioridade",
-    user: "Lucia Ferreira",
+    action: 'Criou nova fila de prioridade',
+    user: 'Lucia Ferreira',
     timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    category: "queue",
+    category: 'queue',
   },
 ]
-

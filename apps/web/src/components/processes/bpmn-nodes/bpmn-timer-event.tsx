@@ -1,12 +1,12 @@
-import { Handle, Position } from "reactflow"
-import { Clock } from "lucide-react"
+import { Handle, Position } from 'reactflow'
+import { Clock } from 'lucide-react'
 
 export function BpmnTimerEvent({ data, selected }: { data: any; selected: boolean }) {
   return (
     <div className="relative">
       <div
         className={`flex h-12 w-12 items-center justify-center rounded-full border-2 bg-blue-100 ${
-          selected ? "border-blue-500" : "border-blue-300"
+          selected ? 'border-blue-500' : 'border-blue-300'
         }`}
       >
         <Clock className="h-6 w-6" />
@@ -17,4 +17,3 @@ export function BpmnTimerEvent({ data, selected }: { data: any; selected: boolea
     </div>
   )
 }
-

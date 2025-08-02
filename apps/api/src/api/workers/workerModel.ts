@@ -74,13 +74,28 @@ export const WorkerKeyRouteParamsSchema = z.object({
   key: commonValidations.key,
 })
 
-export const GetWorkersRouteQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1).optional().describe('The page number to retrieve, starting from 1'),
-  limit: z.coerce.number().int().positive().max(100).default(10).optional().describe('Maximum number of items per page (max 100)'),
-}).transform(data => ({
-  page: data.page ?? 1,
-  limit: data.limit ?? 10
-}))
+export const GetWorkersRouteQuerySchema = z
+  .object({
+    page: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(1)
+      .optional()
+      .describe('The page number to retrieve, starting from 1'),
+    limit: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(100)
+      .default(10)
+      .optional()
+      .describe('Maximum number of items per page (max 100)'),
+  })
+  .transform((data) => ({
+    page: data.page ?? 1,
+    limit: data.limit ?? 10,
+  }))
 
 export const PaginationMetaSchema = z.object({
   page: z.number().int().positive().describe('Current page number'),
