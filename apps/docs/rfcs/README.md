@@ -2,13 +2,23 @@
 
 This directory contains technical RFCs (Request for Comments) for the Botmaster ecosystem. All RFCs are written in English to ensure clarity and enable universal collaboration across the development team and community.
 
+## New Decentralized RFC Structure
+
+RFCs are now organized by application to keep documentation close to the code:
+
+- **API RFCs**: [`/apps/api/docs/rfcs/`](../../api/docs/rfcs/) - Backend API and services
+- **Web/Orchestrator RFCs**: [`/apps/web/docs/rfcs/`](../../web/docs/rfcs/) - Web orchestration interface
+- **Jobmaster RFCs**: [`/apps/jobmaster/docs/rfcs/`](../../jobmaster/docs/rfcs/) - Agent application
+- **Jobmaster-GUI RFCs**: [`/apps/jobmaster-gui/docs/rfcs/`](../../jobmaster-gui/docs/rfcs/) - Desktop GUI application
+- **Shared RFCs**: [`./shared/`](./shared/) - Cross-cutting concerns and ecosystem-wide changes
+
 ## Applications Overview
 
 The Botmaster ecosystem consists of several interconnected applications:
 
 - **api** (`/apps/api/`) - Central backend API providing business logic, data persistence, and coordination services for the entire ecosystem
-- **orchestrator** (`/apps/web/`) - Web-based orchestration interface for managing workers, workflows, and processes across the distributed system
-- **jobmaster** - Agent application running on users' machines that executes workers and communicates with the central API
+- **web** (`/apps/web/`) - Web-based orchestration interface for managing workers, workflows, and processes across the distributed system
+- **jobmaster** (`/apps/jobmaster/`) - Agent application running on users' machines that executes workers and communicates with the central API
 - **jobmaster-gui** (`/apps/jobmaster-gui/`) - Optional Electron-based GUI providing a user-friendly interface for the jobmaster agent
 - **shared** - RFCs affecting multiple applications, shared libraries, or ecosystem-wide architectural decisions
 
@@ -16,7 +26,7 @@ The Botmaster ecosystem consists of several interconnected applications:
 
 ### How to Propose an RFC
 
-1. **Copy the template**: Copy [`rfc-template.md`](./rfc-template.md) to the appropriate application folder based on the primary scope of your proposal.
+1. **Copy the template**: Copy [`rfc-template.md`](./rfc-template.md) to the appropriate application's `docs/rfcs/` folder based on the primary scope of your proposal.
 
 2. **Name your RFC**: Use the format `NNNN-descriptive-title.md` where NNNN is the next available number (start with 0001).
 
@@ -40,22 +50,11 @@ The Botmaster ecosystem consists of several interconnected applications:
 - **Provide alternatives**: Discuss alternative approaches and explain why the proposed solution is preferred
 - **Plan for migration**: Include rollout strategies and backward compatibility considerations
 
-## RFC Index
-
-Browse RFCs by application:
-
-- [**RFC Template**](./rfc-template.md) - Use this template for creating new RFCs
-- [**API RFCs**](./api/) - Backend API and services
-- [**Orchestrator RFCs**](./orchestrator/) - Web orchestration interface
-- [**Jobmaster RFCs**](./jobmaster/) - Agent application
-- [**Jobmaster-GUI RFCs**](./jobmaster-gui/) - Desktop GUI application
-- [**Shared RFCs**](./shared/) - Cross-cutting concerns and ecosystem-wide changes
-
 ## Getting Started
 
 1. **Identify the scope**: Determine which application(s) your proposal primarily affects
-2. **Review existing RFCs**: Check the relevant application folder(s) for related proposals
-3. **Use the template**: Copy `rfc-template.md` and fill out all sections thoroughly
+2. **Review existing RFCs**: Check the relevant application's `docs/rfcs/` folder for related proposals
+3. **Use the template**: Copy [`rfc-template.md`](./rfc-template.md) to the appropriate location and fill out all sections thoroughly
 4. **Engage early**: Consider opening a draft PR or discussion issue before finalizing your RFC
 5. **Follow up**: Track implementation progress and update the RFC as needed
 

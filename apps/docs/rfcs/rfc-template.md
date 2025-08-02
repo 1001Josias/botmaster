@@ -1,7 +1,7 @@
 # RFC Template
 
 **Status:** Draft  
-**Target Application(s):** [Specify which apps: api, orchestrator, jobmaster, jobmaster-gui, shared]  
+**Target Application(s):** [Specify which apps: api, web, jobmaster, jobmaster-gui, shared]  
 **RFC Number:** [Assigned when merged]  
 **Created:** [YYYY-MM-DD]  
 **Last Updated:** [YYYY-MM-DD]  
