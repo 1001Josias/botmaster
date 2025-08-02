@@ -148,7 +148,10 @@
 ---
 
 **Status Legend:**
-- **Draft:** Initial version, open for feedback
-- **Proposed:** Ready for implementation, awaiting final approval
-- **Final:** Approved and ready for or under implementation
-- **Deprecated:** No longer valid or superseded by another RFC
+- **Draft:** Initial RFC proposal, open for discussion and iteration
+- **In Review:** RFC is undergoing formal technical and stakeholder review process
+- **Accepted:** RFC has been approved for implementation after review process
+- **Rejected:** RFC was not approved for implementation (with documented reasons)
+- **Deferred:** RFC is postponed for future consideration (not rejected, but not current priority)
+- **Implemented:** Accepted RFC has been fully implemented and deployed
+- **Superseded:** RFC has been replaced by a newer, more comprehensive RFC

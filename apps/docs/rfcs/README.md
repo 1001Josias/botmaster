@@ -94,10 +94,10 @@ RFCs can have the following outcomes:
 
 Once accepted:
 
-1. **Update status**: Change RFC status to "Accepted"
+1. **Update status**: Change RFC status field in the document to "Accepted"
 2. **Create implementation tasks**: Break down the RFC into actionable tasks
 3. **Track progress**: Update the RFC with implementation progress
-4. **Update status**: Change to "Implemented" when complete
+4. **Update status**: Change status field to "Implemented" when complete
 
 ### 6. Post-Implementation
 
@@ -124,6 +124,15 @@ Each RFC progresses through clearly defined statuses:
 - **Deferred**: RFC is postponed for future consideration (not rejected, but not current priority)
 - **Implemented**: Accepted RFC has been fully implemented and deployed
 - **Superseded**: RFC has been replaced by a newer, more comprehensive RFC
+
+### Status Tracking
+
+RFC statuses are maintained directly within each RFC document:
+
+- Each RFC file contains a **Status** field at the top of the document
+- When an RFC's status changes, this field is updated and the change is committed to the repository
+- Status updates are tracked through Git history, providing a complete audit trail
+- The status field should be updated whenever the RFC progresses through its lifecycle
 
 ## Directory Structure
 
