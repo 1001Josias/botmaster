@@ -111,6 +111,18 @@ Draft → In Review → [Accepted|Rejected|Deferred] → Implemented
                   Superseded (if replaced by newer RFC)
 ```
 
+## RFC Status Definitions
+
+Each RFC progresses through clearly defined statuses:
+
+- **Draft**: Initial RFC proposal submitted as a Pull Request, open for discussion and iteration
+- **In Review**: RFC is undergoing formal technical and stakeholder review process
+- **Accepted**: RFC has been approved for implementation after review process
+- **Rejected**: RFC was not approved for implementation (with documented reasons)
+- **Deferred**: RFC is postponed for future consideration (not rejected, but not current priority)
+- **Implemented**: Accepted RFC has been fully implemented and deployed
+- **Superseded**: RFC has been replaced by a newer, more comprehensive RFC
+
 ## Directory Structure
 
 ```
