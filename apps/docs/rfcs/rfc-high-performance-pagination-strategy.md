@@ -158,7 +158,7 @@ class CursorPaginationStrategy implements PaginationStrategy {
       
       return {
         sql: `
-          SELECT * FROM worker 
+          SELECT id, created_at, name, status FROM worker 
           WHERE ${whereClause}
           ${orderClause}
           LIMIT $1
