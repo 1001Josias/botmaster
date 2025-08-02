@@ -266,7 +266,7 @@ class TokenPaginationStrategy implements PaginationStrategy {
       lastId: lastRecord.id,
       lastCreatedAt: lastRecord.created_at.toISOString(),
       filters,
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24h expiry
+      exp: Math.floor(Date.now() / 1000) + TokenPaginationStrategy.TOKEN_EXPIRY_SECONDS // 24h expiry
     }
     
     return jwt.sign(payload, process.env.PAGINATION_JWT_SECRET!)
