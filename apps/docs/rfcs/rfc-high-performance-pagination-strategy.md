@@ -205,8 +205,8 @@ class KeysetPaginationStrategy implements PaginationStrategy {
   buildQuery(params: PaginationParams): PaginationQuery {
     const { limit, cursor, sortBy = 'created_at', sortOrder = 'desc' } = params
     
-    // Create composite index hint for optimal performance
-    const indexHint = `/*+ IndexScan(worker idx_worker_${sortBy}_id) */`
+    // Ensure composite index exists on (${sortBy}, id) for optimal performance
+    // No optimizer hint needed; PostgreSQL will use the best available index
     
     if (cursor) {
       const { lastSortValue, lastId } = this.decodeCursor(cursor)
