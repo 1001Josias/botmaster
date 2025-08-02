@@ -14,7 +14,11 @@ Use this directory for RFCs that:
 
 ## How to Create a New RFC
 
-1. Copy the central template from [`../rfc-template.md`](../rfc-template.md)
+1. Copy the central template from [`../rfc-template.md`](../rfc-template.md):
+   ```bash
+   # Copy the RFC template to create a new shared RFC (replace NNNN and title)
+   cp apps/docs/rfcs/rfc-template.md apps/docs/rfcs/shared/NNNN-your-rfc-title.md
+   ```
 2. Place it in this directory with the format `NNNN-descriptive-title.md`
 3. Fill out all sections, ensuring "Target Application(s)" lists all affected apps
 4. Follow the RFC process outlined in [`../README.md`](../README.md)
