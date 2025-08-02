@@ -1631,14 +1631,14 @@ Feedback from internal team review and stakeholder discussion:
 ```sql
 -- Offset pagination (current implementation)
 EXPLAIN (ANALYZE, BUFFERS) 
-SELECT * FROM worker w 
+SELECT w.id, w.created_at FROM worker w 
 WHERE [RLS conditions]
 ORDER BY w.created_at DESC, w.id DESC
 LIMIT 20 OFFSET 19980; -- Page 1000
 
 -- Cursor pagination (proposed)
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM worker w 
+SELECT w.id, w.created_at FROM worker w 
 WHERE [RLS conditions]
   AND (w.created_at < $2 OR (w.created_at = $2 AND w.id < $3))
 ORDER BY w.created_at DESC, w.id DESC
