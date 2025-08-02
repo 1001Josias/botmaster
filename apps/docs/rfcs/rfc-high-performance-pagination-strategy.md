@@ -231,7 +231,7 @@ class KeysetPaginationStrategy implements PaginationStrategy {
     return {
       sql: `
         ${indexHint}
-        SELECT * FROM worker 
+        SELECT id, created_at, name, status FROM worker 
         WHERE ${this.buildRLSClause()}
         ORDER BY ${sortBy} ${sortOrder.toUpperCase()}, id ${sortOrder.toUpperCase()}
         LIMIT $1
