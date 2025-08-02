@@ -215,7 +215,7 @@ Browse RFCs by application:
 
 - [**RFC Template**](./rfc-template.md) - Use this template for creating new RFCs
 - [**API RFCs**](../../api/docs/rfcs/) - Backend API and services
-- [**Orchestrator RFCs**](./orchestrator/) - Web orchestration interface
+- [**Web RFCs**](../../web/docs/rfcs/) - Web orchestration interface
 - [**Jobmaster RFCs**](./jobmaster/) - Agent application
 - [**Jobmaster-GUI RFCs**](./jobmaster-gui/) - Desktop GUI application
 - [**Shared RFCs**](./shared/) - Cross-cutting concerns and ecosystem-wide changes
