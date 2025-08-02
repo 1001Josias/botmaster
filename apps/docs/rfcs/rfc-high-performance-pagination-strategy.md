@@ -24,7 +24,7 @@ The current Botmaster API implements basic offset-based pagination using LIMIT/O
 
 The current implementation in the workers API uses:
 ```sql
-SELECT * FROM worker w 
+SELECT w.id, w.created_at, w.name, w.status FROM worker w 
 WHERE [RLS conditions]
 ORDER BY w.created_at DESC, w.id DESC
 LIMIT $1 OFFSET $2;
