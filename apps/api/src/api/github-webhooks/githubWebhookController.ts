@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import crypto from 'crypto'
+import { createHmac, timingSafeEqual } from 'node:crypto'
 import { BaseController } from '@/common/controllers/baseController'
 import { handleServiceResponse } from '@/common/utils/httpHandlers'
 import { githubWebhookService, GitHubWebhookService } from './githubWebhookService'
@@ -63,12 +63,11 @@ class GitHubWebhookController extends BaseController<GitHubWebhookService> {
 
   private verifyWebhookSignature(payload: string, signature: string): boolean {
     try {
-      const expectedSignature = 'sha256=' + crypto
-        .createHmac('sha256', env.GITHUB_WEBHOOK_SECRET!)
+      const expectedSignature = 'sha256=' + createHmac('sha256', env.GITHUB_WEBHOOK_SECRET!)
         .update(payload)
         .digest('hex')
       
-      return crypto.timingSafeEqual(
+      return timingSafeEqual(
         Buffer.from(expectedSignature),
         Buffer.from(signature)
       )
