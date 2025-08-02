@@ -20,7 +20,7 @@ RFCs are particularly valuable for:
 The Botmaster ecosystem consists of multiple interconnected applications:
 
 - **api** (`/apps/api/`) - Backend service containing all business logic
-- **orchestrator** (`/apps/web/`) - Web application for orchestrating workers, workflows, and processes
+- **orchestrator** (`/apps/web/`) - Web application for orchestrating workers, workflows, processes, queues and others resources available
 - **jobmaster** - Background agent responsible for executing worker code on target machines
 - **jobmaster-gui** (`/apps/jobmaster-gui/`) - Optional Electron application providing UI for jobmaster status and configuration
 - **shared** - Common libraries and utilities used across applications
