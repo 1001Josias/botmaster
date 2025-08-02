@@ -1,4 +1,4 @@
-# Web/Orchestrator RFCs
+# Orchestrator RFCs
 
 This directory contains RFCs specific to the Web application (orchestrator interface).
 
@@ -10,7 +10,7 @@ This directory contains RFCs specific to the Web application (orchestrator inter
    cp apps/docs/rfcs/rfc-template.md apps/web/docs/rfcs/NNNN-your-rfc-title.md
    ```
 2. Place it in this directory with the format `NNNN-descriptive-title.md`
-3. Fill out all sections, ensuring "Target Application(s)" includes "web"
+3. Fill out all sections, ensuring "Target Application(s)" includes "Orchestrator"
 4. Follow the RFC process outlined in [`/apps/docs/rfcs/README.md`](../../docs/rfcs/README.md)
 
 ## Cross-Application RFCs
