@@ -23,7 +23,7 @@ The Botmaster ecosystem consists of multiple interconnected applications:
 - **orchestrator** (`/apps/web/`) - Web application for orchestrating workers, workflows, processes, queues and others resources available
 - **jobmaster** - Background agent responsible for executing worker code on target machines
 - **jobmaster-gui** (`/apps/jobmaster-gui/`) - Optional Electron application providing UI for jobmaster status and configuration
-- **shared** - Common libraries and utilities used across applications
+- **packages** - Common libraries and utilities used across applications
 
 ## When to Write an RFC
 
