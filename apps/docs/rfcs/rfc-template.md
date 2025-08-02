@@ -148,7 +148,12 @@
 ---
 
 **Status Legend:**
-- **Draft:** Initial version, open for feedback
-- **Proposed:** Ready for implementation, awaiting final approval
-- **Final:** Approved and ready for or under implementation
-- **Deprecated:** No longer valid or superseded by another RFC
+- **Draft:** Initial RFC proposal, open for discussion and iteration
+- **In Review:** RFC is undergoing formal technical and stakeholder review process
+- **Accepted:** RFC has been approved for implementation after review process
+- **Rejected:** RFC PR is closed without merging (reasons documented in PR discussion)
+- **Deferred:** RFC is postponed for future consideration and merged with this status
+- **Implemented:** Accepted RFC has been fully implemented and deployed
+- **Superseded:** RFC has been replaced by a newer, more comprehensive RFC
+
+**Note:** Rejected RFCs are handled by closing the Pull Request rather than merging to keep RFC directories clean.
