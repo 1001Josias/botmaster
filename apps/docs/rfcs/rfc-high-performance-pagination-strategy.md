@@ -1646,7 +1646,7 @@ LIMIT 21;
 
 -- Keyset pagination (optimized)
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT * FROM worker w 
+SELECT w.id, w.created_at FROM worker w 
 WHERE [RLS conditions]
   AND (w.created_at, w.id) < ($2, $3)
 ORDER BY w.created_at DESC, w.id DESC
