@@ -1,12 +1,12 @@
-import { Handle, Position } from "reactflow"
-import { Flag } from "lucide-react"
+import { Handle, Position } from 'reactflow'
+import { Flag } from 'lucide-react'
 
 export function BpmnSignalEvent({ data, selected }: { data: any; selected: boolean }) {
   return (
     <div className="relative">
       <div
         className={`flex h-12 w-12 items-center justify-center rounded-full border-2 bg-orange-100 ${
-          selected ? "border-blue-500" : "border-orange-300"
+          selected ? 'border-blue-500' : 'border-orange-300'
         }`}
       >
         <Flag className="h-6 w-6" />
@@ -17,4 +17,3 @@ export function BpmnSignalEvent({ data, selected }: { data: any; selected: boole
     </div>
   )
 }
-

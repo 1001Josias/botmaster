@@ -1,35 +1,35 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import type { Node } from "reactflow"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useEffect } from 'react'
+import type { Node } from 'reactflow'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import { useToast } from '@/components/ui/use-toast'
 
 // Mock data for resources
 const mockWorkers = [
-  { id: "worker1", name: "Customer Verification Worker" },
-  { id: "worker2", name: "Account Creation Worker" },
-  { id: "worker3", name: "Email Notification Worker" },
-  { id: "worker4", name: "Data Processing Worker" },
+  { id: 'worker1', name: 'Customer Verification Worker' },
+  { id: 'worker2', name: 'Account Creation Worker' },
+  { id: 'worker3', name: 'Email Notification Worker' },
+  { id: 'worker4', name: 'Data Processing Worker' },
 ]
 
 const mockWorkflows = [
-  { id: "workflow1", name: "Customer Verification Workflow" },
-  { id: "workflow2", name: "Account Setup Workflow" },
-  { id: "workflow3", name: "Notification Workflow" },
+  { id: 'workflow1', name: 'Customer Verification Workflow' },
+  { id: 'workflow2', name: 'Account Setup Workflow' },
+  { id: 'workflow3', name: 'Notification Workflow' },
 ]
 
 const mockTriggers = [
-  { id: "trigger1", name: "API Webhook" },
-  { id: "trigger2", name: "Scheduled Event" },
-  { id: "trigger3", name: "Message Queue" },
+  { id: 'trigger1', name: 'API Webhook' },
+  { id: 'trigger2', name: 'Scheduled Event' },
+  { id: 'trigger3', name: 'Message Queue' },
 ]
 
 interface ResourceSelectorProps {
@@ -39,58 +39,58 @@ interface ResourceSelectorProps {
 
 export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps) {
   const { toast } = useToast()
-  const [resourceType, setResourceType] = useState<string>("")
-  const [resourceId, setResourceId] = useState<string>("")
+  const [resourceType, setResourceType] = useState<string>('')
+  const [resourceId, setResourceId] = useState<string>('')
   const [configuration, setConfiguration] = useState<any>({})
-  const [activeTab, setActiveTab] = useState("resource")
+  const [activeTab, setActiveTab] = useState('resource')
 
   useEffect(() => {
     // Initialize from existing implementation data if available
     if (node.data.implementation) {
-      setResourceType(node.data.implementation.resourceType || "")
-      setResourceId(node.data.implementation.resourceId || "")
+      setResourceType(node.data.implementation.resourceType || '')
+      setResourceId(node.data.implementation.resourceId || '')
       setConfiguration(node.data.implementation.configuration || {})
     } else {
       // Set default resource type based on node type
-      const defaultType = getDefaultResourceType(node.type || "")
+      const defaultType = getDefaultResourceType(node.type || '')
       setResourceType(defaultType)
-      setResourceId("")
+      setResourceId('')
       setConfiguration({})
     }
   }, [node])
 
   const getDefaultResourceType = (nodeType: string): string => {
     switch (nodeType) {
-      case "task":
-      case "serviceTask":
-      case "scriptTask":
-        return "worker"
-      case "userTask":
-      case "sendTask":
-      case "businessRuleTask":
-        return "workflow"
-      case "startEvent":
-      case "messageEvent":
-      case "signalEvent":
-      case "timerEvent":
-        return "trigger"
-      case "exclusiveGateway":
-      case "inclusiveGateway":
-      case "parallelGateway":
-      case "eventGateway":
-        return "condition"
+      case 'task':
+      case 'serviceTask':
+      case 'scriptTask':
+        return 'worker'
+      case 'userTask':
+      case 'sendTask':
+      case 'businessRuleTask':
+        return 'workflow'
+      case 'startEvent':
+      case 'messageEvent':
+      case 'signalEvent':
+      case 'timerEvent':
+        return 'trigger'
+      case 'exclusiveGateway':
+      case 'inclusiveGateway':
+      case 'parallelGateway':
+      case 'eventGateway':
+        return 'condition'
       default:
-        return ""
+        return ''
     }
   }
 
   const getResourceOptions = () => {
     switch (resourceType) {
-      case "worker":
+      case 'worker':
         return mockWorkers
-      case "workflow":
+      case 'workflow':
         return mockWorkflows
-      case "trigger":
+      case 'trigger':
         return mockTriggers
       default:
         return []
@@ -107,7 +107,7 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
     })
 
     toast({
-      title: "Resource connected",
+      title: 'Resource connected',
       description: `Successfully connected ${resourceType} to "${node.data.label}"`,
     })
   }
@@ -121,7 +121,7 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
             value={resourceType}
             onValueChange={(value) => {
               setResourceType(value)
-              setResourceId("")
+              setResourceId('')
             }}
           >
             <SelectTrigger id="resourceType">
@@ -131,14 +131,14 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               <SelectItem value="worker">Worker</SelectItem>
               <SelectItem value="workflow">Workflow</SelectItem>
               <SelectItem value="trigger">Trigger</SelectItem>
-              {(node.type === "exclusiveGateway" || node.type === "inclusiveGateway") && (
+              {(node.type === 'exclusiveGateway' || node.type === 'inclusiveGateway') && (
                 <SelectItem value="condition">Condition</SelectItem>
               )}
             </SelectContent>
           </Select>
         </div>
 
-        {resourceType && resourceType !== "condition" && (
+        {resourceType && resourceType !== 'condition' && (
           <div className="grid gap-2">
             <Label htmlFor="resourceId">Select {resourceType}</Label>
             <Select value={resourceId} onValueChange={(value) => setResourceId(value)}>
@@ -156,12 +156,12 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
           </div>
         )}
 
-        {resourceType === "condition" && (
+        {resourceType === 'condition' && (
           <div className="space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="conditionType">Condition Type</Label>
               <Select
-                value={configuration.conditionType || "expression"}
+                value={configuration.conditionType || 'expression'}
                 onValueChange={(value) => setConfiguration({ ...configuration, conditionType: value })}
               >
                 <SelectTrigger id="conditionType">
@@ -175,13 +175,13 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               </Select>
             </div>
 
-            {configuration.conditionType === "expression" && (
+            {configuration.conditionType === 'expression' && (
               <div className="grid gap-2">
                 <Label htmlFor="expression">Expression</Label>
                 <Textarea
                   id="expression"
                   placeholder="Enter condition expression (e.g., result == 'success')"
-                  value={configuration.expression || ""}
+                  value={configuration.expression || ''}
                   onChange={(e) =>
                     setConfiguration({
                       ...configuration,
@@ -192,14 +192,14 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               </div>
             )}
 
-            {configuration.conditionType === "variable" && (
+            {configuration.conditionType === 'variable' && (
               <div className="space-y-4">
                 <div className="grid gap-2">
                   <Label htmlFor="variableName">Variable Name</Label>
                   <Input
                     id="variableName"
                     placeholder="Enter variable name"
-                    value={configuration.variableName || ""}
+                    value={configuration.variableName || ''}
                     onChange={(e) =>
                       setConfiguration({
                         ...configuration,
@@ -211,7 +211,7 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
                 <div className="grid gap-2">
                   <Label htmlFor="operator">Operator</Label>
                   <Select
-                    value={configuration.operator || "equals"}
+                    value={configuration.operator || 'equals'}
                     onValueChange={(value) => setConfiguration({ ...configuration, operator: value })}
                   >
                     <SelectTrigger id="operator">
@@ -231,7 +231,7 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
                   <Input
                     id="value"
                     placeholder="Enter comparison value"
-                    value={configuration.value || ""}
+                    value={configuration.value || ''}
                     onChange={(e) =>
                       setConfiguration({
                         ...configuration,
@@ -243,11 +243,11 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               </div>
             )}
 
-            {configuration.conditionType === "status" && (
+            {configuration.conditionType === 'status' && (
               <div className="grid gap-2">
                 <Label htmlFor="status">Status</Label>
                 <Select
-                  value={configuration.status || "success"}
+                  value={configuration.status || 'success'}
                   onValueChange={(value) => setConfiguration({ ...configuration, status: value })}
                 >
                   <SelectTrigger id="status">
@@ -264,12 +264,12 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
           </div>
         )}
 
-        {resourceType === "trigger" && node.type === "timerEvent" && (
+        {resourceType === 'trigger' && node.type === 'timerEvent' && (
           <div className="space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="timerType">Timer Type</Label>
               <Select
-                value={configuration.timerType || "date"}
+                value={configuration.timerType || 'date'}
                 onValueChange={(value) => setConfiguration({ ...configuration, timerType: value })}
               >
                 <SelectTrigger id="timerType">
@@ -283,13 +283,13 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               </Select>
             </div>
 
-            {configuration.timerType === "date" && (
+            {configuration.timerType === 'date' && (
               <div className="grid gap-2">
                 <Label htmlFor="date">Date and Time</Label>
                 <Input
                   id="date"
                   type="datetime-local"
-                  value={configuration.date || ""}
+                  value={configuration.date || ''}
                   onChange={(e) =>
                     setConfiguration({
                       ...configuration,
@@ -300,13 +300,13 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               </div>
             )}
 
-            {configuration.timerType === "duration" && (
+            {configuration.timerType === 'duration' && (
               <div className="grid gap-2">
                 <Label htmlFor="duration">Duration (ISO 8601)</Label>
                 <Input
                   id="duration"
                   placeholder="e.g., PT15M for 15 minutes"
-                  value={configuration.duration || ""}
+                  value={configuration.duration || ''}
                   onChange={(e) =>
                     setConfiguration({
                       ...configuration,
@@ -320,13 +320,13 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
               </div>
             )}
 
-            {configuration.timerType === "cycle" && (
+            {configuration.timerType === 'cycle' && (
               <div className="grid gap-2">
                 <Label htmlFor="cycle">Cron Expression</Label>
                 <Input
                   id="cycle"
                   placeholder="e.g., 0 0 * * * for daily at midnight"
-                  value={configuration.cycle || ""}
+                  value={configuration.cycle || ''}
                   onChange={(e) =>
                     setConfiguration({
                       ...configuration,
@@ -406,7 +406,7 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
           <Textarea
             id="notes"
             placeholder="Add implementation notes..."
-            value={configuration.notes || ""}
+            value={configuration.notes || ''}
             onChange={(e) =>
               setConfiguration({
                 ...configuration,
@@ -442,4 +442,3 @@ export function ResourceSelector({ node, updateNodeData }: ResourceSelectorProps
     </Card>
   )
 }
-

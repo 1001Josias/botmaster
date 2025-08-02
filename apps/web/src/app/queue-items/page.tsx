@@ -1,7 +1,7 @@
-import { QueueItemsHeader } from "@/components/queue-items/queue-items-header"
-import { QueueItemsFilters } from "@/components/queue-items/queue-items-filters"
-import { QueueItemsTable } from "@/components/queue-items/queue-items-table"
-import { QueueItemsStats } from "@/components/queue-items/queue-items-stats"
+import { QueueItemsHeader } from '@/components/queue-items/queue-items-header'
+import { QueueItemsFilters } from '@/components/queue-items/queue-items-filters'
+import { QueueItemsTable } from '@/components/queue-items/queue-items-table'
+import { QueueItemsStats } from '@/components/queue-items/queue-items-stats'
 
 export default function QueueItemsPage() {
   return (
@@ -13,4 +13,3 @@ export default function QueueItemsPage() {
     </div>
   )
 }
-

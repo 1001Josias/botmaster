@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { QueueItem } from "@/lib/types/queue-item"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import type { QueueItem } from '@/lib/types/queue-item'
+import { Badge } from '@/components/ui/badge'
 
 interface QueueItemInfoProps {
   id: string
@@ -12,40 +12,40 @@ export function QueueItemInfo({ id }: QueueItemInfoProps) {
   // Dados simulados para demonstração
   const item: QueueItem = {
     id,
-    jobId: "job-123",
-    jobName: "Processamento de Dados",
-    workerId: "worker-456",
-    workerName: "Worker de Análise",
-    workerVersion: "1.5",
-    status: "completed",
-    createdAt: "2023-05-15T14:30:00Z",
-    startedAt: "2023-05-15T14:30:05Z",
-    finishedAt: "2023-05-15T14:31:25Z",
+    jobId: 'job-123',
+    jobName: 'Processamento de Dados',
+    workerId: 'worker-456',
+    workerName: 'Worker de Análise',
+    workerVersion: '1.5',
+    status: 'completed',
+    createdAt: '2023-05-15T14:30:00Z',
+    startedAt: '2023-05-15T14:30:05Z',
+    finishedAt: '2023-05-15T14:31:25Z',
     processingTime: 80000,
-    payload: { data: "Sample payload data" },
+    payload: { data: 'Sample payload data' },
     result: { success: true, processedItems: 150 },
     error: null,
     attempts: 1,
     maxAttempts: 3,
     priority: 2,
-    tags: ["production", "data-processing"],
-    metadata: { source: "API", requestId: "req-789" },
+    tags: ['production', 'data-processing'],
+    metadata: { source: 'API', requestId: 'req-789' },
   }
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
-    return new Date(dateString).toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+    if (!dateString) return '-'
+    return new Date(dateString).toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     })
   }
 
   const formatDuration = (ms: number | null) => {
-    if (ms === null) return "-"
+    if (ms === null) return '-'
 
     const seconds = Math.floor(ms / 1000)
     if (seconds < 60) return `${seconds} segundos`
@@ -69,8 +69,8 @@ export function QueueItemInfo({ id }: QueueItemInfoProps) {
 
             <div className="text-sm font-medium">Status:</div>
             <div className="text-sm">
-              <Badge variant={item.status === "completed" ? "success" : "default"}>
-                {item.status === "completed" ? "Concluído" : item.status}
+              <Badge variant={item.status === 'completed' ? 'success' : 'default'}>
+                {item.status === 'completed' ? 'Concluído' : item.status}
               </Badge>
             </div>
 
@@ -115,7 +115,7 @@ export function QueueItemInfo({ id }: QueueItemInfoProps) {
             <div className="text-sm">
               {item.startedAt && item.createdAt
                 ? formatDuration(new Date(item.startedAt).getTime() - new Date(item.createdAt).getTime())
-                : "-"}
+                : '-'}
             </div>
           </div>
         </CardContent>
@@ -168,4 +168,3 @@ export function QueueItemInfo({ id }: QueueItemInfoProps) {
     </div>
   )
 }
-

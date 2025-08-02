@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Check, AlertCircle } from "lucide-react"
+import { Card, CardContent } from '@/components/ui/card'
+import { Check, AlertCircle } from 'lucide-react'
 
 interface ItemRequirementsProps {
   id: string
@@ -11,19 +11,19 @@ export function ItemRequirements({ id }: ItemRequirementsProps) {
   // Dados simulados para os requisitos
   const requirements = [
     {
-      name: "BotMaster v2.0+",
+      name: 'BotMaster v2.0+',
       met: true,
     },
     {
-      name: "Worker: Email Sender",
+      name: 'Worker: Email Sender',
       met: true,
     },
     {
-      name: "Worker: Data Transformer",
+      name: 'Worker: Data Transformer',
       met: false,
     },
     {
-      name: "Acesso a API externa",
+      name: 'Acesso a API externa',
       met: true,
     },
   ]
@@ -41,7 +41,7 @@ export function ItemRequirements({ id }: ItemRequirementsProps) {
               ) : (
                 <AlertCircle className="h-5 w-5 text-amber-500" />
               )}
-              <span className={req.met ? "" : "text-muted-foreground"}>{req.name}</span>
+              <span className={req.met ? '' : 'text-muted-foreground'}>{req.name}</span>
               {!req.met && <span className="text-xs text-amber-500 ml-auto">Não instalado</span>}
             </li>
           ))}
@@ -50,4 +50,3 @@ export function ItemRequirements({ id }: ItemRequirementsProps) {
     </Card>
   )
 }
-

@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Activity, AlertTriangle, CheckCircle, Clock, Users } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Activity, AlertTriangle, CheckCircle, Clock, Users } from 'lucide-react'
 
 export function AuditStats() {
   return (
@@ -159,7 +159,7 @@ function StatsCard({ title, value, description, icon, trend, trendUp }: StatsCar
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground">{description}</p>
-        <div className={`flex items-center text-xs mt-2 ${trendUp ? "text-green-500" : "text-red-500"}`}>
+        <div className={`flex items-center text-xs mt-2 ${trendUp ? 'text-green-500' : 'text-red-500'}`}>
           {trendUp ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertTriangle className="h-3 w-3 mr-1" />}
           {trend}
         </div>
@@ -167,4 +167,3 @@ function StatsCard({ title, value, description, icon, trend, trendUp }: StatsCar
     </Card>
   )
 }
-

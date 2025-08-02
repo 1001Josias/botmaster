@@ -1,16 +1,16 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
 
 interface AuditFiltersProps {
   className?: string
@@ -82,10 +82,10 @@ export function AuditFilters({ className }: AuditFiltersProps) {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn("w-full justify-start text-left font-normal", !startDate && "text-muted-foreground")}
+                  className={cn('w-full justify-start text-left font-normal', !startDate && 'text-muted-foreground')}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, "dd/MM/yyyy") : "Selecionar data"}
+                  {startDate ? format(startDate, 'dd/MM/yyyy') : 'Selecionar data'}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -100,10 +100,10 @@ export function AuditFilters({ className }: AuditFiltersProps) {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn("w-full justify-start text-left font-normal", !endDate && "text-muted-foreground")}
+                  className={cn('w-full justify-start text-left font-normal', !endDate && 'text-muted-foreground')}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, "dd/MM/yyyy") : "Selecionar data"}
+                  {endDate ? format(endDate, 'dd/MM/yyyy') : 'Selecionar data'}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -126,4 +126,3 @@ export function AuditFilters({ className }: AuditFiltersProps) {
     </Card>
   )
 }
-

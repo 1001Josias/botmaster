@@ -1,33 +1,33 @@
-import { Handle, Position } from "reactflow"
+import { Handle, Position } from 'reactflow'
 
 export function BpmnGateway({ data, selected }: { data: any; selected: boolean }) {
   const getGatewayColor = () => {
     switch (data.type) {
-      case "exclusiveGateway":
-        return "border-yellow-500 bg-yellow-100"
-      case "parallelGateway":
-        return "border-green-500 bg-green-100"
-      case "inclusiveGateway":
-        return "border-blue-500 bg-blue-100"
-      case "eventGateway":
-        return "border-purple-500 bg-purple-100"
+      case 'exclusiveGateway':
+        return 'border-yellow-500 bg-yellow-100'
+      case 'parallelGateway':
+        return 'border-green-500 bg-green-100'
+      case 'inclusiveGateway':
+        return 'border-blue-500 bg-blue-100'
+      case 'eventGateway':
+        return 'border-purple-500 bg-purple-100'
       default:
-        return "border-gray-500 bg-gray-100"
+        return 'border-gray-500 bg-gray-100'
     }
   }
 
   const getGatewayIcon = () => {
     switch (data.type) {
-      case "exclusiveGateway":
-        return "×"
-      case "parallelGateway":
-        return "+"
-      case "inclusiveGateway":
-        return "○"
-      case "eventGateway":
-        return "◇"
+      case 'exclusiveGateway':
+        return '×'
+      case 'parallelGateway':
+        return '+'
+      case 'inclusiveGateway':
+        return '○'
+      case 'eventGateway':
+        return '◇'
       default:
-        return ""
+        return ''
     }
   }
 
@@ -35,7 +35,7 @@ export function BpmnGateway({ data, selected }: { data: any; selected: boolean }
     <div className="relative">
       <div
         className={`flex h-14 w-14 rotate-45 items-center justify-center border-2 ${
-          selected ? "border-blue-500" : getGatewayColor()
+          selected ? 'border-blue-500' : getGatewayColor()
         }`}
       >
         <div className="-rotate-45 text-lg font-bold">{getGatewayIcon()}</div>
@@ -48,4 +48,3 @@ export function BpmnGateway({ data, selected }: { data: any; selected: boolean }
     </div>
   )
 }
-
