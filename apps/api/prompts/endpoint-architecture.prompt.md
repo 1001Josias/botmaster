@@ -151,10 +151,15 @@ export interface IExampleRepository extends IExampleBase {
 
 // Interface específica para o Service
 export interface IExampleService extends IExampleBase {
-  create: (example: CreateExampleDto) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
+  create: (
+    example: CreateExampleDto
+  ) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
   getById: (id: string) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
   getAll: () => Promise<ServiceResponse<ExampleResponseDto[] | ServiceResponseObjectError | null>>
-  update: (id: string, example: UpdateExampleDto) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
+  update: (
+    id: string,
+    example: UpdateExampleDto
+  ) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
   delete: (id: string) => Promise<ServiceResponse<ExampleResponseDto | ServiceResponseObjectError | null>>
 }
 
@@ -170,21 +175,13 @@ export interface IExampleController extends IExampleBase {
     res: ResponseCustom<ExampleResponseDto, null>,
     next: NextFunction
   ) => Promise<void>
-  getAll: (
-    req: Request,
-    res: ResponseCustom<ExampleResponseDto[], null>,
-    next: NextFunction
-  ) => Promise<void>
+  getAll: (req: Request, res: ResponseCustom<ExampleResponseDto[], null>, next: NextFunction) => Promise<void>
   update: (
     req: Request<{ id: string }, null, UpdateExampleDto>,
     res: ResponseCustom<ExampleResponseDto, UpdateExampleDto>,
     next: NextFunction
   ) => Promise<void>
-  delete: (
-    req: Request<{ id: string }>,
-    res: ResponseCustom<null, null>,
-    next: NextFunction
-  ) => Promise<void>
+  delete: (req: Request<{ id: string }>, res: ResponseCustom<null, null>, next: NextFunction) => Promise<void>
 }
 ```
 

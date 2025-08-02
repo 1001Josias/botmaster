@@ -1,6 +1,12 @@
 import { PoolClient } from 'pg'
 import { logger } from '@/server'
-import { CreateWorkerDto, WorkerDatabaseDto, WorkerResponseDto, GetWorkersQueryDto, PaginatedWorkersResponseDto } from '@/api/workers/workerModel'
+import {
+  CreateWorkerDto,
+  WorkerDatabaseDto,
+  WorkerResponseDto,
+  GetWorkersQueryDto,
+  PaginatedWorkersResponseDto,
+} from '@/api/workers/workerModel'
 import { IWorker } from '@/api/workers/worker'
 import { BaseRepository } from '@/common/repositories/baseRepository'
 import { readSqlFile } from '@/common/utils/sqlReader'
@@ -53,7 +59,7 @@ export class WorkerRepository extends BaseRepository implements IWorker<any, Pro
     if (rows.length === 0) {
       return null
     }
-    
+
     const row = rows[0]
     return {
       id: row.id,
@@ -74,18 +80,18 @@ export class WorkerRepository extends BaseRepository implements IWorker<any, Pro
 
   async getAll(query: GetWorkersQueryDto): Promise<PaginatedWorkersResponseDto> {
     const offset = (query.page - 1) * query.limit
-    
+
     // Use direct database query since we need to handle empty results gracefully
     await this.ensureSessionContext()
-    const { rows } = await this.database.query<WorkerDatabaseDto & { total_count: string }>(
-      getWorkersPaginatedQuery, 
-      [query.limit, offset]
-    )
-    
+    const { rows } = await this.database.query<WorkerDatabaseDto & { total_count: string }>(getWorkersPaginatedQuery, [
+      query.limit,
+      offset,
+    ])
+
     const totalItems = rows.length > 0 ? parseInt(rows[0].total_count, 10) : 0
     const totalPages = Math.ceil(totalItems / query.limit)
-    
-    const items: WorkerResponseDto[] = rows.map(row => ({
+
+    const items: WorkerResponseDto[] = rows.map((row) => ({
       id: row.id,
       key: row.key,
       name: row.name,
@@ -104,12 +110,12 @@ export class WorkerRepository extends BaseRepository implements IWorker<any, Pro
     // Calculate pagination metadata
     const previousPages: number[] = []
     const nextPages: number[] = []
-    
+
     // Add up to 3 previous pages
     for (let i = Math.max(1, query.page - 3); i < query.page; i++) {
       previousPages.push(i)
     }
-    
+
     // Add up to 3 next pages
     for (let i = query.page + 1; i <= Math.min(totalPages, query.page + 3); i++) {
       nextPages.push(i)
@@ -126,7 +132,7 @@ export class WorkerRepository extends BaseRepository implements IWorker<any, Pro
         nextPages,
         firstPage: 1,
         lastPage: Math.max(1, totalPages),
-      }
+      },
     }
   }
 

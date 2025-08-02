@@ -45,7 +45,8 @@ Consider writing an RFC when:
 3. **Fill out the template**: Complete all relevant sections
 4. **Submit as Draft**: Create a Pull Request with the status set to "Draft"
 
-**Example RFC placement**: 
+**Example RFC placement**:
+
 - Application-specific RFC: `apps/api/docs/rfcs/0001-user-authentication-system.md`
 - Cross-application RFC: `apps/docs/rfcs/shared/0001-unified-logging-strategy.md`
 
@@ -157,7 +158,7 @@ botmaster/
 ## RFC Numbering
 
 - RFCs are numbered sequentially starting from `0001`
-- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`)  
+- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`)
 - Numbers are assigned when the RFC PR is created
 - Only merged RFCs (Accepted, Deferred, Implemented, Superseded) consume numbers
 - Rejected RFCs don't consume numbers as they are closed without merging

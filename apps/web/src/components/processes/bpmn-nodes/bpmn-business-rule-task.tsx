@@ -1,12 +1,12 @@
-import { Handle, Position } from "reactflow"
-import { FileText } from "lucide-react"
+import { Handle, Position } from 'reactflow'
+import { FileText } from 'lucide-react'
 
 export function BpmnBusinessRuleTask({ data, selected }: { data: any; selected: boolean }) {
   return (
     <div className="relative">
       <div
         className={`flex h-14 w-36 items-center justify-center rounded-md border-2 bg-amber-100 ${
-          selected ? "border-blue-500" : "border-amber-300"
+          selected ? 'border-blue-500' : 'border-amber-300'
         }`}
       >
         <FileText className="mr-2 h-4 w-4" />
@@ -17,4 +17,3 @@ export function BpmnBusinessRuleTask({ data, selected }: { data: any; selected: 
     </div>
   )
 }
-
