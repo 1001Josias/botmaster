@@ -1,4 +1,4 @@
-import { ProcessDetails } from "@/components/processes/process-details"
+import { ProcessDetails } from '@/components/processes/process-details'
 
 export default function ProcessDetailsPage({ params }: { params: { id: string } }) {
   return (
@@ -7,4 +7,3 @@ export default function ProcessDetailsPage({ params }: { params: { id: string } 
     </div>
   )
 }
-

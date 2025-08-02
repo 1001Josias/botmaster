@@ -1,30 +1,30 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Upload, Plus, Trash2 } from "lucide-react"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Upload, Plus, Trash2 } from 'lucide-react'
 
 export function PublishForm() {
-  const [itemType, setItemType] = useState("worker")
-  const [pricingType, setPricingType] = useState("free")
+  const [itemType, setItemType] = useState('worker')
+  const [pricingType, setPricingType] = useState('free')
   const [screenshots, setScreenshots] = useState<string[]>([])
   const [tags, setTags] = useState<string[]>([])
-  const [currentTag, setCurrentTag] = useState("")
+  const [currentTag, setCurrentTag] = useState('')
 
   const handleAddTag = () => {
     if (currentTag && !tags.includes(currentTag)) {
       setTags([...tags, currentTag])
-      setCurrentTag("")
+      setCurrentTag('')
     }
   }
 
@@ -35,7 +35,7 @@ export function PublishForm() {
   const handleAddScreenshot = () => {
     // Em um cenário real, aqui seria feito o upload da imagem
     // Para este exemplo, estamos apenas adicionando um placeholder
-    setScreenshots([...screenshots, "/placeholder.svg?height=200&width=300"])
+    setScreenshots([...screenshots, '/placeholder.svg?height=200&width=300'])
   }
 
   const handleRemoveScreenshot = (index: number) => {
@@ -45,7 +45,7 @@ export function PublishForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Lógica para enviar o formulário
-    console.log("Form submitted")
+    console.log('Form submitted')
   }
 
   return (
@@ -129,7 +129,7 @@ export function PublishForm() {
                       value={currentTag}
                       onChange={(e) => setCurrentTag(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
+                        if (e.key === 'Enter') {
                           e.preventDefault()
                           handleAddTag()
                         }
@@ -166,7 +166,7 @@ export function PublishForm() {
                     {screenshots.map((screenshot, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={screenshot || "/placeholder.svg"}
+                          src={screenshot || '/placeholder.svg'}
                           alt={`Screenshot ${index + 1}`}
                           className="w-full h-32 object-cover rounded-md"
                         />
@@ -241,14 +241,14 @@ export function PublishForm() {
                   </RadioGroup>
                 </div>
 
-                {pricingType === "paid" && (
+                {pricingType === 'paid' && (
                   <div className="space-y-2">
                     <Label htmlFor="price">Preço (USD)</Label>
                     <Input id="price" type="number" min="0" step="0.01" placeholder="Ex: 19.99" />
                   </div>
                 )}
 
-                {pricingType === "subscription" && (
+                {pricingType === 'subscription' && (
                   <div className="space-y-2">
                     <Label>Planos de Assinatura</Label>
                     <div className="space-y-2">
@@ -268,10 +268,10 @@ export function PublishForm() {
                   <div className="flex items-center space-x-2">
                     <Checkbox id="terms" />
                     <Label htmlFor="terms">
-                      Concordo com os{" "}
+                      Concordo com os{' '}
                       <a href="#" className="text-primary underline">
                         termos e condições
-                      </a>{" "}
+                      </a>{' '}
                       do Marketplace
                     </Label>
                   </div>
@@ -290,4 +290,3 @@ export function PublishForm() {
     </form>
   )
 }
-

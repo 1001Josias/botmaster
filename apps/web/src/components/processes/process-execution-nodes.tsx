@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import type { Process, ProcessExecution } from "@/lib/types/process"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { format, formatDistanceStrict } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { CheckCircle2, Clock, XCircle, AlertTriangle } from "lucide-react"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import type { Process, ProcessExecution } from '@/lib/types/process'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { format, formatDistanceStrict } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { CheckCircle2, Clock, XCircle, AlertTriangle } from 'lucide-react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 interface ProcessExecutionNodesProps {
   execution: ProcessExecution
@@ -16,7 +16,7 @@ interface ProcessExecutionNodesProps {
 
 export function ProcessExecutionNodes({ execution, process }: ProcessExecutionNodesProps) {
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "HH:mm:ss", { locale: ptBR })
+    return format(new Date(dateString), 'HH:mm:ss', { locale: ptBR })
   }
 
   const getNodeLabel = (nodeId: string) => {
@@ -26,16 +26,16 @@ export function ProcessExecutionNodes({ execution, process }: ProcessExecutionNo
 
   const getNodeType = (nodeId: string) => {
     const node = process.nodes.find((n) => n.id === nodeId)
-    return node?.data.type || "unknown"
+    return node?.data.type || 'unknown'
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "completed":
+      case 'completed':
         return <CheckCircle2 className="h-5 w-5 text-green-500" />
-      case "failed":
+      case 'failed':
         return <XCircle className="h-5 w-5 text-red-500" />
-      case "skipped":
+      case 'skipped':
         return <AlertTriangle className="h-5 w-5 text-amber-500" />
       default:
         return <Clock className="h-5 w-5 text-blue-500" />
@@ -44,19 +44,19 @@ export function ProcessExecutionNodes({ execution, process }: ProcessExecutionNo
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-800"
-      case "failed":
-        return "bg-red-100 text-red-800"
-      case "skipped":
-        return "bg-amber-100 text-amber-800"
+      case 'completed':
+        return 'bg-green-100 text-green-800'
+      case 'failed':
+        return 'bg-red-100 text-red-800'
+      case 'skipped':
+        return 'bg-amber-100 text-amber-800'
       default:
-        return "bg-blue-100 text-blue-800"
+        return 'bg-blue-100 text-blue-800'
     }
   }
 
   const getDuration = (startedAt: string, completedAt?: string) => {
-    if (!completedAt) return "Em andamento"
+    if (!completedAt) return 'Em andamento'
 
     const start = new Date(startedAt)
     const end = new Date(completedAt)
@@ -104,12 +104,12 @@ export function ProcessExecutionNodes({ execution, process }: ProcessExecutionNo
                       <div>
                         <h4 className="text-sm font-medium mb-1">Status</h4>
                         <Badge className={getStatusColor(node.status)}>
-                          {node.status === "completed"
-                            ? "Concluído"
-                            : node.status === "failed"
-                              ? "Falhou"
-                              : node.status === "skipped"
-                                ? "Ignorado"
+                          {node.status === 'completed'
+                            ? 'Concluído'
+                            : node.status === 'failed'
+                              ? 'Falhou'
+                              : node.status === 'skipped'
+                                ? 'Ignorado'
                                 : node.status}
                         </Badge>
                       </div>
@@ -144,4 +144,3 @@ export function ProcessExecutionNodes({ execution, process }: ProcessExecutionNo
     </Card>
   )
 }
-

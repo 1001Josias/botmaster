@@ -1,30 +1,30 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Download, Star, Clock, Shield } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Download, Star, Clock, Shield } from 'lucide-react'
 
 export function SubscriptionBenefits() {
   const benefits = [
     {
       icon: <Download className="h-6 w-6 text-primary" />,
-      title: "Acesso Premium",
-      description: "Acesso ilimitado a todos os recursos premium do marketplace",
+      title: 'Acesso Premium',
+      description: 'Acesso ilimitado a todos os recursos premium do marketplace',
     },
     {
       icon: <Star className="h-6 w-6 text-primary" />,
-      title: "Conteúdo Exclusivo",
-      description: "Workflows e processes exclusivos para assinantes",
+      title: 'Conteúdo Exclusivo',
+      description: 'Workflows e processes exclusivos para assinantes',
     },
     {
       icon: <Clock className="h-6 w-6 text-primary" />,
-      title: "Acesso Antecipado",
-      description: "Seja o primeiro a acessar novos recursos e atualizações",
+      title: 'Acesso Antecipado',
+      description: 'Seja o primeiro a acessar novos recursos e atualizações',
     },
     {
       icon: <Shield className="h-6 w-6 text-primary" />,
-      title: "Suporte Prioritário",
-      description: "Obtenha ajuda rápida quando precisar",
+      title: 'Suporte Prioritário',
+      description: 'Obtenha ajuda rápida quando precisar',
     },
   ]
 
@@ -55,4 +55,3 @@ export function SubscriptionBenefits() {
     </Card>
   )
 }
-

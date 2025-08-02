@@ -1,11 +1,11 @@
-import { Handle, Position } from "reactflow"
+import { Handle, Position } from 'reactflow'
 
 export function BpmnTask({ data, selected }: { data: any; selected: boolean }) {
   return (
     <div className="relative">
       <div
         className={`flex h-14 w-36 items-center justify-center rounded-md border-2 bg-blue-100 ${
-          selected ? "border-blue-500" : "border-blue-300"
+          selected ? 'border-blue-500' : 'border-blue-300'
         }`}
       >
         <div className="text-xs font-medium">{data.label}</div>
@@ -15,4 +15,3 @@ export function BpmnTask({ data, selected }: { data: any; selected: boolean }) {
     </div>
   )
 }
-

@@ -1,4 +1,4 @@
-import { ProcessEditor } from "@/components/processes/process-editor"
+import { ProcessEditor } from '@/components/processes/process-editor'
 
 export default function ProcessEditorPage() {
   return (
@@ -7,4 +7,3 @@ export default function ProcessEditorPage() {
     </div>
   )
 }
-

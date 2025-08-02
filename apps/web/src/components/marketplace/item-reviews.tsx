@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Star } from "lucide-react"
+import { useState } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Star } from 'lucide-react'
 
 interface ItemReviewsProps {
   id: string
@@ -13,33 +13,33 @@ interface ItemReviewsProps {
 
 export function ItemReviews({ id }: ItemReviewsProps) {
   const [rating, setRating] = useState(0)
-  const [comment, setComment] = useState("")
+  const [comment, setComment] = useState('')
 
   // Dados simulados para as avaliações
   const reviews = [
     {
-      id: "review-1",
-      userName: "João Silva",
-      userAvatar: "/placeholder.svg?height=40&width=40",
+      id: 'review-1',
+      userName: 'João Silva',
+      userAvatar: '/placeholder.svg?height=40&width=40',
       rating: 5,
-      comment: "Excelente workflow! Economizou horas do meu tempo e a integração foi perfeita.",
-      createdAt: "2023-11-15T10:30:00Z",
+      comment: 'Excelente workflow! Economizou horas do meu tempo e a integração foi perfeita.',
+      createdAt: '2023-11-15T10:30:00Z',
     },
     {
-      id: "review-2",
-      userName: "Maria Oliveira",
-      userAvatar: "/placeholder.svg?height=40&width=40",
+      id: 'review-2',
+      userName: 'Maria Oliveira',
+      userAvatar: '/placeholder.svg?height=40&width=40',
       rating: 4,
-      comment: "Muito bom, mas poderia ter mais opções de configuração para casos específicos.",
-      createdAt: "2023-10-22T14:15:00Z",
+      comment: 'Muito bom, mas poderia ter mais opções de configuração para casos específicos.',
+      createdAt: '2023-10-22T14:15:00Z',
     },
     {
-      id: "review-3",
-      userName: "Carlos Mendes",
-      userAvatar: "/placeholder.svg?height=40&width=40",
+      id: 'review-3',
+      userName: 'Carlos Mendes',
+      userAvatar: '/placeholder.svg?height=40&width=40',
       rating: 5,
-      comment: "Simplesmente perfeito! Fácil de configurar e extremamente eficiente.",
-      createdAt: "2023-09-05T09:45:00Z",
+      comment: 'Simplesmente perfeito! Fácil de configurar e extremamente eficiente.',
+      createdAt: '2023-09-05T09:45:00Z',
     },
   ]
 
@@ -48,7 +48,7 @@ export function ItemReviews({ id }: ItemReviewsProps) {
     console.log({ rating, comment })
     // Reset do formulário
     setRating(0)
-    setComment("")
+    setComment('')
   }
 
   const formatDate = (dateString: string) => {
@@ -77,7 +77,7 @@ export function ItemReviews({ id }: ItemReviewsProps) {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-4 w-4 ${i < review.rating ? "fill-primary text-primary" : "text-muted"}`}
+                        className={`h-4 w-4 ${i < review.rating ? 'fill-primary text-primary' : 'text-muted'}`}
                       />
                     ))}
                   </div>
@@ -99,7 +99,7 @@ export function ItemReviews({ id }: ItemReviewsProps) {
                   onClick={() => setRating(i + 1)}
                   className="p-0 bg-transparent border-none cursor-pointer"
                 >
-                  <Star className={`h-6 w-6 ${i < rating ? "fill-primary text-primary" : "text-muted"}`} />
+                  <Star className={`h-6 w-6 ${i < rating ? 'fill-primary text-primary' : 'text-muted'}`} />
                 </button>
               ))}
             </div>
@@ -118,4 +118,3 @@ export function ItemReviews({ id }: ItemReviewsProps) {
     </Card>
   )
 }
-

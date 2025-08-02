@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Copy } from "lucide-react"
-import { useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Copy } from 'lucide-react'
+import { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface QueueItemPayloadProps {
   id: string
@@ -15,34 +15,34 @@ export function QueueItemPayload({ id }: QueueItemPayloadProps) {
 
   // Dados simulados para demonstração
   const payload = {
-    requestId: "req-789",
-    timestamp: "2023-05-15T14:29:55Z",
-    source: "API",
-    user: "user@example.com",
+    requestId: 'req-789',
+    timestamp: '2023-05-15T14:29:55Z',
+    source: 'API',
+    user: 'user@example.com',
     data: {
-      customerId: "cust-123",
-      orderId: "order-456",
+      customerId: 'cust-123',
+      orderId: 'order-456',
       items: [
-        { id: "item-1", name: "Product A", quantity: 2, price: 29.99 },
-        { id: "item-2", name: "Product B", quantity: 1, price: 49.99 },
+        { id: 'item-1', name: 'Product A', quantity: 2, price: 29.99 },
+        { id: 'item-2', name: 'Product B', quantity: 1, price: 49.99 },
       ],
       shipping: {
-        address: "123 Main St",
-        city: "Anytown",
-        state: "CA",
-        zipCode: "12345",
-        country: "USA",
+        address: '123 Main St',
+        city: 'Anytown',
+        state: 'CA',
+        zipCode: '12345',
+        country: 'USA',
       },
       payment: {
-        method: "credit_card",
-        cardLast4: "1234",
+        method: 'credit_card',
+        cardLast4: '1234',
         amount: 109.97,
-        currency: "USD",
+        currency: 'USD',
       },
       options: {
-        priority: "standard",
+        priority: 'standard',
         gift: false,
-        notes: "Please leave at the front door",
+        notes: 'Please leave at the front door',
       },
     },
   }
@@ -62,7 +62,7 @@ export function QueueItemPayload({ id }: QueueItemPayloadProps) {
         </div>
         <Button variant="outline" size="sm" onClick={handleCopy}>
           <Copy className="mr-2 h-4 w-4" />
-          {copied ? "Copiado!" : "Copiar"}
+          {copied ? 'Copiado!' : 'Copiar'}
         </Button>
       </CardHeader>
       <CardContent>
@@ -106,24 +106,24 @@ function TreeView({ data, level = 0 }: TreeViewProps) {
 
   const renderValue = (value: any, key: string) => {
     if (value === null) return <span className="text-muted-foreground">null</span>
-    if (typeof value === "boolean") return <span className="text-purple-500">{value.toString()}</span>
-    if (typeof value === "number") return <span className="text-blue-500">{value}</span>
-    if (typeof value === "string") return <span className="text-green-500">"{value}"</span>
+    if (typeof value === 'boolean') return <span className="text-purple-500">{value.toString()}</span>
+    if (typeof value === 'number') return <span className="text-blue-500">{value}</span>
+    if (typeof value === 'string') return <span className="text-green-500">"{value}"</span>
 
     const isArray = Array.isArray(value)
-    const isExpandable = isArray || typeof value === "object"
+    const isExpandable = isArray || typeof value === 'object'
 
     if (!isExpandable) return <span>{String(value)}</span>
 
-    const prefix = isArray ? "[" : "{"
-    const suffix = isArray ? "]" : "}"
+    const prefix = isArray ? '[' : '{'
+    const suffix = isArray ? ']' : '}'
     const count = isArray ? value.length : Object.keys(value).length
 
     return (
       <div>
         <span className="cursor-pointer hover:text-blue-500" onClick={() => toggleExpand(key)}>
-          {prefix} {expanded[key] ? "" : `... ${count} ${isArray ? "items" : "properties"}`}{" "}
-          {expanded[key] ? "" : suffix}
+          {prefix} {expanded[key] ? '' : `... ${count} ${isArray ? 'items' : 'properties'}`}{' '}
+          {expanded[key] ? '' : suffix}
         </span>
 
         {expanded[key] && (
@@ -159,4 +159,3 @@ function TreeView({ data, level = 0 }: TreeViewProps) {
     </div>
   )
 }
-

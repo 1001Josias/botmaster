@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import Image from "next/image"
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Maximize } from "lucide-react"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import Image from 'next/image'
+import { useState } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight, Maximize } from 'lucide-react'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 interface ItemScreenshotsProps {
   id: string
@@ -16,10 +16,10 @@ export function ItemScreenshots({ id }: ItemScreenshotsProps) {
 
   // Dados simulados para as screenshots
   const screenshots = [
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
+    '/placeholder.svg?height=600&width=800',
+    '/placeholder.svg?height=600&width=800',
+    '/placeholder.svg?height=600&width=800',
+    '/placeholder.svg?height=600&width=800',
   ]
 
   const nextImage = () => {
@@ -38,7 +38,7 @@ export function ItemScreenshots({ id }: ItemScreenshotsProps) {
         <div className="relative">
           <div className="relative aspect-video overflow-hidden rounded-lg">
             <Image
-              src={screenshots[currentIndex] || "/placeholder.svg"}
+              src={screenshots[currentIndex] || '/placeholder.svg'}
               alt={`Screenshot ${currentIndex + 1}`}
               fill
               className="object-cover"
@@ -56,7 +56,7 @@ export function ItemScreenshots({ id }: ItemScreenshotsProps) {
               <DialogContent className="max-w-4xl">
                 <div className="relative aspect-video">
                   <Image
-                    src={screenshots[currentIndex] || "/placeholder.svg"}
+                    src={screenshots[currentIndex] || '/placeholder.svg'}
                     alt={`Screenshot ${currentIndex + 1}`}
                     fill
                     className="object-contain"
@@ -91,7 +91,7 @@ export function ItemScreenshots({ id }: ItemScreenshotsProps) {
               key={index}
               variant="ghost"
               size="icon"
-              className={`h-2 w-2 rounded-full p-0 ${index === currentIndex ? "bg-primary" : "bg-muted"}`}
+              className={`h-2 w-2 rounded-full p-0 ${index === currentIndex ? 'bg-primary' : 'bg-muted'}`}
               onClick={() => setCurrentIndex(index)}
             >
               <span className="sr-only">Ver screenshot {index + 1}</span>
@@ -102,4 +102,3 @@ export function ItemScreenshots({ id }: ItemScreenshotsProps) {
     </Card>
   )
 }
-
