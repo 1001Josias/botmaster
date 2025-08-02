@@ -41,11 +41,13 @@ Consider writing an RFC when:
 ### 1. Proposing an RFC
 
 1. **Copy the template**: Use [`rfc-template.md`](./rfc-template.md) as the starting point
-2. **Create a new file**: Name it `XXXX-brief-title.md` where `XXXX` is the next available RFC number (start with `0001`)
+2. **Create a new file**: Place it in the appropriate application's `docs/rfcs/` directory (or `shared/` for cross-cutting concerns) and name it `XXXX-brief-title.md` where `XXXX` is the next available RFC number (start with `0001`)
 3. **Fill out the template**: Complete all relevant sections
 4. **Submit as Draft**: Create a Pull Request with the status set to "Draft"
 
-**Example RFC filename**: `0001-user-authentication-system.md`
+**Example RFC placement**: 
+- Application-specific RFC: `apps/api/docs/rfcs/0001-user-authentication-system.md`
+- Cross-application RFC: `apps/docs/rfcs/shared/0001-unified-logging-strategy.md`
 
 ### 2. Discussion Phase
 
@@ -125,16 +127,20 @@ Each RFC progresses through clearly defined statuses:
 
 ## Directory Structure
 
+The RFC structure is **decentralized** - each application maintains its own RFCs in their respective `docs/rfcs` directories:
+
 ```
-rfcs/
-├── README.md              # This file
-├── rfc-template.md        # RFC template
-├── api/                   # Backend API and services
-├── orchestrator/          # Web orchestration interface
-├── jobmaster/             # Agent application
-├── jobmaster-gui/         # Desktop GUI application
-├── shared/                # Cross-cutting concerns and ecosystem-wide changes
-└── 0001-example-rfc.md    # Example RFCs (when created)
+botmaster/
+├── apps/
+│   ├── docs/rfcs/              # Central documentation and shared resources
+│   │   ├── README.md           # This file (process documentation)
+│   │   ├── rfc-template.md     # RFC template for all apps
+│   │   └── shared/             # Cross-cutting concerns and ecosystem-wide RFCs
+│   ├── api/docs/rfcs/          # Backend API and services RFCs
+│   ├── web/docs/rfcs/          # Web orchestration interface RFCs
+│   ├── jobmaster/docs/rfcs/    # Agent application RFCs
+│   └── jobmaster-gui/docs/rfcs/ # Desktop GUI application RFCs
+└── packages/                   # Common libraries (no RFCs - use shared/ instead)
 ```
 
 ## RFC Numbering
