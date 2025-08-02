@@ -3,8 +3,8 @@
 **Status:** Draft  
 **Target Application(s):** [api, orchestrator, jobmaster, shared]  
 **RFC Number:** [Assigned when merged]  
-**Created:** 2024-12-19  
-**Last Updated:** 2024-12-19  
+**Created:** 2025-01-31  
+**Last Updated:** 2025-01-31  
 **Author(s):** Botmaster Development Team
 
 ## Overview
@@ -31,11 +31,11 @@ LIMIT $1 OFFSET $2;
 ```
 
 #### Why Now
-With Botmaster's growing adoption and increasing data volumes:
-- Individual tenants are approaching 100K+ workers and jobs
-- API response times for pagination beyond page 10 are degrading significantly
-- Database CPU utilization spikes during high-offset queries
-- User experience is deteriorating for large dataset navigation
+With Botmaster's anticipated growth and expected data volumes:
+- Individual tenants will have 100K+ records of jobs, queue items, flows, and audit logs
+- Current offset-based pagination will degrade significantly for deep pagination scenarios
+- Database CPU utilization will spike during high-offset queries as data grows
+- Proactive optimization needed before user experience deteriorates
 
 ### Goals
 - **Performance**: Achieve consistent sub-100ms response times regardless of page depth
@@ -43,7 +43,7 @@ With Botmaster's growing adoption and increasing data volumes:
 - **Consistency**: Eliminate duplicate/missing records during concurrent modifications
 - **Developer Experience**: Provide intuitive APIs that are easy to integrate
 - **Security**: Maintain multi-tenant data isolation through RLS
-- **Backward Compatibility**: Ensure smooth migration from existing pagination
+- **Future-Proof Design**: Implement scalable pagination from the start
 
 ### Non-Goals
 - Real-time data streaming or WebSocket-based updates
@@ -76,12 +76,11 @@ With Botmaster's growing adoption and increasing data volumes:
 
 ### High-Level Design
 
-The proposed solution implements a **hybrid pagination strategy** that adapts based on use case:
+The proposed solution implements a **modern pagination strategy** that adapts based on use case:
 
 1. **Cursor-Based Pagination** (Primary): For sequential navigation and real-time data
 2. **Keyset Pagination** (Performance): For deep pagination and large datasets  
 3. **Token-Based Pagination** (Security): For external API consumers
-4. **Offset Pagination** (Legacy): Maintained for backward compatibility
 
 #### Architecture Overview
 ```
@@ -214,7 +213,6 @@ class KeysetPaginationStrategy implements PaginationStrategy {
       
       return {
         sql: `
-          ${indexHint}
           SELECT id, name, status, created_at, updated_at FROM worker 
           WHERE ${this.buildRLSClause()}
             AND (
@@ -230,7 +228,6 @@ class KeysetPaginationStrategy implements PaginationStrategy {
 
     return {
       sql: `
-        ${indexHint}
         SELECT id, created_at, name, status FROM worker 
         WHERE ${this.buildRLSClause()}
         ORDER BY ${sortBy} ${sortOrder.toUpperCase()}, id ${sortOrder.toUpperCase()}
@@ -289,7 +286,7 @@ class TokenPaginationStrategy implements PaginationStrategy {
 ```typescript
 export const PaginationQuerySchema = z.object({
   // Strategy selection
-  strategy: z.enum(['cursor', 'keyset', 'token', 'offset'])
+  strategy: z.enum(['cursor', 'keyset', 'token'])
     .optional()
     .default('cursor')
     .describe('Pagination strategy to use'),
@@ -306,12 +303,6 @@ export const PaginationQuerySchema = z.object({
   cursor: z.string()
     .optional()
     .describe('Cursor for cursor/keyset pagination'),
-  
-  page: z.coerce.number()
-    .int()
-    .positive()
-    .optional()
-    .describe('Page number for offset pagination (legacy)'),
   
   token: z.string()
     .optional()
@@ -342,7 +333,7 @@ export const PaginatedResponseSchema = z.object({
   data: z.array(z.any()).describe('Array of items for current page'),
   
   pagination: z.object({
-    strategy: z.enum(['cursor', 'keyset', 'token', 'offset'])
+    strategy: z.enum(['cursor', 'keyset', 'token'])
       .describe('Pagination strategy used'),
     
     limit: z.number().describe('Items per page'),
@@ -356,11 +347,6 @@ export const PaginatedResponseSchema = z.object({
     
     // Token-based navigation  
     nextToken: z.string().optional().describe('Token for next page'),
-    
-    // Legacy offset support
-    totalCount: z.number().optional().describe('Total items (offset only)'),
-    totalPages: z.number().optional().describe('Total pages (offset only)'),
-    currentPage: z.number().optional().describe('Current page (offset only)'),
     
     // Performance metadata
     queryTime: z.number().describe('Query execution time in ms'),
@@ -383,9 +369,6 @@ curl "/api/workers?strategy=keyset&cursor=eyJsYXN0U29ydFZhbHVlIjoiMjAyNC0xMi0xOV
 
 # Token pagination (for external APIs)
 curl "/api/workers?strategy=token&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-
-# Legacy offset (backward compatibility)
-curl "/api/workers?strategy=offset&page=1&limit=20"
 
 # With dynamic filtering
 curl "/api/workers?filters[status]=active&filters[scope]=tenant&limit=20"
@@ -512,15 +495,24 @@ INCLUDE (name, description, tags);
 
 ```typescript
 class PaginationCacheManager {
-  private redis: Redis
+  private db: PostgresDatabase
 
   async getCachedPage(cacheKey: string): Promise<any> {
-    const cached = await this.redis.get(cacheKey)
-    return cached ? JSON.parse(cached) : null
+    const result = await this.db.query(`
+      SELECT data, created_at FROM pagination_cache 
+      WHERE cache_key = $1 AND expires_at > NOW()
+    `, [cacheKey])
+    
+    return result.rows[0]?.data || null
   }
 
   async setCachedPage(cacheKey: string, data: any, ttl: number = 300): Promise<void> {
-    await this.redis.setex(cacheKey, ttl, JSON.stringify(data))
+    await this.db.query(`
+      INSERT INTO pagination_cache (cache_key, data, expires_at)
+      VALUES ($1, $2, NOW() + INTERVAL '${ttl} seconds')
+      ON CONFLICT (cache_key) 
+      DO UPDATE SET data = $2, expires_at = NOW() + INTERVAL '${ttl} seconds'
+    `, [cacheKey, JSON.stringify(data)])
   }
 
   generateCacheKey(strategy: string, params: PaginationParams): string {
@@ -529,6 +521,7 @@ class PaginationCacheManager {
       .update(JSON.stringify(params))
       .digest('hex')}`
   }
+}
 }
 ```
 
@@ -568,23 +561,29 @@ class PaginationTelemetry {
 
 ### Database Changes
 
-#### New Pagination Configuration Table
+#### Caching Support Table
 
 ```sql
-CREATE TABLE pagination_config (
-  id SERIAL PRIMARY KEY,
-  resource_type VARCHAR(50) NOT NULL,
-  default_strategy pagination_strategy DEFAULT 'cursor',
-  max_limit INTEGER DEFAULT 100,
-  cache_ttl INTEGER DEFAULT 300,
-  deep_pagination_threshold INTEGER DEFAULT 100,
+-- Simple cache table for PostgreSQL-based caching
+CREATE TABLE pagination_cache (
+  cache_key VARCHAR(255) PRIMARY KEY,
+  data JSONB NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
   
-  CONSTRAINT unique_resource_type UNIQUE (resource_type)
+  INDEX idx_pagination_cache_expires (expires_at)
 );
 
-CREATE TYPE pagination_strategy AS ENUM ('offset', 'cursor', 'keyset', 'token');
+-- Cleanup old cache entries periodically
+CREATE OR REPLACE FUNCTION cleanup_pagination_cache() 
+RETURNS void AS $$
+BEGIN
+  DELETE FROM pagination_cache WHERE expires_at < NOW();
+END;
+$$ LANGUAGE plpgsql;
+
+-- Schedule cleanup (can be done via cron or application scheduler)
+-- SELECT cleanup_pagination_cache();
 ```
 
 #### Enhanced Indexes
@@ -612,38 +611,26 @@ WHERE status = 'active';
 #### Enhanced Pagination Models
 
 ```typescript
-export const PaginationStrategyEnum = z.enum(['offset', 'cursor', 'keyset', 'token'])
+export const PaginationStrategyEnum = z.enum(['cursor', 'keyset', 'token'])
 export type PaginationStrategy = z.infer<typeof PaginationStrategyEnum>
-
-export const PaginationConfigSchema = z.object({
-  resourceType: z.string(),
-  defaultStrategy: PaginationStrategyEnum,
-  maxLimit: z.number().int().positive().max(100),
-  cacheTtl: z.number().int().positive(),
-  deepPaginationThreshold: z.number().int().positive()
-})
 
 export const EnhancedPaginationQuerySchema = z.object({
   strategy: PaginationStrategyEnum.optional(),
   limit: z.coerce.number().int().positive().max(100).default(20),
   cursor: z.string().optional(),
   token: z.string().optional(),
-  page: z.coerce.number().int().positive().optional(),
   sortBy: z.string().optional().default('created_at'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
   filters: z.record(z.string(), z.any()).optional(),
   includeTotalCount: z.boolean().optional().default(false)
 }).refine((data) => {
-  // Validation rules for strategy-specific parameters
-  if (data.strategy === 'offset' && !data.page) {
-    return false
-  }
-  if (['cursor', 'keyset'].includes(data.strategy!) && data.cursor && data.page) {
+  // Validation: cursor and token strategies are mutually exclusive
+  if (data.cursor && data.token) {
     return false
   }
   return true
 }, {
-  message: "Invalid combination of pagination parameters"
+  message: "Cannot use both cursor and token parameters simultaneously"
 })
 
 export const PaginationMetaResponseSchema = z.object({
@@ -658,11 +645,6 @@ export const PaginationMetaResponseSchema = z.object({
   
   // Token-based
   nextToken: z.string().optional(),
-  
-  // Offset-based (legacy)
-  totalCount: z.number().optional(),
-  totalPages: z.number().optional(),
-  currentPage: z.number().optional(),
   
   // Performance metrics
   queryTime: z.number(),
@@ -734,9 +716,9 @@ export const PaginationMetaResponseSchema = z.object({
 
 #### Phase 3: Integration & Optimization (Weeks 5-6)
 - **Timeline:** 2 weeks
-- **Dependencies:** Phase 2 completion, Redis cache
+- **Dependencies:** Phase 2 completion, PostgreSQL caching setup
 - **Tasks:**
-  - [ ] Integrate caching layer with Redis
+  - [ ] Integrate caching layer with PostgreSQL
   - [ ] Implement pagination configuration management
   - [ ] Add comprehensive error handling and validation
   - [ ] Create OpenAPI documentation updates
@@ -763,54 +745,21 @@ interface PaginationFeatureFlags {
   enableCursorPagination: boolean
   enableKeysetPagination: boolean
   enableTokenPagination: boolean
-  forceNewPaginationForEndpoint: Record<string, boolean>
-  legacyPaginationDeprecationDate: string
+  defaultPaginationStrategy: 'cursor' | 'keyset' | 'token'
 }
 ```
 
-#### Gradual Migration
+#### Gradual Rollout
 
-1. **Week 1**: Enable cursor pagination for 10% of traffic
-2. **Week 2**: Increase to 50% with performance monitoring
-3. **Week 3**: Enable for 100% of new users, 80% of existing users
-4. **Week 4**: Full migration with legacy support
+1. **Week 1**: Deploy with cursor pagination as default
+2. **Week 2**: Enable keyset pagination for performance-critical endpoints
+3. **Week 3**: Enable token pagination for external API access
+4. **Week 4**: Full deployment with monitoring and optimization
 
-### Backward Compatibility
-
-#### Legacy Endpoint Support
-
-```typescript
-class LegacyPaginationAdapter {
-  static adaptRequest(legacyQuery: any): PaginationParams {
-    return {
-      strategy: 'offset',
-      limit: legacyQuery.limit || 10,
-      offset: ((legacyQuery.page || 1) - 1) * (legacyQuery.limit || 10),
-      sortBy: 'created_at',
-      sortOrder: 'desc'
-    }
-  }
-
-  static adaptResponse(response: PaginatedResponse<any>): LegacyPaginatedResponse<any> {
-    const totalPages = Math.ceil((response.pagination.totalCount || 0) / response.pagination.limit)
-    return {
-      items: response.data,
-      pagination: {
-        page: Math.floor((response.pagination.offset || 0) / response.pagination.limit) + 1,
-        limit: response.pagination.limit,
-        totalPages,
-        totalItems: response.pagination.totalCount || 0,
-        // ... legacy fields
-      }
-    }
-  }
-}
-```
-
-### Migration Steps
+### Implementation Steps
 
 1. **Preparation**
-   - Install required dependencies (Redis, JWT libraries)
+   - Install required dependencies (JWT libraries)
    - Create database indexes with `CONCURRENTLY` option
    - Set up monitoring and alerting
 
@@ -820,26 +769,28 @@ class LegacyPaginationAdapter {
    - Validate RLS policy compatibility
 
 3. **Rollout**
-   - Enable feature flags for beta users
+   - Deploy to production with feature flags
    - Monitor performance metrics and error rates
-   - Gradually increase traffic percentage
+   - Enable all strategies progressively
 
-4. **Finalization**
-   - Remove legacy pagination code after 6 months
-   - Clean up unused database indexes
+4. **Optimization**
+   - Tune caching parameters based on usage patterns
+   - Optimize database indexes based on query patterns
+   - Update documentation and examples
    - Update documentation and examples
 
 ### Rollback Plan
 
 #### Immediate Rollback (< 1 hour)
-- Disable feature flags to revert to offset pagination
+- Disable problematic pagination strategy via feature flags
+- Default to cursor pagination as the most stable strategy
 - Monitor error rates and response times
 - No data loss or corruption risk
 
 #### Full Rollback (< 24 hours)
-- Revert database to previous schema snapshot
-- Restore previous pagination implementation
-- Update client documentation
+- Revert to simple database queries without pagination caching
+- Disable all advanced pagination features
+- Update monitoring dashboards
 
 #### Rollback Monitoring
 ```typescript
@@ -874,9 +825,9 @@ interface RollbackTriggers {
 - **Risk**: Index creation requires maintenance window
 
 #### Caching Layer
-- **Requirement**: Redis cluster for pagination cache
-- **Impact**: Reduced database load, improved response times
-- **Cost**: Additional infrastructure cost (~$100/month)
+- **Implementation**: PostgreSQL-based caching using dedicated cache table
+- **Impact**: Reduced database load for repeated queries, improved response times
+- **Cost**: Minimal additional storage cost for cache table
 
 #### Application Layer
 - **Code Changes**: ~2000 lines of new TypeScript code
@@ -1030,8 +981,7 @@ paths:
 ### Deployment Considerations
 
 #### Infrastructure Requirements
-- **Database**: Additional 500MB storage for indexes
-- **Redis**: 2GB memory allocation for pagination cache
+- **Database**: Additional 500MB storage for indexes and cache table
 - **Application**: Additional environment variables for JWT secrets
 
 #### Environment Variables
