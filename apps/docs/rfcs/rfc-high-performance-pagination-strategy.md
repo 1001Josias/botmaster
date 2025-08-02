@@ -1292,6 +1292,7 @@ export const paginationConfig = {
 
 #### Database Configuration
 
+> **Note:** The following `ALTER SYSTEM` statements require PostgreSQL superuser privileges and may require a server restart to take effect. These are example values only; you should adjust them based on your system resources and performance testing.
 ```sql
 -- Database settings for optimal pagination performance
 ALTER SYSTEM SET shared_buffers = '256MB';
