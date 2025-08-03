@@ -25,7 +25,7 @@ const openApiResponseInternalError = {
           z.object({
             error: z.string().openapi({ example: internalError.error }),
           }),
-          StatusCodes.INTERNAL_SERVER_ERROR,
+          StatusCodes.INTERNAL_SERVER_ERROR
         ),
       },
     },
@@ -43,7 +43,7 @@ const openApiResponseNotFound = {
           z.object({
             error: z.string().openapi({ example: 'Resource not found.' }),
           }),
-          StatusCodes.NOT_FOUND,
+          StatusCodes.NOT_FOUND
         ),
       },
     },
@@ -61,7 +61,7 @@ const openApiResponseBadRequest = {
           z.object({
             errors: z.array(z.string()),
           }),
-          StatusCodes.BAD_REQUEST,
+          StatusCodes.BAD_REQUEST
         ),
       },
     },
@@ -83,6 +83,10 @@ export function createOpenApiResponse<T>(config: OpenApiResponseConfig<T>[]) {
         },
       }
     },
-    { ...openApiResponseInternalError, ...openApiResponseNotFound, ...openApiResponseBadRequest },
+    {
+      ...openApiResponseInternalError,
+      ...openApiResponseNotFound,
+      ...openApiResponseBadRequest,
+    }
   )
 }

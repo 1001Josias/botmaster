@@ -30,7 +30,7 @@ export const ServiceResponseSchema = (
   success: boolean,
   description: string,
   dataSchema: z.ZodType,
-  statusCode: StatusCodes,
+  statusCode: StatusCodes
 ) =>
   z.object({
     success: z.boolean().openapi({ example: success }),

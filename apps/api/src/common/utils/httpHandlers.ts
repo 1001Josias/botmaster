@@ -36,7 +36,9 @@ export function validateRequest<I, O>(schema: ZodSchema, context: ValidateReques
         validatedData: {
           ...res.locals?.validatedData,
           [context]: schema.parse(req[context]),
-          context: contextSchema.parse({ folderKey: req.headers['x-folder-key'] }),
+          context: contextSchema.parse({
+            folderKey: req.headers['x-folder-key'],
+          }),
         },
       }
       next()
