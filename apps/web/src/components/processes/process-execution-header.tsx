@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import type { Process, ProcessExecution } from "@/lib/types/process"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { PlayCircle, PauseCircle, StopCircle, RefreshCw, Clock, AlertCircle } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import type { Process, ProcessExecution } from '@/lib/types/process'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { PlayCircle, PauseCircle, StopCircle, RefreshCw, Clock, AlertCircle } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 interface ProcessExecutionHeaderProps {
   execution: ProcessExecution
@@ -15,28 +15,28 @@ interface ProcessExecutionHeaderProps {
 export function ProcessExecutionHeader({ execution, process }: ProcessExecutionHeaderProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "running":
-        return "bg-blue-500 text-white"
-      case "completed":
-        return "bg-green-500 text-white"
-      case "failed":
-        return "bg-red-500 text-white"
-      case "cancelled":
-        return "bg-gray-500 text-white"
+      case 'running':
+        return 'bg-blue-500 text-white'
+      case 'completed':
+        return 'bg-green-500 text-white'
+      case 'failed':
+        return 'bg-red-500 text-white'
+      case 'cancelled':
+        return 'bg-gray-500 text-white'
       default:
-        return "bg-gray-200 text-gray-800"
+        return 'bg-gray-200 text-gray-800'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "running":
+      case 'running':
         return <PlayCircle className="h-5 w-5 mr-1" />
-      case "completed":
+      case 'completed':
         return <StopCircle className="h-5 w-5 mr-1" />
-      case "failed":
+      case 'failed':
         return <AlertCircle className="h-5 w-5 mr-1" />
-      case "cancelled":
+      case 'cancelled':
         return <PauseCircle className="h-5 w-5 mr-1" />
       default:
         return null
@@ -45,21 +45,21 @@ export function ProcessExecutionHeader({ execution, process }: ProcessExecutionH
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "running":
-        return "Em execução"
-      case "completed":
-        return "Concluído"
-      case "failed":
-        return "Falhou"
-      case "cancelled":
-        return "Cancelado"
+      case 'running':
+        return 'Em execução'
+      case 'completed':
+        return 'Concluído'
+      case 'failed':
+        return 'Falhou'
+      case 'cancelled':
+        return 'Cancelado'
       default:
         return status
     }
   }
 
   const getDuration = () => {
-    if (!execution.startedAt) return "N/A"
+    if (!execution.startedAt) return 'N/A'
 
     const start = new Date(execution.startedAt)
     const end = execution.completedAt ? new Date(execution.completedAt) : new Date()
@@ -97,7 +97,7 @@ export function ProcessExecutionHeader({ execution, process }: ProcessExecutionH
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {execution.status === "running" && (
+        {execution.status === 'running' && (
           <>
             <Button variant="outline" size="sm">
               <PauseCircle className="h-4 w-4 mr-2" />
@@ -118,4 +118,3 @@ export function ProcessExecutionHeader({ execution, process }: ProcessExecutionH
     </div>
   )
 }
-

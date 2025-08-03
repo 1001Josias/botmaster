@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Clock } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Clock } from 'lucide-react'
 
 export function QueueItemsStats() {
   // Dados simulados para demonstração
@@ -10,7 +10,7 @@ export function QueueItemsStats() {
     completed: 11876,
     error: 289,
     cancelled: 16,
-    avgProcessingTime: "1m 23s",
+    avgProcessingTime: '1m 23s',
   }
 
   return (
@@ -81,4 +81,3 @@ export function QueueItemsStats() {
     </div>
   )
 }
-

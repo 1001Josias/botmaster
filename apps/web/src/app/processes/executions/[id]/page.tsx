@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Skeleton } from "@/components/ui/skeleton"
-import { ArrowLeft, RefreshCw, PauseCircle, StopCircle } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ArrowLeft, RefreshCw, PauseCircle, StopCircle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 // Tipos simplificados para este exemplo
 type ProcessExecution = {
   id: string
   processId: string
   processName: string
-  status: "running" | "completed" | "failed" | "paused" | "canceled"
+  status: 'running' | 'completed' | 'failed' | 'paused' | 'canceled'
   startedAt: string
   completedAt?: string
   currentNodeId?: string
@@ -23,7 +23,7 @@ type ProcessExecution = {
     id: string
     name: string
     type: string
-    status: "pending" | "running" | "completed" | "failed" | "skipped"
+    status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
     startedAt?: string
     completedAt?: string
     duration?: number
@@ -31,7 +31,7 @@ type ProcessExecution = {
   }>
   logs: Array<{
     timestamp: string
-    level: "info" | "warning" | "error" | "debug"
+    level: 'info' | 'warning' | 'error' | 'debug'
     message: string
     nodeId?: string
     nodeName?: string
@@ -41,146 +41,146 @@ type ProcessExecution = {
 
 // Dados de exemplo
 const mockExecution: ProcessExecution = {
-  id: "exec-123",
-  processId: "proc-456",
-  processName: "Processo de Aprovação de Crédito",
-  status: "running",
+  id: 'exec-123',
+  processId: 'proc-456',
+  processName: 'Processo de Aprovação de Crédito',
+  status: 'running',
   startedAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
   progress: 65,
   executedNodes: [
     {
-      id: "node-1",
-      name: "Início",
-      type: "start",
-      status: "completed",
+      id: 'node-1',
+      name: 'Início',
+      type: 'start',
+      status: 'completed',
       startedAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
       completedAt: new Date(Date.now() - 1000 * 60 * 9.8).toISOString(),
       duration: 12000,
     },
     {
-      id: "node-2",
-      name: "Verificar Dados do Cliente",
-      type: "task",
-      status: "completed",
+      id: 'node-2',
+      name: 'Verificar Dados do Cliente',
+      type: 'task',
+      status: 'completed',
       startedAt: new Date(Date.now() - 1000 * 60 * 9.8).toISOString(),
       completedAt: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
       duration: 108000,
       output: { valid: true, score: 85 },
     },
     {
-      id: "node-3",
-      name: "Análise de Crédito",
-      type: "service",
-      status: "completed",
+      id: 'node-3',
+      name: 'Análise de Crédito',
+      type: 'service',
+      status: 'completed',
       startedAt: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
       completedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
       duration: 180000,
-      output: { approved: true, limit: 5000, risk: "low" },
+      output: { approved: true, limit: 5000, risk: 'low' },
     },
     {
-      id: "node-4",
-      name: "Decisão de Aprovação",
-      type: "gateway",
-      status: "completed",
+      id: 'node-4',
+      name: 'Decisão de Aprovação',
+      type: 'gateway',
+      status: 'completed',
       startedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
       completedAt: new Date(Date.now() - 1000 * 60 * 4.9).toISOString(),
       duration: 6000,
     },
     {
-      id: "node-5",
-      name: "Gerar Contrato",
-      type: "task",
-      status: "running",
+      id: 'node-5',
+      name: 'Gerar Contrato',
+      type: 'task',
+      status: 'running',
       startedAt: new Date(Date.now() - 1000 * 60 * 4.9).toISOString(),
     },
   ],
   logs: [
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
-      level: "info",
-      message: "Processo iniciado",
-      nodeId: "node-1",
-      nodeName: "Início",
+      level: 'info',
+      message: 'Processo iniciado',
+      nodeId: 'node-1',
+      nodeName: 'Início',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 9.8).toISOString(),
-      level: "info",
-      message: "Iniciando verificação de dados",
-      nodeId: "node-2",
-      nodeName: "Verificar Dados do Cliente",
+      level: 'info',
+      message: 'Iniciando verificação de dados',
+      nodeId: 'node-2',
+      nodeName: 'Verificar Dados do Cliente',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 9).toISOString(),
-      level: "debug",
-      message: "Consultando base de dados de clientes",
-      nodeId: "node-2",
-      nodeName: "Verificar Dados do Cliente",
+      level: 'debug',
+      message: 'Consultando base de dados de clientes',
+      nodeId: 'node-2',
+      nodeName: 'Verificar Dados do Cliente',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 8.5).toISOString(),
-      level: "info",
-      message: "Dados do cliente validados com sucesso",
-      nodeId: "node-2",
-      nodeName: "Verificar Dados do Cliente",
+      level: 'info',
+      message: 'Dados do cliente validados com sucesso',
+      nodeId: 'node-2',
+      nodeName: 'Verificar Dados do Cliente',
       data: { score: 85 },
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
-      level: "info",
-      message: "Iniciando análise de crédito",
-      nodeId: "node-3",
-      nodeName: "Análise de Crédito",
+      level: 'info',
+      message: 'Iniciando análise de crédito',
+      nodeId: 'node-3',
+      nodeName: 'Análise de Crédito',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 7).toISOString(),
-      level: "warning",
-      message: "Histórico de crédito com pequenas pendências",
-      nodeId: "node-3",
-      nodeName: "Análise de Crédito",
+      level: 'warning',
+      message: 'Histórico de crédito com pequenas pendências',
+      nodeId: 'node-3',
+      nodeName: 'Análise de Crédito',
       data: { pendingAmount: 120.5 },
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 6).toISOString(),
-      level: "info",
-      message: "Calculando limite de crédito",
-      nodeId: "node-3",
-      nodeName: "Análise de Crédito",
+      level: 'info',
+      message: 'Calculando limite de crédito',
+      nodeId: 'node-3',
+      nodeName: 'Análise de Crédito',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-      level: "info",
-      message: "Análise de crédito concluída",
-      nodeId: "node-3",
-      nodeName: "Análise de Crédito",
+      level: 'info',
+      message: 'Análise de crédito concluída',
+      nodeId: 'node-3',
+      nodeName: 'Análise de Crédito',
       data: { approved: true, limit: 5000 },
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 4.9).toISOString(),
-      level: "info",
-      message: "Decisão: Crédito aprovado",
-      nodeId: "node-4",
-      nodeName: "Decisão de Aprovação",
+      level: 'info',
+      message: 'Decisão: Crédito aprovado',
+      nodeId: 'node-4',
+      nodeName: 'Decisão de Aprovação',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 4.8).toISOString(),
-      level: "info",
-      message: "Iniciando geração de contrato",
-      nodeId: "node-5",
-      nodeName: "Gerar Contrato",
+      level: 'info',
+      message: 'Iniciando geração de contrato',
+      nodeId: 'node-5',
+      nodeName: 'Gerar Contrato',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 3).toISOString(),
-      level: "debug",
-      message: "Aplicando template de contrato",
-      nodeId: "node-5",
-      nodeName: "Gerar Contrato",
+      level: 'debug',
+      message: 'Aplicando template de contrato',
+      nodeId: 'node-5',
+      nodeName: 'Gerar Contrato',
     },
     {
       timestamp: new Date(Date.now() - 1000 * 60 * 1).toISOString(),
-      level: "info",
-      message: "Aguardando assinatura digital",
-      nodeId: "node-5",
-      nodeName: "Gerar Contrato",
+      level: 'info',
+      message: 'Aguardando assinatura digital',
+      nodeId: 'node-5',
+      nodeName: 'Gerar Contrato',
     },
   ],
 }
@@ -192,7 +192,7 @@ export default function ProcessExecutionPage() {
 
   const [execution, setExecution] = useState<ProcessExecution | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("diagram")
+  const [activeTab, setActiveTab] = useState('diagram')
 
   useEffect(() => {
     // Simulando carregamento de dados
@@ -208,7 +208,7 @@ export default function ProcessExecutionPage() {
 
     // Atualização automática para processos em execução
     let interval: NodeJS.Timeout | null = null
-    if (execution?.status === "running") {
+    if (execution?.status === 'running') {
       interval = setInterval(() => {
         loadData()
       }, 5000)
@@ -229,12 +229,12 @@ export default function ProcessExecutionPage() {
   }
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return "-"
+    if (!dateString) return '-'
     return new Date(dateString).toLocaleString()
   }
 
   const formatDuration = (ms?: number) => {
-    if (!ms) return "-"
+    if (!ms) return '-'
     const seconds = Math.floor(ms / 1000)
     if (seconds < 60) return `${seconds}s`
     const minutes = Math.floor(seconds / 60)
@@ -244,15 +244,15 @@ export default function ProcessExecutionPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "running":
+      case 'running':
         return <Badge className="bg-blue-500">Em Execução</Badge>
-      case "completed":
+      case 'completed':
         return <Badge className="bg-green-500">Concluído</Badge>
-      case "failed":
+      case 'failed':
         return <Badge className="bg-red-500">Falha</Badge>
-      case "paused":
+      case 'paused':
         return <Badge className="bg-yellow-500">Pausado</Badge>
-      case "canceled":
+      case 'canceled':
         return <Badge className="bg-gray-500">Cancelado</Badge>
       default:
         return <Badge className="bg-gray-500">{status}</Badge>
@@ -261,15 +261,15 @@ export default function ProcessExecutionPage() {
 
   const getNodeStatusBadge = (status: string) => {
     switch (status) {
-      case "running":
+      case 'running':
         return <Badge className="bg-blue-500">Em Execução</Badge>
-      case "completed":
+      case 'completed':
         return <Badge className="bg-green-500">Concluído</Badge>
-      case "failed":
+      case 'failed':
         return <Badge className="bg-red-500">Falha</Badge>
-      case "pending":
+      case 'pending':
         return <Badge className="bg-gray-500">Pendente</Badge>
-      case "skipped":
+      case 'skipped':
         return <Badge className="bg-purple-500">Ignorado</Badge>
       default:
         return <Badge className="bg-gray-500">{status}</Badge>
@@ -278,13 +278,13 @@ export default function ProcessExecutionPage() {
 
   const getLogLevelBadge = (level: string) => {
     switch (level) {
-      case "info":
+      case 'info':
         return <Badge className="bg-blue-500">Info</Badge>
-      case "warning":
+      case 'warning':
         return <Badge className="bg-yellow-500">Aviso</Badge>
-      case "error":
+      case 'error':
         return <Badge className="bg-red-500">Erro</Badge>
-      case "debug":
+      case 'debug':
         return <Badge className="bg-gray-500">Debug</Badge>
       default:
         return <Badge className="bg-gray-500">{level}</Badge>
@@ -309,7 +309,7 @@ export default function ProcessExecutionPage() {
       <div className="container mx-auto py-6">
         <Card className="p-6 bg-destructive/10 text-destructive">
           <p>Execução não encontrada ou ocorreu um erro ao carregar os dados.</p>
-          <Button variant="outline" className="mt-4" onClick={() => router.push("/dashboard/processes")}>
+          <Button variant="outline" className="mt-4" onClick={() => router.push('/dashboard/processes')}>
             Voltar para Processos
           </Button>
         </Card>
@@ -322,7 +322,7 @@ export default function ProcessExecutionPage() {
       {/* Cabeçalho */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard/processes")}>
+          <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/processes')}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
@@ -338,7 +338,7 @@ export default function ProcessExecutionPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          {execution.status === "running" && (
+          {execution.status === 'running' && (
             <>
               <Button variant="outline" size="sm">
                 <PauseCircle className="mr-2 h-4 w-4" />
@@ -377,7 +377,7 @@ export default function ProcessExecutionPage() {
               <p className="font-medium">
                 {execution.completedAt
                   ? formatDuration(new Date(execution.completedAt).getTime() - new Date(execution.startedAt).getTime())
-                  : formatDuration(Date.now() - new Date(execution.startedAt).getTime()) + " (em andamento)"}
+                  : formatDuration(Date.now() - new Date(execution.startedAt).getTime()) + ' (em andamento)'}
               </p>
             </div>
             <div>
@@ -477,4 +477,3 @@ export default function ProcessExecutionPage() {
     </div>
   )
 }
-

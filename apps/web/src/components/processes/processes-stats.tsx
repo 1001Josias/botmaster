@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Activity, CheckCircle, Clock, FileWarning } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Activity, CheckCircle, Clock, FileWarning } from 'lucide-react'
 
 export function ProcessesStats() {
   // In a real application, these would be fetched from an API
@@ -57,4 +57,3 @@ export function ProcessesStats() {
     </div>
   )
 }
-

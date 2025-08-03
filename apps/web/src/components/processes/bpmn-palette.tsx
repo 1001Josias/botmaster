@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Circle,
   Square,
@@ -22,7 +22,7 @@ import {
   Database,
   Mail,
   Workflow,
-} from "lucide-react"
+} from 'lucide-react'
 
 interface BpmnElementProps {
   icon: React.ReactNode
@@ -49,7 +49,7 @@ interface BpmnPaletteProps {
 }
 
 export function BpmnPalette({ onDragStart }: BpmnPaletteProps) {
-  const [activeTab, setActiveTab] = useState("events")
+  const [activeTab, setActiveTab] = useState('events')
 
   return (
     <Card className="h-full">
@@ -215,4 +215,3 @@ export function BpmnPalette({ onDragStart }: BpmnPaletteProps) {
     </Card>
   )
 }
-

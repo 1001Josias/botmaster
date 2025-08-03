@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,17 +11,17 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { ChevronDown, X } from "lucide-react"
+} from '@/components/ui/dropdown-menu'
+import { Badge } from '@/components/ui/badge'
+import { ChevronDown, X } from 'lucide-react'
 
 export function MarketplaceFilters() {
-  const [itemType, setItemType] = useState("all")
-  const [pricing, setPricing] = useState("all")
-  const [sort, setSort] = useState("popular")
+  const [itemType, setItemType] = useState('all')
+  const [pricing, setPricing] = useState('all')
+  const [sort, setSort] = useState('popular')
   const [tags, setTags] = useState<string[]>([])
 
-  const popularTags = ["automation", "email", "data-processing", "api", "integration", "reporting"]
+  const popularTags = ['worker', 'email', 'data-processing', 'api', 'integration', 'reporting']
 
   const addTag = (tag: string) => {
     if (!tags.includes(tag)) {
@@ -118,4 +118,3 @@ export function MarketplaceFilters() {
     </div>
   )
 }
-

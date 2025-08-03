@@ -1,4 +1,4 @@
-export type QueueItemStatus = "waiting" | "processing" | "completed" | "error" | "cancelled"
+export type QueueItemStatus = 'waiting' | 'processing' | 'completed' | 'error' | 'cancelled'
 
 export interface QueueItem {
   id: string
@@ -42,7 +42,7 @@ export interface QueueItemsResponse {
 }
 
 export interface ExportOptions {
-  format: "csv" | "json"
+  format: 'csv' | 'json'
   fields: string[]
   compress: boolean
   selectedIds?: string[]
@@ -55,4 +55,3 @@ export interface ExportResult {
   expiresAt: string
   itemCount: number
 }
-
