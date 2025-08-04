@@ -10,6 +10,10 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "format": {
+      "dependsOn": ["^format"],
+      "inputs": ["$TURBO_DEFAULT$", ".prettierrc", ".prettierignore"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
