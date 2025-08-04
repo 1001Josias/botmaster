@@ -14,6 +14,10 @@
       "dependsOn": ["^format"],
       "inputs": ["$TURBO_DEFAULT$", ".prettierrc", ".prettierignore"]
     },
+    "format:check": {
+      "dependsOn": ["^format:check"],
+      "inputs": ["$TURBO_DEFAULT$", ".prettierrc", ".prettierignore"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
