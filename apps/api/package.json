@@ -43,6 +43,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:^",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/pg": "^8.11.10",
