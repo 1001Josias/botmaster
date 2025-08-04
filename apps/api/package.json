@@ -15,6 +15,7 @@
     "lint": "eslint ./",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --config ./node_modules/@repo/eslint-config/.prettierrc --write .",
+    "format:check": "prettier --config ./node_modules/@repo/eslint-config/.prettierrc --check .",
     "test": "vitest run",
     "prepare": "husky",
     "migrations": "chmod +x src/scripts/run-migrations.sh && src/scripts/run-migrations.sh",

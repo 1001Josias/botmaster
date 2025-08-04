@@ -10,18 +10,19 @@
     "test:coverage": "vitest run --coverage",
     "lint": "next lint",
     "lint-staged": "lint-staged",
-    "prettier": "prettier --config node_modules/@repo/eslint-config/.prettierrc --write . --inlude '*.js,*.json,*.md,*.ts,*.tsx'",
-    "stylelint-staged": "stylelint"
+    "format": "prettier --config node_modules/@repo/eslint-config/.prettierrc --write . --include '*.js,*.json,*.md,*.ts,*.tsx'",
+    "stylelint-staged": "stylelint",
+    "format:check": "prettier --config node_modules/@repo/eslint-config/.prettierrc --check ."
   },
   "pre-commit": [
     "lint",
-    "prettier",
+    "format",
     "test:coverage"
   ],
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
       "lint",
-      "prettier"
+      "format"
     ],
     "*.css": "stylelint-staged"
   },

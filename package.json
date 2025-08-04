@@ -5,7 +5,8 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --config packages/eslint-config/.prettierrc --write ."
+    "format": "prettier --config packages/eslint-config/.prettierrc --write .",
+    "format:check": "turbo format:check"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
@@ -24,7 +25,8 @@
       "next@>=9.5.5 <14.2.15": ">=14.2.15",
       "next@>=14.0.0 <14.2.21": ">=14.2.21",
       "esbuild@<=0.24.2": ">=0.25.0",
-      "next@>=14.0.0 <14.2.25": ">=14.2.25"
+      "next@>=14.0.0 <14.2.25": ">=14.2.25",
+      "prettier": "^3.5.3"
     }
   }
 }
