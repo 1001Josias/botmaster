@@ -10,11 +10,13 @@
 ## Overview
 
 ### Summary
+
 This RFC proposes a comprehensive high-performance pagination strategy for RESTful endpoints in the Botmaster API, optimized for PostgreSQL databases with multi-tenant architecture and Row-Level Security (RLS).
 
 ### Context and Motivation
 
 #### Background
+
 The current Botmaster API implements basic offset-based pagination using LIMIT/OFFSET queries. While functional for moderate datasets, this approach has significant performance limitations:
 
 - **Linear Performance Degradation**: OFFSET queries become exponentially slower as the offset increases, especially on large datasets (1M+ rows)
@@ -23,21 +25,25 @@ The current Botmaster API implements basic offset-based pagination using LIMIT/O
 - **Memory Usage**: High OFFSET values consume excessive memory and CPU resources
 
 The current implementation in the workers API uses:
+
 ```sql
-SELECT w.id, w.created_at, w.name, w.status FROM worker w 
+SELECT w.id, w.created_at, w.name, w.status FROM worker w
 WHERE [RLS conditions]
 ORDER BY w.created_at DESC, w.id DESC
 LIMIT $1 OFFSET $2;
 ```
 
 #### Why Now
+
 With Botmaster's anticipated growth and expected data volumes:
+
 - Individual tenants will have 100K+ records of jobs, queue items, flows, and audit logs
 - Current offset-based pagination will degrade significantly for deep pagination scenarios
 - Database CPU utilization will spike during high-offset queries as data grows
 - Proactive optimization needed before user experience deteriorates
 
 ### Goals
+
 - **Performance**: Achieve consistent sub-100ms response times regardless of page depth
 - **Scalability**: Support datasets with millions of records per tenant
 - **Consistency**: Eliminate duplicate/missing records during concurrent modifications
@@ -46,6 +52,7 @@ With Botmaster's anticipated growth and expected data volumes:
 - **Future-Proof Design**: Implement scalable pagination from the start
 
 ### Non-Goals
+
 - Real-time data streaming or WebSocket-based updates
 - Complex aggregation queries within pagination
 - Cross-tenant data pagination
@@ -54,11 +61,13 @@ With Botmaster's anticipated growth and expected data volumes:
 ## Scope
 
 ### Target Application(s)
+
 - **Primary**: `api` - Core REST API endpoints for all resources
 - **Secondary**: `orchestrator` - Background job result pagination
 - **Future**: `jobmaster` - Job execution history pagination
 
 ### Affected Components
+
 - All repository classes implementing pagination (`*Repository.ts`)
 - Service layer pagination logic (`*Service.ts`)
 - API route handlers with paginated endpoints
@@ -67,6 +76,7 @@ With Botmaster's anticipated growth and expected data volumes:
 - Response serialization models (`*Model.ts`)
 
 ### Dependencies
+
 - PostgreSQL 12+ (current: 14+)
 - Existing RLS policies and multi-tenant architecture
 - Current authentication and authorization system
@@ -79,10 +89,11 @@ With Botmaster's anticipated growth and expected data volumes:
 The proposed solution implements a **modern pagination strategy** that adapts based on use case:
 
 1. **Cursor-Based Pagination** (Primary): For sequential navigation and real-time data
-2. **Keyset Pagination** (Performance): For deep pagination and large datasets  
+2. **Keyset Pagination** (Performance): For deep pagination and large datasets
 3. **Token-Based Pagination** (Security): For external API consumers
 
 #### Architecture Overview
+
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   API Layer     │    │  Service Layer   │    │ Repository Layer│
@@ -146,15 +157,15 @@ class CursorPaginationStrategy implements PaginationStrategy {
 
   buildQuery(params: PaginationParams): PaginationQuery {
     const { limit, cursor, sortBy = 'created_at', sortOrder = 'desc' } = params
-    
+
     let whereClause = this.buildRLSClause()
     let orderClause = `ORDER BY ${sortBy} ${sortOrder.toUpperCase()}, id ${sortOrder.toUpperCase()}`
-    
+
     if (cursor) {
       const decodedCursor = this.decodeCursor(cursor)
       const operator = sortOrder === 'desc' ? '<' : '>'
       whereClause += ` AND (${sortBy} ${operator} $2 OR (${sortBy} = $2 AND id ${operator} $3))`
-      
+
       return {
         sql: `
           SELECT id, created_at, name, status FROM worker 
@@ -162,21 +173,22 @@ class CursorPaginationStrategy implements PaginationStrategy {
           ${orderClause}
           LIMIT $1
         `,
-        params: [limit + 1, decodedCursor.sortValue, decodedCursor.id]
+        params: [limit + 1, decodedCursor.sortValue, decodedCursor.id],
       }
     }
-    
+
     return {
       sql: `
-        SELECT * FROM worker 
+        SELECT id, created_at, name, status FROM worker
         WHERE ${whereClause}
         ${orderClause}
         LIMIT $1
       `,
-      params: [limit + 1]
+      params: [limit + 1],
     }
   }
 
+  // prettier-ignore
   private decodeCursor(cursor: string): { sortValue: any, id: number } {
     try {
       const decoded = Buffer.from(cursor, 'base64').toString('utf-8')
@@ -203,14 +215,14 @@ class KeysetPaginationStrategy implements PaginationStrategy {
 
   buildQuery(params: PaginationParams): PaginationQuery {
     const { limit, cursor, sortBy = 'created_at', sortOrder = 'desc' } = params
-    
+
     // Ensure composite index exists on (${sortBy}, id) for optimal performance
     // No optimizer hint needed; PostgreSQL will use the best available index
-    
+
     if (cursor) {
       const { lastSortValue, lastId } = this.decodeCursor(cursor)
       const operator = sortOrder === 'desc' ? '<' : '>'
-      
+
       return {
         sql: `
           SELECT id, name, status, created_at, updated_at FROM worker 
@@ -222,7 +234,7 @@ class KeysetPaginationStrategy implements PaginationStrategy {
           ORDER BY ${sortBy} ${sortOrder.toUpperCase()}, id ${sortOrder.toUpperCase()}
           LIMIT $1
         `,
-        params: [limit, lastSortValue, lastId]
+        params: [limit, lastSortValue, lastId],
       }
     }
 
@@ -233,7 +245,7 @@ class KeysetPaginationStrategy implements PaginationStrategy {
         ORDER BY ${sortBy} ${sortOrder.toUpperCase()}, id ${sortOrder.toUpperCase()}
         LIMIT $1
       `,
-      params: [limit]
+      params: [limit],
     }
   }
 }
@@ -246,15 +258,15 @@ For external API consumers requiring stateless, secure pagination:
 ```typescript
 class TokenPaginationStrategy implements PaginationStrategy {
   readonly type = 'token'
-  
+
   buildQuery(params: PaginationParams): PaginationQuery {
     const { limit, cursor: token } = params
-    
+
     if (token) {
       const decoded = this.verifyAndDecodeToken(token)
       return this.buildQueryFromToken(decoded, limit)
     }
-    
+
     return this.buildInitialQuery(limit)
   }
 
@@ -263,9 +275,9 @@ class TokenPaginationStrategy implements PaginationStrategy {
       lastId: lastRecord.id,
       lastCreatedAt: lastRecord.created_at.toISOString(),
       filters,
-      exp: Math.floor(Date.now() / 1000) + TokenPaginationStrategy.TOKEN_EXPIRY_SECONDS // 24h expiry
+      exp: Math.floor(Date.now() / 1000) + TokenPaginationStrategy.TOKEN_EXPIRY_SECONDS, // 24h expiry
     }
-    
+
     return jwt.sign(payload, process.env.PAGINATION_JWT_SECRET!)
   }
 
@@ -286,43 +298,23 @@ class TokenPaginationStrategy implements PaginationStrategy {
 ```typescript
 export const PaginationQuerySchema = z.object({
   // Strategy selection
-  strategy: z.enum(['cursor', 'keyset', 'token'])
-    .optional()
-    .default('cursor')
-    .describe('Pagination strategy to use'),
-  
+  strategy: z.enum(['cursor', 'keyset', 'token']).optional().default('cursor').describe('Pagination strategy to use'),
+
   // Universal parameters
-  limit: z.coerce.number()
-    .int()
-    .positive()
-    .max(100)
-    .default(20)
-    .describe('Number of items per page (max 100)'),
-  
+  limit: z.coerce.number().int().positive().max(100).default(20).describe('Number of items per page (max 100)'),
+
   // Strategy-specific parameters
-  cursor: z.string()
-    .optional()
-    .describe('Cursor for cursor/keyset pagination'),
-  
-  token: z.string()
-    .optional()
-    .describe('Pagination token for stateless pagination'),
-  
+  cursor: z.string().optional().describe('Cursor for cursor/keyset pagination'),
+
+  token: z.string().optional().describe('Pagination token for stateless pagination'),
+
   // Sorting and filtering
-  sortBy: z.string()
-    .optional()
-    .default('created_at')
-    .describe('Field to sort by'),
-  
-  sortOrder: z.enum(['asc', 'desc'])
-    .optional()
-    .default('desc')
-    .describe('Sort order'),
-  
+  sortBy: z.string().optional().default('created_at').describe('Field to sort by'),
+
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order'),
+
   // Dynamic filtering
-  filters: z.record(z.string(), z.any())
-    .optional()
-    .describe('Dynamic filters to apply')
+  filters: z.record(z.string(), z.any()).optional().describe('Dynamic filters to apply'),
 })
 ```
 
@@ -331,27 +323,26 @@ export const PaginationQuerySchema = z.object({
 ```typescript
 export const PaginatedResponseSchema = z.object({
   data: z.array(z.any()).describe('Array of items for current page'),
-  
+
   pagination: z.object({
-    strategy: z.enum(['cursor', 'keyset', 'token'])
-      .describe('Pagination strategy used'),
-    
+    strategy: z.enum(['cursor', 'keyset', 'token']).describe('Pagination strategy used'),
+
     limit: z.number().describe('Items per page'),
-    
+
     hasNextPage: z.boolean().describe('Whether next page exists'),
     hasPreviousPage: z.boolean().describe('Whether previous page exists'),
-    
+
     // Cursor-based navigation
     nextCursor: z.string().optional().describe('Cursor for next page'),
     previousCursor: z.string().optional().describe('Cursor for previous page'),
-    
-    // Token-based navigation  
+
+    // Token-based navigation
     nextToken: z.string().optional().describe('Token for next page'),
-    
+
     // Performance metadata
     queryTime: z.number().describe('Query execution time in ms'),
-    cacheHit: z.boolean().describe('Whether result was cached')
-  })
+    cacheHit: z.boolean().describe('Whether result was cached'),
+  }),
 })
 ```
 
@@ -427,10 +418,7 @@ CREATE POLICY worker_tenant_access ON worker
 ```typescript
 class SecureCursorGenerator {
   private static sign(data: string): string {
-    return crypto
-      .createHmac('sha256', process.env.CURSOR_SIGNING_KEY!)
-      .update(data)
-      .digest('hex')
+    return crypto.createHmac('sha256', process.env.CURSOR_SIGNING_KEY!).update(data).digest('hex')
   }
 
   static encode(sortValue: any, id: number): string {
@@ -439,19 +427,19 @@ class SecureCursorGenerator {
     return Buffer.from(`${payload}.${signature}`).toString('base64')
   }
 
-  static decode(cursor: string): { sortValue: any, id: number } {
+  static decode(cursor: string): { sortValue: any; id: number } {
     const decoded = Buffer.from(cursor, 'base64').toString('utf-8')
     const [payload, signature] = decoded.split('.')
-    
+
     if (this.sign(payload) !== signature) {
       throw new Error('Invalid cursor signature')
     }
-    
+
     const data = JSON.parse(payload)
     if (data.exp < Date.now()) {
       throw new Error('Cursor expired')
     }
-    
+
     return { sortValue: data.sortValue, id: data.id }
   }
 }
@@ -464,11 +452,11 @@ class SecureCursorGenerator {
 Based on PostgreSQL 14+ performance testing with 1M+ records:
 
 | Strategy | Page 1 | Page 10 | Page 100 | Page 1000 | Memory Usage |
-|----------|--------|---------|----------|-----------|--------------|
-| Offset   | 5ms    | 25ms    | 250ms    | 2500ms    | High        |
-| Cursor   | 8ms    | 12ms    | 15ms     | 18ms      | Low         |
-| Keyset   | 6ms    | 8ms     | 10ms     | 12ms      | Low         |
-| Token    | 10ms   | 14ms    | 17ms     | 20ms      | Low         |
+| -------- | ------ | ------- | -------- | --------- | ------------ |
+| Offset   | 5ms    | 25ms    | 250ms    | 2500ms    | High         |
+| Cursor   | 8ms    | 12ms    | 15ms     | 18ms      | Low          |
+| Keyset   | 6ms    | 8ms     | 10ms     | 12ms      | Low          |
+| Token    | 10ms   | 14ms    | 17ms     | 20ms      | Low          |
 
 #### Index Optimization
 
@@ -476,13 +464,13 @@ Required composite indexes for optimal performance:
 
 ```sql
 -- Primary pagination index
-CREATE INDEX CONCURRENTLY idx_worker_created_at_id 
-ON worker (created_at DESC, id DESC) 
+CREATE INDEX CONCURRENTLY idx_worker_created_at_id
+ON worker (created_at DESC, id DESC)
 WHERE [RLS conditions];
 
 -- Multi-column sorting support
-CREATE INDEX CONCURRENTLY idx_worker_status_created_at_id 
-ON worker (status, created_at DESC, id DESC) 
+CREATE INDEX CONCURRENTLY idx_worker_status_created_at_id
+ON worker (status, created_at DESC, id DESC)
 WHERE status IN ('active', 'inactive');
 
 -- Keyset optimization
@@ -491,7 +479,7 @@ ON worker (scope, scope_ref, created_at DESC, id DESC)
 INCLUDE (name, description, tags);
 ```
 
-#### Caching Strategy  
+#### Caching Strategy
 
 ```typescript
 class PaginationCacheManager {
@@ -499,10 +487,10 @@ class PaginationCacheManager {
 
   async getCachedPage(cacheKey: string): Promise<any> {
     const result = await this.db.query(`
-      SELECT data, created_at FROM pagination_cache 
+      SELECT data, created_at FROM pagination_cache
       WHERE cache_key = $1 AND expires_at > NOW()
     `, [cacheKey])
-    
+
     return result.rows[0]?.data || null
   }
 
@@ -510,7 +498,7 @@ class PaginationCacheManager {
     await this.db.query(`
       INSERT INTO pagination_cache (cache_key, data, expires_at)
       VALUES ($1, $2, NOW() + INTERVAL '${ttl} seconds')
-      ON CONFLICT (cache_key) 
+      ON CONFLICT (cache_key)
       DO UPDATE SET data = $2, expires_at = NOW() + INTERVAL '${ttl} seconds'
     `, [cacheKey, JSON.stringify(data)])
   }
@@ -544,7 +532,7 @@ class PaginationTelemetry {
     // Send to monitoring system (DataDog, Prometheus, etc.)
     console.log('PAGINATION_QUERY', {
       timestamp: new Date().toISOString(),
-      ...metrics
+      ...metrics,
     })
   }
 }
@@ -570,12 +558,12 @@ CREATE TABLE pagination_cache (
   data JSONB NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-  
+
   INDEX idx_pagination_cache_expires (expires_at)
 );
 
 -- Cleanup old cache entries periodically
-CREATE OR REPLACE FUNCTION cleanup_pagination_cache() 
+CREATE OR REPLACE FUNCTION cleanup_pagination_cache()
 RETURNS void AS $$
 BEGIN
   DELETE FROM pagination_cache WHERE expires_at < NOW();
@@ -614,42 +602,47 @@ WHERE status = 'active';
 export const PaginationStrategyEnum = z.enum(['cursor', 'keyset', 'token'])
 export type PaginationStrategy = z.infer<typeof PaginationStrategyEnum>
 
-export const EnhancedPaginationQuerySchema = z.object({
-  strategy: PaginationStrategyEnum.optional(),
-  limit: z.coerce.number().int().positive().max(100).default(20),
-  cursor: z.string().optional(),
-  token: z.string().optional(),
-  sortBy: z.string().optional().default('created_at'),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
-  filters: z.record(z.string(), z.any()).optional(),
-  includeTotalCount: z.boolean().optional().default(false)
-}).refine((data) => {
-  // Validation: cursor and token strategies are mutually exclusive
-  if (data.cursor && data.token) {
-    return false
-  }
-  return true
-}, {
-  message: "Cannot use both cursor and token parameters simultaneously"
-})
+export const EnhancedPaginationQuerySchema = z
+  .object({
+    strategy: PaginationStrategyEnum.optional(),
+    limit: z.coerce.number().int().positive().max(100).default(20),
+    cursor: z.string().optional(),
+    token: z.string().optional(),
+    sortBy: z.string().optional().default('created_at'),
+    sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+    filters: z.record(z.string(), z.any()).optional(),
+    includeTotalCount: z.boolean().optional().default(false),
+  })
+  .refine(
+    (data) => {
+      // Validation: cursor and token strategies are mutually exclusive
+      if (data.cursor && data.token) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'Cannot use both cursor and token parameters simultaneously',
+    }
+  )
 
 export const PaginationMetaResponseSchema = z.object({
   strategy: PaginationStrategyEnum,
   limit: z.number(),
   hasNextPage: z.boolean(),
   hasPreviousPage: z.boolean(),
-  
+
   // Cursor-based
   nextCursor: z.string().optional(),
   previousCursor: z.string().optional(),
-  
+
   // Token-based
   nextToken: z.string().optional(),
-  
+
   // Performance metrics
   queryTime: z.number(),
   cacheHit: z.boolean(),
-  indexesUsed: z.array(z.string()).optional()
+  indexesUsed: z.array(z.string()).optional(),
 })
 ```
 
@@ -693,6 +686,7 @@ export const PaginationMetaResponseSchema = z.object({
 ### Implementation Plan
 
 #### Phase 1: Foundation (Weeks 1-2)
+
 - **Timeline:** 2 weeks
 - **Dependencies:** Database access, TypeScript environment
 - **Tasks:**
@@ -704,7 +698,8 @@ export const PaginationMetaResponseSchema = z.object({
 - **Success Criteria:** Cursor pagination working for workers endpoint
 
 #### Phase 2: Strategy Expansion (Weeks 3-4)
-- **Timeline:** 2 weeks  
+
+- **Timeline:** 2 weeks
 - **Dependencies:** Phase 1 completion
 - **Tasks:**
   - [ ] Implement keyset pagination strategy
@@ -715,6 +710,7 @@ export const PaginationMetaResponseSchema = z.object({
 - **Success Criteria:** All pagination strategies functional with A/B testing
 
 #### Phase 3: Integration & Optimization (Weeks 5-6)
+
 - **Timeline:** 2 weeks
 - **Dependencies:** Phase 2 completion, PostgreSQL caching setup
 - **Tasks:**
@@ -726,6 +722,7 @@ export const PaginationMetaResponseSchema = z.object({
 - **Success Criteria:** Production-ready pagination with monitoring
 
 #### Phase 4: Migration & Rollout (Weeks 7-8)
+
 - **Timeline:** 2 weeks
 - **Dependencies:** Phase 3 completion, staging environment
 - **Tasks:**
@@ -782,17 +779,20 @@ interface PaginationFeatureFlags {
 ### Rollback Plan
 
 #### Immediate Rollback (< 1 hour)
+
 - Disable problematic pagination strategy via feature flags
 - Default to cursor pagination as the most stable strategy
 - Monitor error rates and response times
 - No data loss or corruption risk
 
 #### Full Rollback (< 24 hours)
+
 - Revert to simple database queries without pagination caching
 - Disable all advanced pagination features
 - Update monitoring dashboards
 
 #### Rollback Monitoring
+
 ```typescript
 interface RollbackTriggers {
   errorRate: number // > 5%
@@ -807,11 +807,13 @@ interface RollbackTriggers {
 ### API Changes
 
 #### API Contract Changes
+
 - **Query Parameters**: New pagination parameters for modern strategies
 - **Response Format**: Consistent pagination metadata structure
 - **Error Responses**: New error codes for invalid cursors/tokens
 
 #### Client Impact Assessment
+
 - **Web Frontend**: Implementation of modern pagination strategies
 - **Mobile Apps**: Adoption of cursor-based navigation for better UX
 - **External APIs**: Token-based pagination for secure access
@@ -820,16 +822,19 @@ interface RollbackTriggers {
 ### Dependencies Impact
 
 #### Database Layer
+
 - **Positive**: Improved query performance, reduced CPU usage
 - **Neutral**: Additional indexes increase storage by ~5%
 - **Risk**: Index creation requires maintenance window
 
 #### Caching Layer
+
 - **Implementation**: PostgreSQL-based caching using dedicated cache table
 - **Impact**: Reduced database load for repeated queries, improved response times
 - **Cost**: Minimal additional storage cost for cache table
 
 #### Application Layer
+
 - **Code Changes**: ~2000 lines of new TypeScript code
 - **Bundle Size**: +15KB (pagination utilities)
 - **Memory**: +10MB per process (caching structures)
@@ -837,6 +842,7 @@ interface RollbackTriggers {
 ### Testing Strategy
 
 #### Unit Testing
+
 ```typescript
 describe('CursorPaginationStrategy', () => {
   it('should generate valid cursor for first page', () => {
@@ -860,6 +866,7 @@ describe('CursorPaginationStrategy', () => {
 ```
 
 #### Integration Testing
+
 ```typescript
 describe('Pagination Integration', () => {
   beforeEach(async () => {
@@ -869,57 +876,56 @@ describe('Pagination Integration', () => {
   it('should maintain consistency across pagination strategies', async () => {
     const cursorResult = await paginateWithCursor({ limit: 10 })
     const offsetResult = await paginateWithOffset({ page: 1, limit: 10 })
-    
+
     expect(cursorResult.data.length).toBe(offsetResult.items.length)
     expect(cursorResult.data[0].id).toBe(offsetResult.items[0].id)
   })
 
   it('should handle concurrent data modifications', async () => {
     const firstPage = await paginateWithCursor({ limit: 5 })
-    
+
     // Simulate concurrent modification
     await createNewWorker()
-    
-    const secondPage = await paginateWithCursor({ 
+
+    const secondPage = await paginateWithCursor({
       cursor: firstPage.pagination.nextCursor,
-      limit: 5 
+      limit: 5,
     })
-    
+
     // Should not contain duplicates from first page
-    const firstPageIds = firstPage.data.map(w => w.id)
-    const secondPageIds = secondPage.data.map(w => w.id)
-    expect(firstPageIds.some(id => secondPageIds.includes(id))).toBe(false)
+    const firstPageIds = firstPage.data.map((w) => w.id)
+    const secondPageIds = secondPage.data.map((w) => w.id)
+    expect(firstPageIds.some((id) => secondPageIds.includes(id))).toBe(false)
   })
 })
 ```
 
 #### End-to-End Testing
+
 ```typescript
 describe('Pagination E2E', () => {
   it('should paginate through large dataset consistently', async () => {
     await seedDatabase(10000)
     const allRecords = []
     let cursor: string | undefined
-    
+
     do {
-      const response = await request(app)
-        .get('/api/workers')
-        .query({ limit: 100, cursor })
-        .expect(200)
-      
+      const response = await request(app).get('/api/workers').query({ limit: 100, cursor }).expect(200)
+
       allRecords.push(...response.body.data)
       cursor = response.body.pagination.nextCursor
     } while (cursor)
-    
+
     expect(allRecords.length).toBe(10000)
     // Verify no duplicates
-    const uniqueIds = new Set(allRecords.map(r => r.id))
+    const uniqueIds = new Set(allRecords.map((r) => r.id))
     expect(uniqueIds.size).toBe(10000)
   })
 })
 ```
 
 #### Performance Testing
+
 ```bash
 # Load testing with different pagination strategies
 artillery run --config pagination-load-test.yml
@@ -934,18 +940,21 @@ artillery run --config pagination-load-test.yml
 ### Documentation Updates
 
 #### User Documentation
+
 - **API Reference**: Updated endpoint documentation with new parameters
 - **Pagination Guide**: Comprehensive guide choosing optimal strategy
 - **Migration Guide**: Step-by-step migration for API consumers
 - **Best Practices**: Performance optimization recommendations
 
 #### Developer Documentation
+
 - **Architecture Guide**: Pagination system architecture and design decisions
 - **Contributing Guide**: How to add pagination to new endpoints
 - **Troubleshooting**: Common issues and debugging steps
 - **Performance Tuning**: Database optimization and monitoring
 
 #### API Documentation
+
 ```yaml
 # OpenAPI 3.0 specification updates
 paths:
@@ -981,10 +990,12 @@ paths:
 ### Deployment Considerations
 
 #### Infrastructure Requirements
+
 - **Database**: Additional 500MB storage for indexes and cache table
 - **Application**: Additional environment variables for JWT secrets
 
 #### Environment Variables
+
 ```bash
 # New environment variables required
 PAGINATION_JWT_SECRET=your-jwt-secret-key
@@ -995,21 +1006,22 @@ ENABLE_PAGINATION_METRICS=true
 ```
 
 #### Monitoring Setup
+
 ```yaml
 # Prometheus metrics
 pagination_query_duration_seconds:
   type: histogram
-  help: "Time spent executing pagination queries"
+  help: 'Time spent executing pagination queries'
   labels: [strategy, resource_type]
 
 pagination_cache_hits_total:
   type: counter
-  help: "Number of pagination cache hits"
+  help: 'Number of pagination cache hits'
   labels: [strategy]
 
 pagination_large_result_sets_total:
   type: counter
-  help: "Usage of large result set pagination (performance monitoring)"
+  help: 'Usage of large result set pagination (performance monitoring)'
 ```
 
 ## Examples
@@ -1025,18 +1037,18 @@ export class WorkerService {
     try {
       const strategy = PaginationStrategyFactory.create(query.strategy || 'cursor')
       const paginationQuery = strategy.buildQuery(query)
-      
+
       return await WorkerRepository.session(this.context, async (repo) => {
         const result = await repo.paginate(paginationQuery)
         const response = strategy.serializeResponse(result.data, result.meta)
-        
+
         PaginationTelemetry.recordQuery({
           strategy: query.strategy || 'cursor',
           queryTime: result.meta.queryTime,
           resultCount: result.data.length,
-          cacheHit: result.meta.cacheHit
+          cacheHit: result.meta.cacheHit,
         })
-        
+
         return this.fetchedSuccessfully('Workers retrieved successfully', response)
       })
     } catch (error) {
@@ -1052,39 +1064,39 @@ export class WorkerService {
 export class WorkerRepository extends BaseRepository {
   async paginate(paginationQuery: PaginationQuery): Promise<PaginationResult<WorkerDatabaseDto>> {
     const startTime = performance.now()
-    
+
     // Check cache first
     const cacheKey = this.generateCacheKey(paginationQuery)
     const cached = await this.cache.get(cacheKey)
     if (cached) {
       return {
         data: cached.data,
-        meta: { ...cached.meta, cacheHit: true }
+        meta: { ...cached.meta, cacheHit: true },
       }
     }
-    
+
     // Execute query
     const result = await this.db.query(paginationQuery.sql, paginationQuery.params)
     const queryTime = performance.now() - startTime
-    
+
     // Process results for hasNext detection
     const limit = paginationQuery.params[0] as number
     const hasNextPage = result.rows.length > limit - 1
     const data = hasNextPage ? result.rows.slice(0, -1) : result.rows
-    
+
     const response = {
       data,
       meta: {
         queryTime,
         cacheHit: false,
         hasNextPage,
-        hasPreviousPage: !!paginationQuery.cursor
-      }
+        hasPreviousPage: !!paginationQuery.cursor,
+      },
     }
-    
+
     // Cache result
     await this.cache.set(cacheKey, response, this.cacheTtl)
-    
+
     return response
   }
 }
@@ -1098,25 +1110,25 @@ export class WorkerRepository extends BaseRepository {
 class WorkerDashboard {
   private cursor: string | undefined
   private workers: Worker[] = []
-  
+
   async loadMore() {
     try {
       const response = await fetch(`/api/workers?cursor=${this.cursor}&limit=20`)
       const result = await response.json()
-      
+
       this.workers.push(...result.data)
       this.cursor = result.pagination.nextCursor
-      
+
       return {
         hasMore: result.pagination.hasNextPage,
-        loaded: result.data.length
+        loaded: result.data.length,
       }
     } catch (error) {
       console.error('Failed to load workers:', error)
       throw error
     }
   }
-  
+
   async refresh() {
     this.cursor = undefined
     this.workers = []
@@ -1130,26 +1142,26 @@ class WorkerDashboard {
 ```typescript
 class ExternalAPIClient {
   private token: string | undefined
-  
+
   async getAllWorkers(): Promise<Worker[]> {
     const allWorkers: Worker[] = []
-    
+
     do {
       const response = await this.httpClient.get('/api/workers', {
         params: {
           strategy: 'token',
           token: this.token,
-          limit: 100
+          limit: 100,
         },
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`
-        }
+          Authorization: `Bearer ${this.apiKey}`,
+        },
       })
-      
+
       allWorkers.push(...response.data.data)
       this.token = response.data.pagination.nextToken
     } while (this.token)
-    
+
     return allWorkers
   }
 }
@@ -1161,26 +1173,26 @@ class ExternalAPIClient {
 class WorkerProcessor {
   async *processAllWorkers(): AsyncGenerator<Worker, void, unknown> {
     let cursor: string | undefined
-    
+
     while (true) {
       const response = await WorkerService.getAll({
         strategy: 'keyset',
         cursor,
         limit: 1000, // Large batches for efficiency
-        filters: { status: 'active' }
+        filters: { status: 'active' },
       })
-      
+
       if (response.data.length === 0) break
-      
+
       for (const worker of response.data) {
         yield worker
       }
-      
+
       if (!response.pagination.hasNextPage) break
       cursor = response.pagination.nextCursor
     }
   }
-  
+
   async processWorkers() {
     for await (const worker of this.processAllWorkers()) {
       await this.processWorker(worker)
@@ -1198,51 +1210,52 @@ class WorkerProcessor {
 export const paginationConfig = {
   strategies: {
     default: 'cursor',
-    fallback: 'offset'
+    fallback: 'offset',
   },
-  
+
   limits: {
     default: 20,
     maximum: 100,
-    deepOffsetThreshold: 1000
+    deepOffsetThreshold: 1000,
   },
-  
+
   caching: {
     enabled: true,
     ttl: 300, // 5 minutes
-    keyPrefix: 'pagination:'
+    keyPrefix: 'pagination:',
   },
-  
+
   security: {
     cursorSigningEnabled: true,
     tokenExpirationHours: 24,
-    maxTokensPerUser: 100
+    maxTokensPerUser: 100,
   },
-  
+
   monitoring: {
     enableMetrics: true,
     logSlowQueries: true,
-    slowQueryThreshold: 500 // ms
+    slowQueryThreshold: 500, // ms
   },
-  
+
   resourceConfigs: {
     workers: {
       defaultStrategy: 'cursor',
       maxLimit: 50,
-      allowDeepOffset: false
+      allowDeepOffset: false,
     },
     jobs: {
       defaultStrategy: 'keyset',
       maxLimit: 100,
-      cacheTtl: 600
-    }
-  }
+      cacheTtl: 600,
+    },
+  },
 }
 ```
 
 #### Database Configuration
 
 > **Note:** The following `ALTER SYSTEM` statements require PostgreSQL superuser privileges and may require a server restart to take effect. These are example values only; you should adjust them based on your system resources and performance testing.
+
 ```sql
 -- Database settings for optimal pagination performance
 ALTER SYSTEM SET shared_buffers = '256MB';
@@ -1263,15 +1276,18 @@ SELECT pg_reload_conf();
 ## Alternatives Considered
 
 ### Alternative 1: GraphQL Relay Cursor Pagination
+
 **Description:** Adopt GraphQL Relay-style cursor pagination with `first`, `after`, `last`, `before` parameters.
 
 **Pros:**
+
 - Industry standard approach used by GitHub, Facebook
 - Built-in support in GraphQL libraries
 - Excellent developer experience with tools
 - Bidirectional pagination support
 
 **Cons:**
+
 - Requires GraphQL adoption across entire API
 - Significant architectural change from REST
 - Learning curve for team not familiar with GraphQL
@@ -1280,15 +1296,18 @@ SELECT pg_reload_conf();
 **Reason for Rejection:** Major departure from existing REST architecture would require extensive refactoring and team training. The benefits don't justify the migration effort for our current needs.
 
 ### Alternative 2: Search-Based Pagination
+
 **Description:** Use Elasticsearch or similar search engine for all pagination queries with search-after functionality.
 
 **Pros:**
+
 - Extremely fast for large datasets
 - Rich filtering and search capabilities
 - Built-in aggregations and analytics
 - Horizontal scaling support
 
 **Cons:**
+
 - Additional infrastructure complexity and cost
 - Data synchronization challenges between PostgreSQL and search engine
 - Search engine expertise required on team
@@ -1297,15 +1316,18 @@ SELECT pg_reload_conf();
 **Reason for Rejection:** Adds significant operational complexity and cost without addressing our core pagination performance needs. PostgreSQL optimization is more straightforward and cost-effective.
 
 ### Alternative 3: Materialized View Pagination
+
 **Description:** Create materialized views for common pagination scenarios with pre-computed page boundaries.
 
 **Pros:**
+
 - Very fast query performance for common cases
 - Simplified query logic
 - Reduced database CPU usage
 - Supports complex aggregations
 
 **Cons:**
+
 - Refresh overhead and scheduling complexity
 - Storage overhead for materialized views
 - Limited flexibility for dynamic filtering
@@ -1314,15 +1336,18 @@ SELECT pg_reload_conf();
 **Reason for Rejection:** Too rigid for our dynamic filtering requirements and real-time data needs. The overhead of maintaining multiple materialized views outweighs the performance benefits.
 
 ### Alternative 4: NoSQL Document Database Migration
+
 **Description:** Migrate to MongoDB or similar document database with native pagination support.
 
 **Pros:**
+
 - Native cursor pagination support
 - Schema flexibility for dynamic filtering
 - Horizontal scaling capabilities
 - Built-in aggregation pipeline
 
 **Cons:**
+
 - Major database migration effort
 - Loss of ACID guarantees and relational integrity
 - Team expertise in PostgreSQL would be lost
@@ -1331,15 +1356,18 @@ SELECT pg_reload_conf();
 **Reason for Rejection:** Massive undertaking that doesn't align with our current PostgreSQL expertise and infrastructure. The migration risk far exceeds the pagination benefits.
 
 ### Do Nothing
+
 **Description:** Maintain current offset-based pagination with some minor optimizations.
 
 **Pros:**
+
 - No development effort required
 - No risk of introducing bugs
 - Familiar implementation for team
 - Simple debugging and maintenance
 
 **Cons:**
+
 - Performance continues to degrade with data growth
 - Poor user experience for deep pagination
 - Increasing database resource usage
@@ -1349,16 +1377,16 @@ SELECT pg_reload_conf();
 
 ## Risks and Mitigations
 
-| Risk | Impact | Probability | Mitigation Strategy | Owner |
-|------|--------|-------------|-------------------|-------|
-| Cursor decoding failures leading to API errors | High | Medium | Comprehensive input validation, graceful fallback to first page, detailed error logging and monitoring | Backend Team |
-| Database index creation causes downtime | High | Low | Use `CREATE INDEX CONCURRENTLY`, schedule during maintenance windows, test on staging replicas | DevOps Team |
-| Performance regression during initial rollout | Medium | Medium | Gradual rollout with A/B testing, immediate rollback capability, comprehensive monitoring | Backend Team |
-| RLS policy incompatibility with new queries | High | Low | Extensive testing in staging environment, RLS policy validation in CI/CD | Security Team |
-| Cache inconsistency leading to stale data | Medium | Medium | Short cache TTLs, cache invalidation on writes, cache warming strategies | Backend Team |
-| Memory usage increase from cursor storage | Low | High | Cursor compression, TTL-based cleanup, monitoring memory usage patterns | DevOps Team |
-| Client integration difficulties | Medium | Low | Comprehensive documentation, migration guides, backward compatibility layer | API Team |
-| JWT token security vulnerabilities | High | Low | Regular secret rotation, token expiration, rate limiting, security audit | Security Team |
+| Risk                                           | Impact | Probability | Mitigation Strategy                                                                                    | Owner         |
+| ---------------------------------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------------------ | ------------- |
+| Cursor decoding failures leading to API errors | High   | Medium      | Comprehensive input validation, graceful fallback to first page, detailed error logging and monitoring | Backend Team  |
+| Database index creation causes downtime        | High   | Low         | Use `CREATE INDEX CONCURRENTLY`, schedule during maintenance windows, test on staging replicas         | DevOps Team   |
+| Performance regression during initial rollout  | Medium | Medium      | Gradual rollout with A/B testing, immediate rollback capability, comprehensive monitoring              | Backend Team  |
+| RLS policy incompatibility with new queries    | High   | Low         | Extensive testing in staging environment, RLS policy validation in CI/CD                               | Security Team |
+| Cache inconsistency leading to stale data      | Medium | Medium      | Short cache TTLs, cache invalidation on writes, cache warming strategies                               | Backend Team  |
+| Memory usage increase from cursor storage      | Low    | High        | Cursor compression, TTL-based cleanup, monitoring memory usage patterns                                | DevOps Team   |
+| Client integration difficulties                | Medium | Low         | Comprehensive documentation, migration guides, backward compatibility layer                            | API Team      |
+| JWT token security vulnerabilities             | High   | Low         | Regular secret rotation, token expiration, rate limiting, security audit                               | Security Team |
 
 ## Success Metrics
 
@@ -1382,6 +1410,7 @@ SELECT pg_reload_conf();
 ### Monitoring and Evaluation
 
 #### Real-time Monitoring Dashboard
+
 ```typescript
 interface PaginationDashboard {
   queryPerformance: {
@@ -1390,13 +1419,13 @@ interface PaginationDashboard {
     p99: number
     byStrategy: Record<PaginationStrategy, number>
   }
-  
+
   usage: {
     requestsPerStrategy: Record<PaginationStrategy, number>
     deepOffsetUsage: number
     cacheHitRate: number
   }
-  
+
   errors: {
     cursorDecodingErrors: number
     tokenValidationErrors: number
@@ -1406,12 +1435,14 @@ interface PaginationDashboard {
 ```
 
 #### Weekly Performance Reviews
+
 - Query performance analysis and trend identification
 - Strategy adoption rates and user feedback
 - Database resource utilization trends
 - Error pattern analysis and resolution
 
 #### Monthly Strategic Assessment
+
 - ROI analysis of performance improvements
 - User satisfaction survey results
 - Competitive benchmarking
@@ -1422,21 +1453,25 @@ interface PaginationDashboard {
 ### Potential Extensions
 
 #### Real-time Pagination with WebSockets
+
 - Live updates to paginated results as data changes
 - WebSocket-based pagination for real-time dashboards
 - Integration with event-driven architecture
 
 #### Machine Learning Enhanced Pagination
+
 - Predictive prefetching based on user behavior patterns
 - Intelligent caching strategies using ML models
 - Personalized pagination strategies per user type
 
 #### Multi-Region Pagination
+
 - Distributed pagination across geographic regions
 - Consistent global pagination with eventual consistency
 - Edge caching strategies for global performance
 
 #### Advanced Analytics Integration
+
 - Deep integration with business intelligence tools
 - Custom pagination for complex analytical queries
 - Time-series specific pagination strategies
@@ -1444,6 +1479,7 @@ interface PaginationDashboard {
 ### Scalability Considerations
 
 #### Horizontal Scaling Support
+
 ```typescript
 interface ShardedPaginationStrategy {
   buildShardedQuery(params: PaginationParams, shards: string[]): ShardedQuery
@@ -1453,11 +1489,13 @@ interface ShardedPaginationStrategy {
 ```
 
 #### Database Sharding Compatibility
+
 - Cursor-based pagination across database shards
 - Global ordering maintenance across shards
 - Shard-aware query routing and result merging
 
 #### Cloud-Native Scaling
+
 - Auto-scaling based on pagination query patterns
 - Serverless pagination functions for burst traffic
 - Multi-cloud deployment strategies
@@ -1465,17 +1503,20 @@ interface ShardedPaginationStrategy {
 ### Technical Considerations
 
 #### Implementation Benefits
+
 - Clean, modern pagination implementation from the start
 - No legacy code maintenance burden
 - Optimized performance for expected data volumes
 - Simplified architecture without backward compatibility layers
 
 #### Maintenance Considerations
+
 - Multiple pagination strategies require clear documentation
 - Caching infrastructure needs monitoring and optimization
 - Strategy selection logic should be well-tested
 
 #### Future Maintenance Plan
+
 - Regular performance monitoring and optimization
 - Documentation updates as usage patterns emerge
 - Strategy consolidation based on actual usage data
@@ -1483,16 +1524,19 @@ interface ShardedPaginationStrategy {
 ### Development Roadmap
 
 #### Phase 1 (Months 1-2): Core Implementation
+
 - Implement all three pagination strategies
 - Set up monitoring and caching
 - Complete testing and documentation
 
 #### Phase 2 (Months 2-4): Optimization
+
 - Performance tuning based on real usage
 - Cache optimization and monitoring improvements
 - Strategy refinement based on usage patterns
 
 #### Phase 3 (Months 4+): Continuous Improvement
+
 - Regular performance reviews and optimizations
 - Feature enhancements based on user feedback
 - Scaling optimizations as data volumes grow
@@ -1510,20 +1554,25 @@ interface ShardedPaginationStrategy {
 ### Decisions Made
 
 #### 2025-01-31 - Pagination Strategy Selection
+
 **Decision:** Implement modern approach with multiple pagination strategies optimized for development environment
 **Rationale:** Different use cases have different performance characteristics and requirements. Modern approach provides flexibility while maintaining performance.
 **Participants:** Backend Team, API Team, DevOps Team
 
-#### 2025-01-31 - Development-First Approach  
+#### 2025-01-31 - Development-First Approach
+
 **Decision:** Focus on clean, modern implementation without legacy compatibility
 **Rationale:** Since the API is still in development phase, we can implement optimal solutions without maintaining backward compatibility.
 **Participants:** Product Team, Backend Team, API Team
 
 #### 2025-01-31 - Caching Implementation
+
 **Decision:** Use PostgreSQL-based caching rather than external cache systems
 **Rationale:** Simplifies infrastructure while providing adequate caching performance. Reduces operational complexity.
 **Participants:** DevOps Team, Backend Team
+
 #### 2025-01-31 - Security Implementation
+
 **Decision:** Use HMAC-signed cursors rather than encrypted cursors for performance
 **Rationale:** Signing provides tamper protection without encryption overhead. Base64 encoding prevents casual tampering.
 **Participants:** Security Team, Backend Team
@@ -1541,6 +1590,7 @@ Feedback from internal team review and stakeholder discussion:
 ## Changelog
 
 ### 2024-12-19 - Version 1.0
+
 - Initial draft with comprehensive pagination strategy analysis
 - Detailed implementation plan and migration strategy
 - Performance benchmarks and security considerations
@@ -1549,11 +1599,13 @@ Feedback from internal team review and stakeholder discussion:
 ## References
 
 ### Related RFCs
+
 - RFC-001: Multi-Tenant Architecture (internal reference)
 - RFC-015: API Security Standards (internal reference)
 - RFC-023: Database Performance Optimization (internal reference)
 
 ### External References
+
 - [API Pagination Best Practices](https://dev.to/moesif/api-pagination-best-practices-5h9d) - Comprehensive pagination strategy comparison
 - [ReadySet Blog: SQL Optimization](https://readyset.io/blog/sql-pagination-optimization) - PostgreSQL-specific pagination optimization
 - [PostgreSQL Documentation: Pagination](https://www.postgresql.org/docs/current/queries-limit.html) - Official PostgreSQL pagination guidance
@@ -1562,6 +1614,7 @@ Feedback from internal team review and stakeholder discussion:
 - [Stripe API Documentation](https://stripe.com/docs/api/pagination) - Production pagination implementation example
 
 ### Issues & PRs
+
 - Issue #456: "Pagination performance optimization for large datasets"
 - Issue #789: "Inconsistent pagination behavior during concurrent modifications"
 - Issue #1234: "Performance optimization for deep pagination scenarios"
@@ -1571,23 +1624,25 @@ Feedback from internal team review and stakeholder discussion:
 ### Appendix A: Performance Benchmarking Methodology
 
 #### Test Environment
+
 - **Database**: PostgreSQL 14.10 on AWS RDS db.r5.2xlarge
 - **Application**: Node.js 18.17.0 with 4GB memory limit
 - **Load Testing**: Artillery.js with 1000 concurrent users
 - **Dataset**: 1,000,000 worker records with realistic data distribution
 
 #### Benchmark Queries
+
 ```sql
 -- Offset pagination (current implementation)
-EXPLAIN (ANALYZE, BUFFERS) 
-SELECT w.id, w.created_at FROM worker w 
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT w.id, w.created_at FROM worker w
 WHERE [RLS conditions]
 ORDER BY w.created_at DESC, w.id DESC
 LIMIT 20 OFFSET 19980; -- Page 1000
 
 -- Cursor pagination (proposed)
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT w.id, w.created_at FROM worker w 
+SELECT w.id, w.created_at FROM worker w
 WHERE [RLS conditions]
   AND (w.created_at < $2 OR (w.created_at = $2 AND w.id < $3))
 ORDER BY w.created_at DESC, w.id DESC
@@ -1595,7 +1650,7 @@ LIMIT 21;
 
 -- Keyset pagination (optimized)
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT w.id, w.created_at FROM worker w 
+SELECT w.id, w.created_at FROM worker w
 WHERE [RLS conditions]
   AND (w.created_at, w.id) < ($2, $3)
 ORDER BY w.created_at DESC, w.id DESC
@@ -1604,16 +1659,17 @@ LIMIT 20;
 
 #### Benchmark Results Detail
 
-| Metric | Offset P1 | Offset P10 | Offset P100 | Offset P1000 | Cursor All | Keyset All |
-|--------|-----------|------------|-------------|--------------|------------|------------|
-| Query Time | 5ms | 25ms | 250ms | 2500ms | 8-18ms | 6-12ms |
-| Buffer Reads | 15 | 150 | 1500 | 15000 | 20-25 | 18-22 |
-| CPU Usage | 0.1% | 0.5% | 5% | 25% | 0.2% | 0.15% |
-| Memory | 2MB | 8MB | 50MB | 200MB | 3MB | 2.5MB |
+| Metric       | Offset P1 | Offset P10 | Offset P100 | Offset P1000 | Cursor All | Keyset All |
+| ------------ | --------- | ---------- | ----------- | ------------ | ---------- | ---------- |
+| Query Time   | 5ms       | 25ms       | 250ms       | 2500ms       | 8-18ms     | 6-12ms     |
+| Buffer Reads | 15        | 150        | 1500        | 15000        | 20-25      | 18-22      |
+| CPU Usage    | 0.1%      | 0.5%       | 5%          | 25%          | 0.2%       | 0.15%      |
+| Memory       | 2MB       | 8MB        | 50MB        | 200MB        | 3MB        | 2.5MB      |
 
 ### Appendix B: Database Schema Analysis
 
 #### Current Worker Table Structure
+
 ```sql
 CREATE TABLE worker (
     id SERIAL PRIMARY KEY,
@@ -1629,12 +1685,12 @@ CREATE TABLE worker (
     tags TEXT[] DEFAULT '{}',
     scope VARCHAR(20) NOT NULL DEFAULT 'folder',
     scope_ref UUID,
-    
+
     -- Constraints
     CONSTRAINT worker_name_regex CHECK (name ~ '^[a-zA-Z0-9-_]+$'),
     CONSTRAINT worker_status_check CHECK (status IN ('active', 'inactive', 'archived')),
     CONSTRAINT worker_scope_check CHECK (scope IN ('folder', 'tenant', 'organization', 'public')),
-    
+
     -- Indexes
     CONSTRAINT worker_key_unique UNIQUE (key),
     CONSTRAINT worker_name_folder_unique UNIQUE (name, folder_key)
@@ -1642,6 +1698,7 @@ CREATE TABLE worker (
 ```
 
 #### Existing Indexes
+
 ```sql
 -- Current indexes (suboptimal for pagination)
 CREATE INDEX idx_workers_created_at ON worker (created_at);
@@ -1650,19 +1707,20 @@ CREATE INDEX idx_workers_scope_ref ON worker (scope_ref);
 CREATE INDEX idx_workers_status ON worker (status);
 
 -- Proposed optimized indexes
-CREATE INDEX CONCURRENTLY idx_worker_pagination_primary 
+CREATE INDEX CONCURRENTLY idx_worker_pagination_primary
 ON worker (created_at DESC, id DESC);
 
-CREATE INDEX CONCURRENTLY idx_worker_pagination_rls 
-ON worker (scope, scope_ref, created_at DESC, id DESC) 
+CREATE INDEX CONCURRENTLY idx_worker_pagination_rls
+ON worker (scope, scope_ref, created_at DESC, id DESC)
 WHERE scope != 'public';
 
-CREATE INDEX CONCURRENTLY idx_worker_pagination_status 
-ON worker (status, created_at DESC, id DESC) 
+CREATE INDEX CONCURRENTLY idx_worker_pagination_status
+ON worker (status, created_at DESC, id DESC)
 WHERE status = 'active';
 ```
 
 #### Row-Level Security Policies
+
 ```sql
 -- Current RLS policies affecting pagination
 CREATE POLICY worker_folder_access ON worker
@@ -1687,12 +1745,14 @@ CREATE POLICY worker_public_access ON worker
 #### Repository Pattern Migration
 
 **Before (Current Implementation):**
+
 ```typescript
 export class WorkerRepository extends BaseRepository {
   async getAll(query: GetWorkersQueryDto): Promise<PaginatedWorkersResponseDto> {
     const offset = (query.page - 1) * query.limit
-    
-    const result = await this.db.query(`
+
+    const result = await this.db.query(
+      `
       WITH worker_count AS (
         SELECT COUNT(*) as total_count FROM worker WHERE [RLS conditions]
       )
@@ -1701,11 +1761,13 @@ export class WorkerRepository extends BaseRepository {
       WHERE [RLS conditions]
       ORDER BY w.created_at DESC, w.id DESC
       LIMIT $1 OFFSET $2
-    `, [query.limit, offset])
-    
+    `,
+      [query.limit, offset]
+    )
+
     const totalCount = result.rows[0]?.total_count || 0
     const totalPages = Math.ceil(totalCount / query.limit)
-    
+
     return {
       items: result.rows,
       pagination: {
@@ -1714,42 +1776,43 @@ export class WorkerRepository extends BaseRepository {
         totalPages,
         totalItems: totalCount,
         // ... other legacy fields
-      }
+      },
     }
   }
 }
 ```
 
 **After (Enhanced Implementation):**
+
 ```typescript
 export class WorkerRepository extends BaseRepository {
   async getAll(query: EnhancedPaginationQueryDto): Promise<PaginatedWorkersResponseDto> {
     const strategy = PaginationStrategyFactory.create(query.strategy || 'cursor')
     const paginationQuery = strategy.buildQuery(query)
-    
+
     // Check cache first
     const cacheKey = this.generateCacheKey(paginationQuery)
     const cached = await this.cache.get(cacheKey)
     if (cached) {
       return this.deserializeCachedResponse(cached)
     }
-    
+
     // Execute optimized query
     const startTime = performance.now()
     const result = await this.db.query(paginationQuery.sql, paginationQuery.params)
     const queryTime = performance.now() - startTime
-    
+
     // Process results
     const response = strategy.serializeResponse(result.rows, {
       queryTime,
       cacheHit: false,
       hasNextPage: this.detectHasNextPage(result.rows, query.limit),
-      hasPreviousPage: !!query.cursor
+      hasPreviousPage: !!query.cursor,
     })
-    
+
     // Cache for future requests
     await this.cache.set(cacheKey, response, this.cacheTtl)
-    
+
     return response
   }
 }
@@ -1758,6 +1821,7 @@ export class WorkerRepository extends BaseRepository {
 ---
 
 **Status Legend:**
+
 - **Draft:** Initial RFC proposal, open for discussion and iteration
 - **In Review:** RFC is undergoing formal technical and stakeholder review process
 - **Accepted:** RFC has been approved for implementation after review process
