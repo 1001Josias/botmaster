@@ -341,7 +341,6 @@ export const PaginatedResponseSchema = z.object({
 
     // Performance metadata
     queryTime: z.number().describe('Query execution time in ms'),
-    cacheHit: z.boolean().describe('Whether result was cached'),
   }),
 })
 ```
@@ -384,8 +383,7 @@ curl "/api/workers?filters[status]=active&filters[scope]=tenant&limit=20"
     "hasNextPage": true,
     "hasPreviousPage": false,
     "nextCursor": "eyJzb3J0VmFsdWUiOiIyMDI0LTEyLTE5VDA5OjU5OjAwWiIsImlkIjoxMDN9",
-    "queryTime": 15,
-    "cacheHit": false
+    "queryTime": 15
   }
 }
 ```
@@ -479,39 +477,7 @@ ON worker (scope, scope_ref, created_at DESC, id DESC)
 INCLUDE (name, description, tags);
 ```
 
-#### Caching Strategy
 
-```typescript
-class PaginationCacheManager {
-  private db: PostgresDatabase
-
-  async getCachedPage(cacheKey: string): Promise<any> {
-    const result = await this.db.query(`
-      SELECT data, created_at FROM pagination_cache
-      WHERE cache_key = $1 AND expires_at > NOW()
-    `, [cacheKey])
-
-    return result.rows[0]?.data || null
-  }
-
-  async setCachedPage(cacheKey: string, data: any, ttl: number = 300): Promise<void> {
-    await this.db.query(`
-      INSERT INTO pagination_cache (cache_key, data, expires_at)
-      VALUES ($1, $2, NOW() + INTERVAL '${ttl} seconds')
-      ON CONFLICT (cache_key)
-      DO UPDATE SET data = $2, expires_at = NOW() + INTERVAL '${ttl} seconds'
-    `, [cacheKey, JSON.stringify(data)])
-  }
-
-  generateCacheKey(strategy: string, params: PaginationParams): string {
-    return `pagination:${strategy}:${crypto
-      .createHash('md5')
-      .update(JSON.stringify(params))
-      .digest('hex')}`
-  }
-}
-}
-```
 
 ### Monitoring and Observability
 
@@ -522,7 +488,6 @@ interface PaginationMetrics {
   strategy: string
   queryTime: number
   resultCount: number
-  cacheHit: boolean
   indexUsage: string[]
   deepPageAccess: boolean // page > 100 for performance monitoring
 }
@@ -541,38 +506,12 @@ class PaginationTelemetry {
 #### Alerting Thresholds
 
 - Query time > 500ms for any pagination strategy
-- Cache hit rate < 60% for repeated queries
 - Index scan efficiency < 90%
 - High memory usage during pagination queries
 
 ## Data Model
 
 ### Database Changes
-
-#### Caching Support Table
-
-```sql
--- Simple cache table for PostgreSQL-based caching
-CREATE TABLE pagination_cache (
-  cache_key VARCHAR(255) PRIMARY KEY,
-  data JSONB NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-
-  INDEX idx_pagination_cache_expires (expires_at)
-);
-
--- Cleanup old cache entries periodically
-CREATE OR REPLACE FUNCTION cleanup_pagination_cache()
-RETURNS void AS $$
-BEGIN
-  DELETE FROM pagination_cache WHERE expires_at < NOW();
-END;
-$$ LANGUAGE plpgsql;
-
--- Schedule cleanup (can be done via cron or application scheduler)
--- SELECT cleanup_pagination_cache();
-```
 
 #### Enhanced Indexes
 
@@ -641,7 +580,6 @@ export const PaginationMetaResponseSchema = z.object({
 
   // Performance metrics
   queryTime: z.number(),
-  cacheHit: z.boolean(),
   indexesUsed: z.array(z.string()).optional(),
 })
 ```
@@ -670,14 +608,14 @@ export const PaginationMetaResponseSchema = z.object({
           │
           ▼
 ┌─────────────────┐    ┌─────────────────┐
-│ Cache Manager   │───▶│ Query Builder   │
-│ Check           │    │ & Executor      │
+│ Query Builder   │───▶│ Database        │
+│ & Executor      │    │ with RLS        │
 └─────────┬───────┘    └─────────┬───────┘
           │                      │
           ▼                      ▼
 ┌─────────────────┐    ┌─────────────────┐
-│ Response        │◀───│ Database        │
-│ Serializer      │    │ with RLS        │
+│ Response        │◀───│ Query Results   │
+│ Serializer      │    │                 │
 └─────────────────┘    └─────────────────┘
 ```
 
@@ -712,9 +650,8 @@ export const PaginationMetaResponseSchema = z.object({
 #### Phase 3: Integration & Optimization (Weeks 5-6)
 
 - **Timeline:** 2 weeks
-- **Dependencies:** Phase 2 completion, PostgreSQL caching setup
+- **Dependencies:** Phase 2 completion
 - **Tasks:**
-  - [ ] Integrate caching layer with PostgreSQL
   - [ ] Implement pagination configuration management
   - [ ] Add comprehensive error handling and validation
   - [ ] Create OpenAPI documentation updates
@@ -771,9 +708,7 @@ interface PaginationFeatureFlags {
    - Enable all strategies progressively
 
 4. **Optimization**
-   - Tune caching parameters based on usage patterns
    - Optimize database indexes based on query patterns
-   - Update documentation and examples
    - Update documentation and examples
 
 ### Rollback Plan
@@ -787,7 +722,7 @@ interface PaginationFeatureFlags {
 
 #### Full Rollback (< 24 hours)
 
-- Revert to simple database queries without pagination caching
+- Revert to simple database queries
 - Disable all advanced pagination features
 - Update monitoring dashboards
 
@@ -797,7 +732,6 @@ interface PaginationFeatureFlags {
 interface RollbackTriggers {
   errorRate: number // > 5%
   responseTime: number // > 500ms P95
-  cacheHitRate: number // < 50%
   databaseCPU: number // > 80%
 }
 ```
@@ -827,17 +761,11 @@ interface RollbackTriggers {
 - **Neutral**: Additional indexes increase storage by ~5%
 - **Risk**: Index creation requires maintenance window
 
-#### Caching Layer
-
-- **Implementation**: PostgreSQL-based caching using dedicated cache table
-- **Impact**: Reduced database load for repeated queries, improved response times
-- **Cost**: Minimal additional storage cost for cache table
-
 #### Application Layer
 
 - **Code Changes**: ~2000 lines of new TypeScript code
 - **Bundle Size**: +15KB (pagination utilities)
-- **Memory**: +10MB per process (caching structures)
+- **Memory**: +5MB per process (pagination structures)
 
 ### Testing Strategy
 
@@ -991,7 +919,7 @@ paths:
 
 #### Infrastructure Requirements
 
-- **Database**: Additional 500MB storage for indexes and cache table
+- **Database**: Additional 100MB storage for indexes
 - **Application**: Additional environment variables for JWT secrets
 
 #### Environment Variables
@@ -1000,7 +928,6 @@ paths:
 # New environment variables required
 PAGINATION_JWT_SECRET=REPLACE_WITH_STRONG_SECRET
 CURSOR_SIGNING_KEY=REPLACE_WITH_SECURE_KEY
-PAGINATION_CACHE_TTL=300
 PAGINATION_MAX_DEEP_OFFSET=1000
 ENABLE_PAGINATION_METRICS=true
 ```
@@ -1013,11 +940,6 @@ pagination_query_duration_seconds:
   type: histogram
   help: 'Time spent executing pagination queries'
   labels: [strategy, resource_type]
-
-pagination_cache_hits_total:
-  type: counter
-  help: 'Number of pagination cache hits'
-  labels: [strategy]
 
 pagination_large_result_sets_total:
   type: counter
@@ -1046,7 +968,6 @@ export class WorkerService {
           strategy: query.strategy || 'cursor',
           queryTime: result.meta.queryTime,
           resultCount: result.data.length,
-          cacheHit: result.meta.cacheHit,
         })
 
         return this.fetchedSuccessfully('Workers retrieved successfully', response)
@@ -1065,16 +986,6 @@ export class WorkerRepository extends BaseRepository {
   async paginate(paginationQuery: PaginationQuery): Promise<PaginationResult<WorkerDatabaseDto>> {
     const startTime = performance.now()
 
-    // Check cache first
-    const cacheKey = this.generateCacheKey(paginationQuery)
-    const cached = await this.cache.get(cacheKey)
-    if (cached) {
-      return {
-        data: cached.data,
-        meta: { ...cached.meta, cacheHit: true },
-      }
-    }
-
     // Execute query
     const result = await this.db.query(paginationQuery.sql, paginationQuery.params)
     const queryTime = performance.now() - startTime
@@ -1088,14 +999,10 @@ export class WorkerRepository extends BaseRepository {
       data,
       meta: {
         queryTime,
-        cacheHit: false,
         hasNextPage,
         hasPreviousPage: !!paginationQuery.cursor,
       },
     }
-
-    // Cache result
-    await this.cache.set(cacheKey, response, this.cacheTtl)
 
     return response
   }
@@ -1219,12 +1126,6 @@ export const paginationConfig = {
     deepOffsetThreshold: 1000,
   },
 
-  caching: {
-    enabled: true,
-    ttl: 300, // 5 minutes
-    keyPrefix: 'pagination:',
-  },
-
   security: {
     cursorSigningEnabled: true,
     tokenExpirationHours: 24,
@@ -1246,7 +1147,6 @@ export const paginationConfig = {
     jobs: {
       defaultStrategy: 'keyset',
       maxLimit: 100,
-      cacheTtl: 600,
     },
   },
 }
@@ -1383,7 +1283,6 @@ SELECT pg_reload_conf();
 | Database index creation causes downtime        | High   | Low         | Use `CREATE INDEX CONCURRENTLY`, schedule during maintenance windows, test on staging replicas         | DevOps Team   |
 | Performance regression during initial rollout  | Medium | Medium      | Gradual rollout with A/B testing, immediate rollback capability, comprehensive monitoring              | Backend Team  |
 | RLS policy incompatibility with new queries    | High   | Low         | Extensive testing in staging environment, RLS policy validation in CI/CD                               | Security Team |
-| Cache inconsistency leading to stale data      | Medium | Medium      | Short cache TTLs, cache invalidation on writes, cache warming strategies                               | Backend Team  |
 | Memory usage increase from cursor storage      | Low    | High        | Cursor compression, TTL-based cleanup, monitoring memory usage patterns                                | DevOps Team   |
 | Client integration difficulties                | Medium | Low         | Comprehensive documentation, migration guides, backward compatibility layer                            | API Team      |
 | JWT token security vulnerabilities             | High   | Low         | Regular secret rotation, token expiration, rate limiting, security audit                               | Security Team |
@@ -1395,7 +1294,6 @@ SELECT pg_reload_conf();
 - **Query Performance**: 95th percentile response time < 100ms for all pagination strategies
 - **Database Efficiency**: 50% reduction in database CPU usage for pagination queries
 - **User Experience**: 90% of users never experience slow pagination (>500ms)
-- **Cache Effectiveness**: Cache hit rate > 70% for repeated pagination queries
 - **Adoption Rate**: 80% of API consumers migrate to cursor-based pagination within 6 months
 - **Error Rate**: Pagination-related errors < 0.1% of total API requests
 
@@ -1423,7 +1321,6 @@ interface PaginationDashboard {
   usage: {
     requestsPerStrategy: Record<PaginationStrategy, number>
     deepOffsetUsage: number
-    cacheHitRate: number
   }
 
   errors: {
@@ -1461,14 +1358,12 @@ interface PaginationDashboard {
 #### Machine Learning Enhanced Pagination
 
 - Predictive prefetching based on user behavior patterns
-- Intelligent caching strategies using ML models
 - Personalized pagination strategies per user type
 
 #### Multi-Region Pagination
 
 - Distributed pagination across geographic regions
 - Consistent global pagination with eventual consistency
-- Edge caching strategies for global performance
 
 #### Advanced Analytics Integration
 
@@ -1512,7 +1407,6 @@ interface ShardedPaginationStrategy {
 #### Maintenance Considerations
 
 - Multiple pagination strategies require clear documentation
-- Caching infrastructure needs monitoring and optimization
 - Strategy selection logic should be well-tested
 
 #### Future Maintenance Plan
@@ -1526,13 +1420,13 @@ interface ShardedPaginationStrategy {
 #### Phase 1 (Months 1-2): Core Implementation
 
 - Implement all three pagination strategies
-- Set up monitoring and caching
+- Set up monitoring
 - Complete testing and documentation
 
 #### Phase 2 (Months 2-4): Optimization
 
 - Performance tuning based on real usage
-- Cache optimization and monitoring improvements
+- Monitoring improvements and optimization
 - Strategy refinement based on usage patterns
 
 #### Phase 3 (Months 4+): Continuous Improvement
@@ -1564,12 +1458,6 @@ interface ShardedPaginationStrategy {
 **Decision:** Focus on clean, modern implementation without legacy compatibility
 **Rationale:** Since the API is still in development phase, we can implement optimal solutions without maintaining backward compatibility.
 **Participants:** Product Team, Backend Team, API Team
-
-#### 2025-01-31 - Caching Implementation
-
-**Decision:** Use PostgreSQL-based caching rather than external cache systems
-**Rationale:** Simplifies infrastructure while providing adequate caching performance. Reduces operational complexity.
-**Participants:** DevOps Team, Backend Team
 
 #### 2025-01-31 - Security Implementation
 
@@ -1790,13 +1678,6 @@ export class WorkerRepository extends BaseRepository {
     const strategy = PaginationStrategyFactory.create(query.strategy || 'cursor')
     const paginationQuery = strategy.buildQuery(query)
 
-    // Check cache first
-    const cacheKey = this.generateCacheKey(paginationQuery)
-    const cached = await this.cache.get(cacheKey)
-    if (cached) {
-      return this.deserializeCachedResponse(cached)
-    }
-
     // Execute optimized query
     const startTime = performance.now()
     const result = await this.db.query(paginationQuery.sql, paginationQuery.params)
@@ -1805,13 +1686,9 @@ export class WorkerRepository extends BaseRepository {
     // Process results
     const response = strategy.serializeResponse(result.rows, {
       queryTime,
-      cacheHit: false,
       hasNextPage: this.detectHasNextPage(result.rows, query.limit),
       hasPreviousPage: !!query.cursor,
     })
-
-    // Cache for future requests
-    await this.cache.set(cacheKey, response, this.cacheTtl)
 
     return response
   }
