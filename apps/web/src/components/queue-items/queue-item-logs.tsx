@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Download } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { Download } from 'lucide-react'
 
 interface QueueItemLogsProps {
   id: string
@@ -12,15 +12,15 @@ interface QueueItemLogsProps {
 export function QueueItemLogs({ id }: QueueItemLogsProps) {
   // Dados simulados para demonstração
   const logs = [
-    { timestamp: "2023-05-15T14:30:00Z", level: "info", message: "Item adicionado à fila" },
-    { timestamp: "2023-05-15T14:30:05Z", level: "info", message: "Iniciando processamento" },
-    { timestamp: "2023-05-15T14:30:10Z", level: "debug", message: "Carregando dados de entrada" },
-    { timestamp: "2023-05-15T14:30:15Z", level: "debug", message: "Validando payload" },
-    { timestamp: "2023-05-15T14:30:20Z", level: "info", message: "Processando lote 1/3" },
-    { timestamp: "2023-05-15T14:30:45Z", level: "info", message: "Processando lote 2/3" },
-    { timestamp: "2023-05-15T14:31:10Z", level: "info", message: "Processando lote 3/3" },
-    { timestamp: "2023-05-15T14:31:20Z", level: "debug", message: "Finalizando processamento" },
-    { timestamp: "2023-05-15T14:31:25Z", level: "info", message: "Processamento concluído com sucesso" },
+    { timestamp: '2023-05-15T14:30:00Z', level: 'info', message: 'Item adicionado à fila' },
+    { timestamp: '2023-05-15T14:30:05Z', level: 'info', message: 'Iniciando processamento' },
+    { timestamp: '2023-05-15T14:30:10Z', level: 'debug', message: 'Carregando dados de entrada' },
+    { timestamp: '2023-05-15T14:30:15Z', level: 'debug', message: 'Validando payload' },
+    { timestamp: '2023-05-15T14:30:20Z', level: 'info', message: 'Processando lote 1/3' },
+    { timestamp: '2023-05-15T14:30:45Z', level: 'info', message: 'Processando lote 2/3' },
+    { timestamp: '2023-05-15T14:31:10Z', level: 'info', message: 'Processando lote 3/3' },
+    { timestamp: '2023-05-15T14:31:20Z', level: 'debug', message: 'Finalizando processamento' },
+    { timestamp: '2023-05-15T14:31:25Z', level: 'info', message: 'Processamento concluído com sucesso' },
   ]
 
   const result = {
@@ -43,28 +43,28 @@ export function QueueItemLogs({ id }: QueueItemLogsProps) {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+    return new Date(dateString).toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     })
   }
 
   const getLogLevelClass = (level: string) => {
     switch (level) {
-      case "error":
-        return "text-red-500"
-      case "warn":
-        return "text-yellow-500"
-      case "info":
-        return "text-blue-500"
-      case "debug":
-        return "text-gray-500"
+      case 'error':
+        return 'text-red-500'
+      case 'warn':
+        return 'text-yellow-500'
+      case 'info':
+        return 'text-blue-500'
+      case 'debug':
+        return 'text-gray-500'
       default:
-        return ""
+        return ''
     }
   }
 
@@ -168,4 +168,3 @@ export function QueueItemLogs({ id }: QueueItemLogsProps) {
     </Tabs>
   )
 }
-

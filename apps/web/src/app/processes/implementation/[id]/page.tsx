@@ -1,4 +1,4 @@
-import { ProcessImplementation } from "@/components/processes/process-implementation"
+import { ProcessImplementation } from '@/components/processes/process-implementation'
 
 export default function ProcessImplementationPage({ params }: { params: { id: string } }) {
   return (
@@ -7,4 +7,3 @@ export default function ProcessImplementationPage({ params }: { params: { id: st
     </div>
   )
 }
-

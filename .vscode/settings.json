@@ -7,6 +7,12 @@
   "prettier.enable": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": "./packages/eslint-config/.prettierrc",
-  "prettier.ignorePath": "./packages/eslint-config/.prettierignore"
+  "prettier.configPath": "packages/eslint-config/.prettierrc",
+  "prettier.ignorePath": "packages/eslint-config/.prettierignore",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": false,
+  "prettier.useEditorConfig": false,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { QueueItemInfo } from "./queue-item-info"
-import { QueueItemLogs } from "./queue-item-logs"
-import { QueueItemPayload } from "./queue-item-payload"
-import { QueueItemJson } from "./queue-item-json"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { QueueItemInfo } from './queue-item-info'
+import { QueueItemLogs } from './queue-item-logs'
+import { QueueItemPayload } from './queue-item-payload'
+import { QueueItemJson } from './queue-item-json'
 
 interface QueueItemDetailsProps {
   id: string
@@ -34,4 +34,3 @@ export function QueueItemDetails({ id }: QueueItemDetailsProps) {
     </Tabs>
   )
 }
-

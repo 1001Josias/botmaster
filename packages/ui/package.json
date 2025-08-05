@@ -9,7 +9,8 @@
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "generate:component": "turbo gen react-component"
+    "generate:component": "turbo gen react-component",
+    "format:check": "prettier --config node_modules/@repo/eslint-config/.prettierrc --check ."
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

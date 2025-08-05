@@ -1,31 +1,31 @@
 export type WebhookEventType =
-  | "queue.item.added"
-  | "queue.item.processed"
-  | "worker.started"
-  | "worker.completed"
-  | "worker.failed"
-  | "workflow.started"
-  | "workflow.completed"
-  | "workflow.failed"
-  | "process.started"
-  | "process.completed"
-  | "process.failed"
-  | "job.created"
-  | "job.started"
-  | "job.completed"
-  | "job.failed"
-  | "flow.started"
-  | "flow.completed"
-  | "flow.failed"
+  | 'queue.item.added'
+  | 'queue.item.processed'
+  | 'worker.started'
+  | 'worker.completed'
+  | 'worker.failed'
+  | 'workflow.started'
+  | 'workflow.completed'
+  | 'workflow.failed'
+  | 'process.started'
+  | 'process.completed'
+  | 'process.failed'
+  | 'job.created'
+  | 'job.started'
+  | 'job.completed'
+  | 'job.failed'
+  | 'flow.started'
+  | 'flow.completed'
+  | 'flow.failed'
 
 export type WebhookHeader = {
   key: string
   value: string
 }
 
-export type WebhookStatus = "active" | "inactive" | "failed"
+export type WebhookStatus = 'active' | 'inactive' | 'failed'
 
-export type WebhookDeliveryStatus = "success" | "failed" | "pending" | "retrying"
+export type WebhookDeliveryStatus = 'success' | 'failed' | 'pending' | 'retrying'
 
 export type WebhookDelivery = {
   id: string
@@ -52,4 +52,3 @@ export type Webhook = {
   retryInterval: number // in seconds
   deliveries: WebhookDelivery[]
 }
-

@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
-import { Download, RefreshCw } from "lucide-react"
-import { ExportDialog } from "./export-dialog"
-import { useState } from "react"
+import { Button } from '@/components/ui/button'
+import { Download, RefreshCw } from 'lucide-react'
+import { ExportDialog } from './export-dialog'
+import { useState } from 'react'
 
 export function QueueItemsHeader() {
   const [showExportDialog, setShowExportDialog] = useState(false)
@@ -28,4 +28,3 @@ export function QueueItemsHeader() {
     </div>
   )
 }
-

@@ -1,6 +1,6 @@
-import { ProcessesHeader } from "@/components/processes/processes-header"
-import { ProcessesStats } from "@/components/processes/processes-stats"
-import { ProcessesList } from "@/components/processes/processes-list"
+import { ProcessesHeader } from '@/components/processes/processes-header'
+import { ProcessesStats } from '@/components/processes/processes-stats'
+import { ProcessesList } from '@/components/processes/processes-list'
 
 export default function ProcessesPage() {
   return (
@@ -11,4 +11,3 @@ export default function ProcessesPage() {
     </div>
   )
 }
-

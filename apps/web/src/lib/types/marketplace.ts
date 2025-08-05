@@ -1,5 +1,5 @@
-export type ItemType = "worker" | "workflow" | "process"
-export type PricingType = "free" | "paid" | "subscription"
+export type ItemType = 'worker' | 'workflow' | 'process'
+export type PricingType = 'free' | 'paid' | 'subscription'
 
 export interface MarketplaceItem {
   id: string
@@ -48,7 +48,7 @@ export interface SubscriptionPlan {
   name: string
   description: string
   price: number
-  interval: "monthly" | "yearly"
+  interval: 'monthly' | 'yearly'
   features: string[]
   itemCount: number
 }
@@ -58,7 +58,7 @@ export interface UserSubscription {
   userId: string
   planId: string
   planName: string
-  status: "active" | "canceled" | "expired"
+  status: 'active' | 'canceled' | 'expired'
   currentPeriodStart: string
   currentPeriodEnd: string
   cancelAtPeriodEnd: boolean
@@ -83,4 +83,3 @@ export interface CuratedCollection {
   coverImage: string
   itemIds: string[]
 }
-

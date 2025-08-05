@@ -35,7 +35,9 @@ const workerInstallationsListOpenApiResponseSuccess = {
 }
 
 const contextHeaders = {
-  'x-folder-key': contextSchema.shape.folderKey.openapi({ description: 'Folder identifier (context)' }),
+  'x-folder-key': contextSchema.shape.folderKey.openapi({
+    description: 'Folder identifier (context)',
+  }),
 }
 
 workerInstallationRegistry.registerPath({

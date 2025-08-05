@@ -1,10 +1,10 @@
-import { ItemDetails } from "@/components/marketplace/item-details"
-import { ItemScreenshots } from "@/components/marketplace/item-screenshots"
-import { ItemRequirements } from "@/components/marketplace/item-requirements"
-import { ItemInstallation } from "@/components/marketplace/item-installation"
-import { ItemReviews } from "@/components/marketplace/item-reviews"
-import { ItemAuthor } from "@/components/marketplace/item-author"
-import { ItemRelated } from "@/components/marketplace/item-related"
+import { ItemDetails } from '@/components/marketplace/item-details'
+import { ItemScreenshots } from '@/components/marketplace/item-screenshots'
+import { ItemRequirements } from '@/components/marketplace/item-requirements'
+import { ItemInstallation } from '@/components/marketplace/item-installation'
+import { ItemReviews } from '@/components/marketplace/item-reviews'
+import { ItemAuthor } from '@/components/marketplace/item-author'
+import { ItemRelated } from '@/components/marketplace/item-related'
 
 export default function MarketplaceItemPage({ params }: { params: { id: string } }) {
   return (
@@ -25,4 +25,3 @@ export default function MarketplaceItemPage({ params }: { params: { id: string }
     </div>
   )
 }
-

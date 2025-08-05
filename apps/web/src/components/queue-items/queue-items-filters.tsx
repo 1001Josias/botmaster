@@ -1,33 +1,33 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon, Filter, Search, X } from "lucide-react"
-import { useState } from "react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
-import type { QueueItemStatus } from "@/lib/types/queue-item"
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import { CalendarIcon, Filter, Search, X } from 'lucide-react'
+import { useState } from 'react'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import type { QueueItemStatus } from '@/lib/types/queue-item'
 
 export function QueueItemsFilters() {
   const [open, setOpen] = useState(false)
   const [dateFrom, setDateFrom] = useState<Date | undefined>()
   const [dateTo, setDateTo] = useState<Date | undefined>()
   const [status, setStatus] = useState<QueueItemStatus[]>([])
-  const [worker, setWorker] = useState<string>("")
-  const [job, setJob] = useState<string>("")
-  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [worker, setWorker] = useState<string>('')
+  const [job, setJob] = useState<string>('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
   const [activeFilters, setActiveFilters] = useState<string[]>([])
 
   const handleApplyFilters = () => {
     const newFilters: string[] = []
 
-    if (dateFrom) newFilters.push(`De: ${format(dateFrom, "dd/MM/yyyy")}`)
-    if (dateTo) newFilters.push(`Até: ${format(dateTo, "dd/MM/yyyy")}`)
+    if (dateFrom) newFilters.push(`De: ${format(dateFrom, 'dd/MM/yyyy')}`)
+    if (dateTo) newFilters.push(`Até: ${format(dateTo, 'dd/MM/yyyy')}`)
     if (status.length > 0) newFilters.push(`Status: ${status.length}`)
     if (worker) newFilters.push(`Worker: ${worker}`)
     if (job) newFilters.push(`Job: ${job}`)
@@ -40,8 +40,8 @@ export function QueueItemsFilters() {
     setDateFrom(undefined)
     setDateTo(undefined)
     setStatus([])
-    setWorker("")
-    setJob("")
+    setWorker('')
+    setJob('')
     setActiveFilters([])
   }
 
@@ -80,11 +80,11 @@ export function QueueItemsFilters() {
                         <PopoverTrigger asChild>
                           <Button
                             id="date-from"
-                            variant={"outline"}
-                            className={cn("justify-start text-left font-normal", !dateFrom && "text-muted-foreground")}
+                            variant={'outline'}
+                            className={cn('justify-start text-left font-normal', !dateFrom && 'text-muted-foreground')}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {dateFrom ? format(dateFrom, "dd/MM/yyyy") : "Selecionar"}
+                            {dateFrom ? format(dateFrom, 'dd/MM/yyyy') : 'Selecionar'}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -98,11 +98,11 @@ export function QueueItemsFilters() {
                         <PopoverTrigger asChild>
                           <Button
                             id="date-to"
-                            variant={"outline"}
-                            className={cn("justify-start text-left font-normal", !dateTo && "text-muted-foreground")}
+                            variant={'outline'}
+                            className={cn('justify-start text-left font-normal', !dateTo && 'text-muted-foreground')}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {dateTo ? format(dateTo, "dd/MM/yyyy") : "Selecionar"}
+                            {dateTo ? format(dateTo, 'dd/MM/yyyy') : 'Selecionar'}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
@@ -181,4 +181,3 @@ export function QueueItemsFilters() {
     </div>
   )
 }
-
