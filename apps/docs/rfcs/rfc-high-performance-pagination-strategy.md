@@ -33,6 +33,8 @@ ORDER BY w.created_at DESC, w.id DESC
 LIMIT $1 OFFSET $2;
 ```
 
+**Current Implementation Analysis**: The file `apps/api/src/api/workers/db/queries/get_workers_paginated.sql` confirms these limitations using OFFSET which indeed degrades with deep pages. Production API performance metrics should be collected to validate the theoretical benchmarks provided in this RFC.
+
 #### Why Now
 
 With Botmaster's anticipated growth and expected data volumes:
@@ -151,6 +153,8 @@ interface PaginationMeta {
 
 Cursor pagination uses encoded position markers for consistent navigation:
 
+**Critical Implementation Note**: The current BaseRepository.query() method throws ResourceNotFoundError when rowCount === 0, which will break pagination when there are no results. A specific queryForPagination() method must be created or the current query() behavior modified during implementation.
+
 ```typescript
 class CursorPaginationStrategy implements PaginationStrategy {
   readonly type = 'cursor'
@@ -192,7 +196,16 @@ class CursorPaginationStrategy implements PaginationStrategy {
   private decodeCursor(cursor: string): { sortValue: any, id: number } {
     try {
       const decoded = Buffer.from(cursor, 'base64').toString('utf-8')
-      return JSON.parse(decoded)
+      const cursorData = JSON.parse(decoded)
+      
+      // Security: Validate cursor structure with Zod schema
+      const CursorSchema = z.object({
+        sortValue: z.any(),
+        id: z.number(),
+        exp: z.number().optional()
+      })
+      
+      return CursorSchema.parse(cursorData)
     } catch {
       throw new Error('Invalid cursor format')
     }
@@ -308,6 +321,9 @@ export const PaginationQuerySchema = z.object({
 
   token: z.string().optional().describe('Pagination token for stateless pagination'),
 
+  // Legacy parameters (for backward compatibility during transition)
+  page: z.number().int().positive().optional().describe('Legacy page number (will be converted to cursor)'),
+
   // Sorting and filtering
   sortBy: z.string().optional().default('created_at').describe('Field to sort by'),
 
@@ -317,6 +333,8 @@ export const PaginationQuerySchema = z.object({
   filters: z.record(z.string(), z.any()).optional().describe('Dynamic filters to apply'),
 })
 ```
+
+**Breaking Change Mitigation**: During the transition period, the API will support both legacy (`page`) and modern (`strategy`, `cursor`, `token`) parameters to ensure compatibility with existing frontend implementations.
 
 #### Response Format
 
@@ -339,11 +357,22 @@ export const PaginatedResponseSchema = z.object({
     // Token-based navigation
     nextToken: z.string().optional().describe('Token for next page'),
 
+    // Legacy fields (for backward compatibility during transition)
+    page: z.number().optional().describe('Current page number (legacy)'),
+    totalPages: z.number().optional().describe('Total number of pages (legacy)'),
+    totalItems: z.number().optional().describe('Total number of items (legacy)'),
+    previousPages: z.array(z.number()).optional().describe('Previous page numbers (legacy)'),
+    nextPages: z.array(z.number()).optional().describe('Next page numbers (legacy)'),
+    firstPage: z.number().optional().describe('First page number (legacy)'),
+    lastPage: z.number().optional().describe('Last page number (legacy)'),
+
     // Performance metadata
     queryTime: z.number().describe('Query execution time in ms'),
   }),
 })
 ```
+
+**Critical Breaking Change Note**: The current response format includes `totalPages`, `totalItems`, `previousPages[]`, `nextPages[]`, `firstPage`, and `lastPage` fields that are used by the existing frontend. During the transition period, these fields will be maintained alongside the new pagination metadata to prevent breaking existing implementations.
 
 ### User Experience
 
@@ -533,6 +562,12 @@ ON worker (status, created_at DESC, id DESC)
 WHERE status = 'active';
 ```
 
+**Index Creation Notes**:
+- The proposed indexes (`idx_worker_pagination_primary`) are superior to current basic indexes (`idx_workers_created_at`)
+- Use `CREATE INDEX CONCURRENTLY` to avoid table locks during creation
+- Monitor index creation progress on large tables - may require maintenance window
+- Current problem: `idx_workers_created_at` is insufficient for composite queries with RLS filters
+
 ### Data Structures
 
 #### Enhanced Pagination Models
@@ -623,19 +658,21 @@ export const PaginationMetaResponseSchema = z.object({
 
 ### Implementation Plan
 
-#### Phase 1: Foundation (Weeks 1-2)
+#### Phase 1: Foundation and Critical Fixes (Weeks 1-3)
 
-- **Timeline:** 2 weeks
+- **Timeline:** 3 weeks
 - **Dependencies:** Database access, TypeScript environment
 - **Tasks:**
+  - [ ] **CRITICAL**: Fix BaseRepository.query() incompatibility (create queryForPagination() method)
   - [ ] Create base pagination interfaces and types
-  - [ ] Implement cursor pagination strategy class
+  - [ ] Implement cursor pagination strategy class with Zod validation
   - [ ] Create pagination query builder utility
   - [ ] Add comprehensive unit tests for cursor logic
   - [ ] Create database indexes for cursor optimization
-- **Success Criteria:** Cursor pagination working for workers endpoint
+  - [ ] Define backward compatibility contract and feature flags
+- **Success Criteria:** Cursor pagination working for workers endpoint with BaseRepository compatibility
 
-#### Phase 2: Strategy Expansion (Weeks 3-4)
+#### Phase 2: Strategy Expansion (Weeks 4-5)
 
 - **Timeline:** 2 weeks
 - **Dependencies:** Phase 1 completion
@@ -647,25 +684,27 @@ export const PaginationMetaResponseSchema = z.object({
   - [ ] Add performance monitoring and metrics collection
 - **Success Criteria:** All pagination strategies functional with A/B testing
 
-#### Phase 3: Integration & Optimization (Weeks 5-6)
+#### Phase 3: Integration & Frontend Coordination (Weeks 6-8)
 
-- **Timeline:** 2 weeks
-- **Dependencies:** Phase 2 completion
+- **Timeline:** 3 weeks
+- **Dependencies:** Phase 2 completion, **mandatory frontend team coordination**
 - **Tasks:**
-  - [ ] Implement pagination configuration management
+  - [ ] Implement backward compatibility layer with legacy response fields
+  - [ ] **CRITICAL**: Coordinate simultaneous frontend migration timeline
   - [ ] Add comprehensive error handling and validation
   - [ ] Create OpenAPI documentation updates
   - [ ] Performance testing and benchmark validation
-- **Success Criteria:** Production-ready pagination with monitoring
+  - [ ] Daily syncs with frontend team during migration
+- **Success Criteria:** Production-ready pagination with frontend compatibility
 
-#### Phase 4: Migration & Rollout (Weeks 7-8)
+#### Phase 4: Migration & Rollout (Weeks 9-10)
 
 - **Timeline:** 2 weeks
-- **Dependencies:** Phase 3 completion, staging environment
+- **Dependencies:** Phase 3 completion, staging environment, frontend readiness
 - **Tasks:**
   - [ ] Deploy to staging with feature flags
   - [ ] Migrate all resource endpoints to new pagination
-  - [ ] Implement backward compatibility layer
+  - [ ] Create adoption metrics per strategy
   - [ ] Create migration guides and documentation
   - [ ] Gradual production rollout with monitoring
 - **Success Criteria:** All endpoints migrated, legacy support maintained
@@ -1279,10 +1318,13 @@ SELECT pg_reload_conf();
 
 | Risk                                           | Impact | Probability | Mitigation Strategy                                                                                    | Owner         |
 | ---------------------------------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------------------ | ------------- |
-| Cursor decoding failures leading to API errors | High   | Medium      | Comprehensive input validation, graceful fallback to first page, detailed error logging and monitoring | Backend Team  |
+| **BaseRepository incompatibility**            | **High** | **High**   | **Fix BaseRepository.query() to create queryForPagination() method before implementation**            | **Backend Team** |
+| **Frontend migration coordination**            | **High** | **Medium**  | **Mandatory team coordination, daily syncs during migration, feature flags for gradual rollout**     | **API/Frontend Teams** |
+| Cursor decoding failures leading to API errors | High   | Medium      | Comprehensive input validation, Zod schema validation, graceful fallback to first page, detailed error logging | Backend Team  |
 | Database index creation causes downtime        | High   | Low         | Use `CREATE INDEX CONCURRENTLY`, schedule during maintenance windows, test on staging replicas         | DevOps Team   |
 | Performance regression during initial rollout  | Medium | Medium      | Gradual rollout with A/B testing, immediate rollback capability, comprehensive monitoring              | Backend Team  |
-| RLS policy incompatibility with new queries    | High   | Low         | Extensive testing in staging environment, RLS policy validation in CI/CD                               | Security Team |
+| RLS policy incompatibility with new queries    | High   | Medium      | **Critical validation needed** - extensive testing in staging environment, RLS policy validation in CI/CD | Security Team |
+| Breaking changes in API response format        | High   | High        | Maintain legacy fields during transition period, backward compatibility layer                          | API Team      |
 | Memory usage increase from cursor storage      | Low    | High        | Cursor compression, TTL-based cleanup, monitoring memory usage patterns                                | DevOps Team   |
 | Client integration difficulties                | Medium | Low         | Comprehensive documentation, migration guides, backward compatibility layer                            | API Team      |
 | JWT token security vulnerabilities             | High   | Low         | Regular secret rotation, token expiration, rate limiting, security audit                               | Security Team |
@@ -1439,10 +1481,21 @@ interface ShardedPaginationStrategy {
 
 ### Open Questions
 
+#### Critical Implementation Questions
+
+- [ ] How to handle active cursors during deployment with signing key changes?
+- [ ] What strategy for endpoints with complex JOINs (example: workers with installations)?
+- [ ] How does pagination work for reports requiring precise total counts?
+- [ ] Compatibility with sorting by calculated fields?
+
+#### Strategic Questions
+
 - [ ] Should we implement automatic strategy selection based on query characteristics?
 - [ ] How should we handle pagination for endpoints with complex JOIN queries?
 - [ ] What's the optimal balance between cursor security and performance?
 - [ ] Should we implement pagination analytics to optimize strategy selection?
+
+**Note**: These critical implementation questions must be answered before implementation to avoid rework during development.
 - [ ] How can we best integrate with existing monitoring and alerting systems?
 
 ### Decisions Made
