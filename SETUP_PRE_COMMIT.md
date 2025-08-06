@@ -19,9 +19,6 @@ This document describes how to configure and use the pre-commit hooks system imp
 
 ```bash
 # In the project root directory
-npm install
-
-# To install dependencies for all workspaces
 pnpm install
 ```
 
@@ -77,31 +74,31 @@ Runs heavier validations before push:
 
 ```bash
 # Run all lints
-npm run lint:all
+pnpm run lint:all
 
 # Run all tests
-npm run test
+pnpm run test
 
 # Run type checking on all workspaces
-npm run type-check:all
+pnpm run type-check:all
 
 # Run security scan
-npm run security:scan
+pnpm run security:scan
 
 # Run bundle analysis
-npm run bundle:analyze
+pnpm run bundle:analyze
 
 # Format all files
-npm run format:all
+pnpm run format:all
 ```
 
 ### Per-Workspace Commands
 
 ```bash
 # Inside any workspace (apps/web, apps/api, etc.)
-npm run type-check       # Local type checking
-npm run security:scan    # Local security scan
-npm run bundle:analyze   # Local bundle analysis
+pnpm run type-check       # Local type checking
+pnpm run security:scan    # Local security scan
+pnpm run bundle:analyze   # Local bundle analysis
 ```
 
 ## 🎯 Development Workflow
@@ -140,8 +137,6 @@ git push origin feature-branch
 
 ```bash
 # Reinstall dependencies
-npm install
-# or
 pnpm install
 ```
 
@@ -149,26 +144,26 @@ pnpm install
 
 ```bash
 # Run type check manually
-npm run type-check:all
+pnpm run type-check:all
 
 # In specific workspace
 cd apps/web
-npm run type-check
+pnpm run type-check
 ```
 
 ### Error: Lint failed
 
 ```bash
 # Auto-fix issues
-npm run lint:all
+pnpm run lint:all
 
 # Format code
-npm run format:all
+pnpm run format:all
 ```
 
 ### Error: Bundle size exceeded
 
-1. Analyze current size: `npm run bundle:analyze`
+1. Analyze current size: `pnpm run bundle:analyze`
 2. Consider:
    - Code splitting
    - Tree shaking
@@ -177,8 +172,8 @@ npm run format:all
 
 ### Error: Security scan warnings
 
-1. Run: `npm audit`
-2. Fix vulnerabilities: `npm audit fix`
+1. Run: `pnpm audit`
+2. Fix vulnerabilities: `pnpm audit`
 3. Review files flagged with potential secrets
 
 ## 🔧 Customization
@@ -238,13 +233,13 @@ To integrate with CI/CD pipelines, use:
 ```yaml
 # GitHub Actions example
 - name: Run security scan
-  run: npm run security:scan
+  run: pnpm run security:scan
 
 - name: Run type check
-  run: npm run type-check:all
+  run: pnpm run type-check:all
 
 - name: Analyze bundle
-  run: npm run bundle:analyze
+  run: pnpm run bundle:analyze
 ```
 
 ## 🎓 Best Practices

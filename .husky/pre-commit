@@ -2,7 +2,7 @@
 echo "🚀 Running pre-commit validations..."
 
 # Run lint-staged for file-specific validations
-npx lint-staged
+pnpm lint-staged
 
 if [ $? -ne 0 ]; then
   echo "❌ Pre-commit validation failed"

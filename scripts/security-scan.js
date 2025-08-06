@@ -68,12 +68,12 @@ const securityChecks = [
     check: () => {
       try {
         console.log('   Checking for package vulnerabilities...')
-        execSync('npm audit --audit-level=moderate', { stdio: 'pipe' })
+        execSync('pnpm audit --audit-level=moderate', { stdio: 'pipe' })
         console.log('   ✅ No moderate or high severity vulnerabilities found')
       } catch (e) {
         console.warn('   ⚠️  Package vulnerabilities found')
-        console.warn('   Run "npm audit" for details')
-        console.warn('   Run "npm audit fix" to attempt automatic fixes')
+        console.warn('   Run "pnpm audit" for details')
+        console.warn('   Run "pnpm audit" to attempt automatic fixes')
         // Don't exit here for pre-commit, just warn
       }
     },

@@ -120,7 +120,7 @@ function analyzeBundleSize(workspace) {
 function checkDependencyUpdates() {
   try {
     console.log('   Checking for outdated dependencies...')
-    const result = execSync('npm outdated --json', { encoding: 'utf8', stdio: 'pipe' })
+    const result = execSync('pnpm outdated --json', { encoding: 'utf8', stdio: 'pipe' })
 
     if (result.trim()) {
       const outdated = JSON.parse(result)
@@ -128,7 +128,7 @@ function checkDependencyUpdates() {
 
       if (count > 0) {
         console.warn(`   ⚠️  ${count} outdated dependencies found`)
-        console.warn('   Run "npm outdated" for details')
+        console.warn('   Run "pnpm outdated" for details')
         return [`${count} outdated dependencies`]
       }
     }
@@ -143,7 +143,7 @@ function checkDependencyUpdates() {
 function analyzeDuplicateDependencies() {
   try {
     console.log('   Checking for duplicate dependencies...')
-    const result = execSync('npm ls --depth=0 --json', { encoding: 'utf8', stdio: 'pipe' })
+    const result = execSync('pnpm ls --depth=0 --json', { encoding: 'utf8', stdio: 'pipe' })
     const packageData = JSON.parse(result)
 
     // This is a simplified check - in practice you might want more sophisticated analysis
