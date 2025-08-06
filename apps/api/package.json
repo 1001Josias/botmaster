@@ -17,7 +17,9 @@
     "format": "prettier --config ./node_modules/@repo/eslint-config/.prettierrc --write .",
     "format:check": "prettier --config ./node_modules/@repo/eslint-config/.prettierrc --check .",
     "test": "vitest run",
-    "prepare": "husky",
+    "type-check": "tsc --noEmit",
+    "security:scan": "node ../../scripts/security-scan.js",
+    "bundle:analyze": "node ../../scripts/bundle-analyzer.js",
     "migrations": "chmod +x src/scripts/run-migrations.sh && src/scripts/run-migrations.sh",
     "migrations:up": "pnpm migrations up",
     "migrations:down": "pnpm migrations down",
@@ -50,8 +52,6 @@
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.6",
     "eslint": "^9.10.0",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
     "pino-pretty": "^11.0.0",
     "prettier": "^3.2.5",
     "rimraf": "^6.0.0",
@@ -61,11 +61,6 @@
     "typescript": "^5.4.4",
     "vite-tsconfig-paths": "^5.0.0",
     "vitest": "^2.0.0"
-  },
-  "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": [
-      "biome check --apply --no-errors-on-unmatched"
-    ]
   },
   "tsup": {
     "entry": [

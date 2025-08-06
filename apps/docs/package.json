@@ -6,7 +6,10 @@
     "dev": "next dev --turbo --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "security:scan": "node ../../scripts/security-scan.js",
+    "bundle:analyze": "node ../../scripts/bundle-analyzer.js"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",

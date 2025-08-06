@@ -1,0 +1,22 @@
+image: node:21.6.2-alpine
+
+when:
+  event:
+    - pull_request
+    - push
+    - commit
+  depends_on:
+    - install-dependencies
+
+steps:
+  - name: test
+    commands:
+      - pnpm run test
+
+  - name: test-affected
+    commands:
+      - pnpm run test:affected
+
+  - name: test-coverage
+    commands:
+      - pnpm run test:coverage
