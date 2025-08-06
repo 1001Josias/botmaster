@@ -1,0 +1,12 @@
+# Pre-commit hook with lint-staged
+echo "🚀 Running pre-commit validations..."
+
+# Run lint-staged for file-specific validations
+npx lint-staged
+
+if [ $? -ne 0 ]; then
+  echo "❌ Pre-commit validation failed"
+  exit 1
+else
+  echo "✅ Pre-commit validations passed"
+fi

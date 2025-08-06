@@ -5,18 +5,40 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"],
+      "cache": true
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*", "vitest.config.*"],
+      "cache": true
+    },
+    "security:scan": {
+      "inputs": ["package*.json", ".env*"],
+      "cache": false
+    },
+    "bundle:analyze": {
+      "dependsOn": ["build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "cache": true
     },
     "format": {
       "dependsOn": ["^format"],
-      "inputs": ["$TURBO_DEFAULT$", ".prettierrc", ".prettierignore"]
+      "inputs": ["$TURBO_DEFAULT$", ".prettierrc*"],
+      "cache": true
     },
     "format:check": {
       "dependsOn": ["^format:check"],
-      "inputs": ["$TURBO_DEFAULT$", ".prettierrc", ".prettierignore"]
+      "inputs": ["$TURBO_DEFAULT$", ".prettierrc*"]
     },
     "dev": {
       "cache": false,

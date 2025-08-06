@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🧪 Running pre-push validations..."
+
+# Run tests only on affected workspaces
+echo "Running tests on affected workspaces..."
+npm run test:affected || {
+  echo "❌ Tests failed on affected workspaces"
+  exit 1
+}
+
+# Security scan
+echo "Running security scan..."
+npm run security:scan || {
+  echo "⚠️  Security scan found issues, but allowing push"
+}
+
+# Bundle size analysis (if applicable)
+echo "Running bundle analysis..."
+npm run bundle:analyze || {
+  echo "⚠️  Bundle analysis failed, but allowing push"
+}
+
+echo "✅ Pre-push validations completed successfully"

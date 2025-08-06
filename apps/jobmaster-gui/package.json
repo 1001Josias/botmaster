@@ -17,7 +17,10 @@
     "build": "concurrently pnpm:build:*",
     "build:next": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "security:scan": "node ../../scripts/security-scan.js",
+    "bundle:analyze": "node ../../scripts/bundle-analyzer.js"
   },
   "dependencies": {
     "next": "14.2.5",
