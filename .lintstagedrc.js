@@ -59,27 +59,30 @@ module.exports = {
   '*.md': ['prettier --config packages/eslint-config/.prettierrc --write'],
 
   // Security-sensitive files
-  '*.{env,secret,key,pem}': [
-    () => {
-      console.error('❌ Security files should not be committed')
+  '*.{env,secret,key,pem}': (filenames) => {
+    if (filenames.length > 0) {
+      console.error('❌ Security files should not be committed:')
+      filenames.forEach((file) => console.error(`   - ${file}`))
       console.error('Please add these files to .gitignore')
       return 'exit 1'
-    },
-  ],
+    }
+    return 'echo "No security-sensitive files to check"'
+  },
 
   // Package files - run audit on changes
   'package*.json': [
-    () => 'npm audit --audit-level=high',
+    () => 'pnpm audit --audit-level=high',
     'prettier --config packages/eslint-config/.prettierrc --write',
   ],
 
   // SQL migrations (API specific)
-  'apps/api/**/*.sql': [
-    () => {
+  'apps/api/**/*.sql': (filenames) => {
+    if (filenames.length > 0) {
       console.log('⚠️  SQL migration detected - ensure it has been reviewed')
       return 'echo "SQL migration validation passed"'
-    },
-  ],
+    }
+    return 'echo "No SQL migrations to check"'
+  },
 
   // Environment template files
   '**/.env.template': [
