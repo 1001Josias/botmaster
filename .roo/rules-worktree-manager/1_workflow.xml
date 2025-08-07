@@ -24,7 +24,7 @@
     <step number="4">
       <action>Open the worktree in VS Code</action>
       <details>
-        Run: code --new-window ../<branch>
+        Run: code ../<branch>
       </details>
     </step>
   </initialization_steps>
