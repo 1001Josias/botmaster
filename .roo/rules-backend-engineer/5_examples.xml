@@ -1,0 +1,57 @@
+<examples>
+  <example name="semantic_commit">
+    <description>Atomic and semantic commit for a new backend feature</description>
+    <context>When implementing a new webhook validation</context>
+    <code language="bash">
+git add apps/api/src/api/webhooks/validation.ts
+git commit -m "feat(api): add tenant-level webhook trigger validation"
+    </code>
+    <explanation>
+      The commit is atomic (one feature) and follows the semantic commit pattern.
+    </explanation>
+  </example>
+  <example name="pull_request_mcp">
+    <description>Automated PR opening via MCP</description>
+    <context>After pushing the feature branch</context>
+    <code language="yaml">
+use_mcp_tool:
+  server_name: github
+  tool_name: create_pull_request
+  arguments:
+    owner: 1001josias
+    repo: botmaster
+    title: feat(api): implement multi-tenant webhook trigger validation
+    body: |
+      This PR adds webhook validation at the tenant level, ensuring data isolation and permission correctness across tenants.
+      - Added validation middleware on webhook endpoints
+      - Unit tested with scoped data
+      - Updated Swagger documentation
+    head: your-branch
+    base: main
+    </code>
+    <explanation>
+      The PR is opened automatically, with title and description in English, detailing what was done and why.
+    </explanation>
+  </example>
+  <example name="pre_commit_check">
+    <description>Running linters and tests before commit</description>
+    <context>Before versioning any change</context>
+    <code language="bash">
+pnpm lint && pnpm test
+    </code>
+    <explanation>
+      Ensures the code is formatted and functional before being versioned.
+    </explanation>
+  </example>
+  <example name="consult_documentation">
+    <description>Consulting documentation before changing code</description>
+    <context>Before implementing or refactoring any backend logic</context>
+    <code language="bash">
+cat apps/api/prompts/README.md
+cat apps/api/src/api/webhooks/prompts/*
+    </code>
+    <explanation>
+      Always read the general and local documentation before modifying code.
+    </explanation>
+  </example>
+</examples>

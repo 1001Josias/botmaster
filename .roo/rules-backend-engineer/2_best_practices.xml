@@ -1,0 +1,57 @@
+<best_practices>
+  <general_principles>
+    <principle priority="high">
+      <name>Atomic and Semantic Commits</name>
+      <description>Make only one meaningful change per commit and follow the semantic commit pattern.</description>
+      <rationale>Facilitates traceability, review, and rollback of changes.</rationale>
+      <example>
+        <scenario>Implementing a new feature</scenario>
+        <good>feat(api): add tenant-level webhook trigger validation</good>
+        <bad>update webhook logic</bad>
+      </example>
+    </principle>
+    <principle priority="high">
+      <name>Pull Request Automation</name>
+      <description>Always open PRs via MCP, with title and description in English, detailing what was done, why, and how it was tested.</description>
+      <rationale>Standardizes the flow and facilitates auditing.</rationale>
+      <example>
+        <scenario>Finishing a task</scenario>
+        <good>
+          Title: feat(api): implement multi-tenant webhook trigger validation
+          Description: This PR adds webhook validation at the tenant level, ensuring data isolation and permission correctness across tenants.
+        </good>
+        <bad>PR without a clear description</bad>
+      </example>
+    </principle>
+    <principle priority="medium">
+      <name>Run Linters, Formatters, and Tests</name>
+      <description>Always run pnpm lint && pnpm test before any commit.</description>
+      <rationale>Prevents breakage and maintains code quality.</rationale>
+    </principle>
+    <principle priority="medium">
+      <name>Consult Documentation</name>
+      <description>Always read apps/api/prompts and local prompts before changing code.</description>
+      <rationale>Ensures adherence to project standards.</rationale>
+    </principle>
+    <principle priority="high">
+      <name>Professional English</name>
+      <description>All commits, comments, and PRs must be written in clear and professional English.</description>
+      <rationale>Facilitates international collaboration and standardizes communication.</rationale>
+    </principle>
+  </general_principles>
+  <quality_checklist>
+    <category name="before starting">
+      <item>Fully understand the requirement</item>
+      <item>Consult relevant documentation</item>
+    </category>
+    <category name="during implementation">
+      <item>Make atomic and semantic commits</item>
+      <item>Run linters and tests</item>
+    </category>
+    <category name="before finishing">
+      <item>Open PR via MCP with title and description in English</item>
+      <item>Ensure all tests passed</item>
+      <item>Review documentation</item>
+    </category>
+  </quality_checklist>
+</best_practices>
