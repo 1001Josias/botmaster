@@ -22,4 +22,11 @@ pnpm bundle:analyze || {
   echo "⚠️  Bundle analysis failed, but allowing push"
 }
 
+# Remove the current worktree if not in the main repository directory
+if [ -f .git ] && grep -q "gitdir: ../.git/worktrees/" .git; then
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  git worktree remove .
+  echo "Worktree removed for branch $branch"
+fi
+
 echo "✅ Pre-push validations completed successfully"
