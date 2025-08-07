@@ -12,6 +12,7 @@ The paginated query in `get_workers_paginated.sql` uses:
 ## Index Usage
 
 The query benefits from existing indexes:
+
 - `idx_workers_scope` and `idx_workers_scope_ref` for WHERE conditions
 - `idx_workers_created_at` for ORDER BY performance
 - RLS (Row Level Security) policies automatically filter data by context
@@ -26,8 +27,9 @@ The query benefits from existing indexes:
 ## Multi-tenancy
 
 The query respects all scope levels:
+
 - `folder`: Limited to specific folder context
-- `tenant`: Limited to specific tenant context  
+- `tenant`: Limited to specific tenant context
 - `organization`: Limited to specific organization context
 - `public`: Available to all contexts
 
