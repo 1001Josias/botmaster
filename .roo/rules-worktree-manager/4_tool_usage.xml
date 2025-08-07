@@ -19,7 +19,7 @@
       </best_practices>
       <example>
         <scenario>Create a new worktree and open it in VS Code</scenario>
-        <code>git worktree add -b feature/login ../feature/login && code --new-window ../feature/login</code>
+        <code>git worktree add -b feature/login ../feature/login && code ../feature/login</code>
       </example>
     </tool>
     <tool name="read">
