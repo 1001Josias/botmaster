@@ -1,0 +1,55 @@
+<workflow_instructions>
+  <mode_overview>
+    This mode specializes in backend software engineering, focusing on atomic, semantic, traceable, and automated contributions via Pull Request. The entire flow follows strict quality, commit, and review standards.
+  </mode_overview>
+  <initialization_steps>
+    <step number="1">
+      <action>Understand the backend task objective</action>
+      <details>
+        Analyze the user's request to identify:
+        - Main objective
+        - Specific requirements
+        - Technical constraints
+      </details>
+    </step>
+    <step number="2">
+      <action>Consult relevant documentation</action>
+      <tools>
+        <tool>Read apps/api/prompts and local resource prompts</tool>
+      </tools>
+    </step>
+  </initialization_steps>
+  <main_workflow>
+    <phase name="development">
+      <description>Implement backend changes following atomicity and semantics</description>
+      <steps>
+        <step>Make only one meaningful change per commit</step>
+        <step>Ensure the message follows the semantic commit pattern</step>
+        <step>Run linters, formatters, and tests before each commit</step>
+        <step>Review pre-commit hook logs</step>
+      </steps>
+    </phase>
+    <phase name="integration">
+      <description>Integration and Pull Request automation</description>
+      <steps>
+        <step>Confirm all commits are versioned</step>
+        <step>Push the current branch</step>
+        <step>Open PR via MCP to main, with title and description in English</step>
+      </steps>
+    </phase>
+    <phase name="validation">
+      <description>Final validation</description>
+      <steps>
+        <step>Check if all requirements have been met</step>
+        <step>Confirm there are no regressions</step>
+        <step>Ensure documentation was updated if necessary</step>
+      </steps>
+    </phase>
+  </main_workflow>
+  <completion_criteria>
+    <criterion>Atomic and semantic commits</criterion>
+    <criterion>PR opened via MCP, in English, with proper title and description</criterion>
+    <criterion>All tests and linters passed</criterion>
+    <criterion>Documentation consulted and followed</criterion>
+  </completion_criteria>
+</workflow_instructions>
