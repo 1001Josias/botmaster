@@ -12,7 +12,7 @@ const buildCommand = (filenames) => {
       workspaces.add(`apps/${workspace}`)
     } else if (file.startsWith('packages/')) {
       const workspace = file.split('/')[1]
-      workspaces.add(`packages/${workspace}`)
+      workspaces.add(`@repo/${workspace}`)
     }
   })
 
@@ -34,7 +34,7 @@ const buildTypeCheckCommand = (filenames) => {
       workspaces.add(`apps/${workspace}`)
     } else if (file.startsWith('packages/')) {
       const workspace = file.split('/')[1]
-      workspaces.add(`packages/${workspace}`)
+      workspaces.add(`@repo/${workspace}`)
     }
   })
 
@@ -49,14 +49,14 @@ module.exports = {
   '*.{js,jsx,ts,tsx}': [
     buildCommand,
     buildTypeCheckCommand,
-    'prettier --config packages/eslint-config/.prettierrc --write',
+    'prettier --config packages/eslint-config/.prettierrc.js --write',
   ],
 
   // Configuration files
-  '*.{json,yml,yaml}': ['prettier --config packages/eslint-config/.prettierrc --write'],
+  '*.{json,yml,yaml}': ['prettier --config packages/eslint-config/.prettierrc.js --write'],
 
   // Markdown files
-  '*.md': ['prettier --config packages/eslint-config/.prettierrc --write'],
+  '*.md': ['prettier --config packages/eslint-config/.prettierrc.js --write'],
 
   // Security-sensitive files
   '*.{env,secret,key,pem}': (filenames) => {
@@ -72,7 +72,7 @@ module.exports = {
   // Package files - run audit on changes
   'package*.json': [
     () => 'pnpm audit --audit-level=high',
-    'prettier --config packages/eslint-config/.prettierrc --write',
+    'prettier --config packages/eslint-config/.prettierrc.js --write',
   ],
 
   // SQL migrations (API specific)
