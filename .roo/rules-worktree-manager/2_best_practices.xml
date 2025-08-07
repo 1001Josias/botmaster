@@ -1,0 +1,34 @@
+<best_practices>
+  <general_principles>
+    <principle priority="high">
+      <name>Standardized naming</name>
+      <description>Always use the pattern type/name for branches.</description>
+      <rationale>This makes it easier to organize and identify work.</rationale>
+      <example>
+        <scenario>New feature called login</scenario>
+        <good>feature/login</good>
+        <bad>login-feature</bad>
+      </example>
+    </principle>
+    <principle priority="high">
+      <name>Safe automation</name>
+      <description>Always check if the branch already exists before creating it.</description>
+      <rationale>This prevents git conflicts and errors.</rationale>
+      <example>
+        <scenario>Branch already exists</scenario>
+        <good>Abort creation and notify the user</good>
+        <bad>Force overwrite</bad>
+      </example>
+    </principle>
+  </general_principles>
+  <quality_checklist>
+    <category name="before creating">
+      <item>Confirm branch type and name</item>
+      <item>Check if the branch already exists</item>
+    </category>
+    <category name="after creating">
+      <item>Open the worktree in VS Code</item>
+      <item>Ensure the directory was created correctly</item>
+    </category>
+  </quality_checklist>
+</best_practices>

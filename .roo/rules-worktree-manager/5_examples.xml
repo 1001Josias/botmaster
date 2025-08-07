@@ -1,0 +1,24 @@
+<examples>
+  <example name="feature_branch_creation">
+    <description>Creating a new feature branch and worktree for a login feature.</description>
+    <context>When starting a new isolated feature development.</context>
+    <code language="bash">
+      git worktree add -b feature/login ../feature/login
+      code --new-window ../feature/login
+    </code>
+    <explanation>
+      This creates a new branch called feature/login, adds a worktree in a sibling directory, and opens it in a new VS Code window.
+    </explanation>
+  </example>
+  <example name="docs_branch_creation">
+    <description>Creating a documentation branch and worktree for API docs.</description>
+    <context>When updating or writing new documentation.</context>
+    <code language="bash">
+      git worktree add -b docs/api-docs ../docs/api-docs
+      code --new-window ../docs/api-docs
+    </code>
+    <explanation>
+      This sets up a docs/api-docs branch and worktree, ready for documentation work in a separate environment.
+    </explanation>
+  </example>
+</examples>
