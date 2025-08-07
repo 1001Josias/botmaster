@@ -6,7 +6,10 @@
     "dev": "next dev --turbo --port 3001",
     "build": "next build",
     "start": "next start",
+    "lint:fix": "next lint . --fix",
     "lint": "next lint",
+    "format": "prettier --config ../../packages/eslint-config/.prettierrc.js --write .",
+    "format:check": "prettier --config ../../packages/eslint-config/.prettierrc.js --check .",
     "type-check": "tsc --noEmit",
     "security:scan": "node ../../scripts/security-scan.js",
     "bundle:analyze": "node ../../scripts/bundle-analyzer.js"
