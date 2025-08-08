@@ -3,8 +3,8 @@
 **Status:** Draft  
 **Target Application(s):** [api, orchestrator, jobmaster, shared]  
 **RFC Number:** [Assigned when merged]  
-**Created:** 2025-01-31  
-**Last Updated:** 2025-01-31  
+**Created:** 2025-08-02
+**Last Updated:** 2025-08-02  
 **Author(s):** Botmaster Development Team
 
 ## Overview
