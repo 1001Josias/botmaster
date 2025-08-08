@@ -435,42 +435,11 @@ CREATE POLICY worker_tenant_access ON worker
   );
 ```
 
-#### Cursor Security: Signature, Encryption, and Best Practices (Options)
+#### Cursor Security: Recommended Approach and Options
 
-When implementing cursor-based pagination, there are different approaches to protect the internal data of the cursor. The choice depends on the desired level of confidentiality, integrity requirements, and API consumer experience. Below are the main available options:
+For cursor-based pagination, it is essential to protect internal identifiers and ensure the integrity of the navigation state. The recommended approach for Botmaster is to use **encrypted cursors (AES-256-GCM)**, which completely hide the cursor content (such as internal `id`) from API consumers, while still allowing for stable and performant pagination.
 
-**1. Signed cursor (HMAC)**
-
-- Ensures integrity and authenticity of the cursor, preventing unauthorized changes.
-- The cursor content (e.g., `created_at`, `id`) can be viewed by the client, but cannot be altered without detection.
-- Recommended when there is no sensitive data in the cursor, but it is important to ensure the client does not tamper with the value.
-
-Example:
-
-```typescript
-import crypto from 'crypto'
-const CURSOR_SIGNING_KEY = process.env.CURSOR_SIGNING_KEY || 'super-secret-key'
-function encodeCursor(payload: object): string {
-  const data = JSON.stringify(payload)
-  const signature = crypto.createHmac('sha256', CURSOR_SIGNING_KEY).update(data).digest('hex')
-  return Buffer.from(`${data}.${signature}`).toString('base64')
-}
-function decodeCursor(cursor: string): any {
-  const decoded = Buffer.from(cursor, 'base64').toString('utf-8')
-  const [data, signature] = decoded.split('.')
-  const expectedSignature = crypto.createHmac('sha256', CURSOR_SIGNING_KEY).update(data).digest('hex')
-  if (signature !== expectedSignature) throw new Error('Invalid cursor signature')
-  return JSON.parse(data)
-}
-```
-
-**2. Encrypted cursor (AES-256-GCM)**
-
-- Completely hides the cursor content, making it unreadable to the client.
-- Recommended when the cursor contains sensitive data (e.g., internal `id`) or when maximum confidentiality is required.
-- The backend is responsible for encrypting and decrypting the cursor.
-
-Example:
+**Example: Encrypted cursor (AES-256-GCM)**
 
 ```typescript
 import crypto from 'crypto'
@@ -497,55 +466,19 @@ function decryptCursor(cursor: string): any {
 }
 ```
 
-**3. General considerations and recommendations**
+**Key points and recommendations:**
 
 - The `id` field should be used only internally for stable ordering and performance, and never exposed directly to the client.
 - Whenever filters or sorting change, the previous cursor should be ignored. The backend can include filters/sorters in the cursor payload and validate them during decoding.
 - Both HMAC signature and AES encryption for small payloads (such as cursors) have negligible impact on API performance.
-- The choice between signature and encryption should be made according to the confidentiality level and endpoint requirements. Both are valid options and can be adopted as needed.
+- The choice between signature and encryption should be made according to the confidentiality level and endpoint requirements. For Botmaster, encrypted cursors are recommended as the default.
+- If you do not require confidentiality, a signed cursor (HMAC) is a valid alternative and can be implemented as described above.
 
-**Visual example of options:**
+**Visual example:**
 
-- Simple base64 cursor: `{ "sortValue": "2024-08-01T10:00:00Z", "id": 123 }` → visible to the client.
-- Signed cursor: `{...}.{signature}` → visible, but not tamperable.
 - Encrypted cursor: `Qk1vQ0p6b3h...` → unreadable to the client.
-
-#### Cursor Security
-
-- **Encoding**: Base64 encoding prevents tampering with sort values
-- **Validation**: Strict cursor format validation prevents injection
-- **Expiration**: Optional cursor expiration for sensitive data
-- **Signing**: HMAC signing for tamper-proof cursors
-
-```typescript
-class SecureCursorGenerator {
-  private static sign(data: string): string {
-    return crypto.createHmac('sha256', process.env.CURSOR_SIGNING_KEY!).update(data).digest('hex')
-  }
-
-  static encode(sortValue: any, id: number): string {
-    const payload = JSON.stringify({ sortValue, id, exp: Date.now() + 3600000 })
-    const signature = this.sign(payload)
-    return Buffer.from(`${payload}.${signature}`).toString('base64')
-  }
-
-  static decode(cursor: string): { sortValue: any; id: number } {
-    const decoded = Buffer.from(cursor, 'base64').toString('utf-8')
-    const [payload, signature] = decoded.split('.')
-
-    if (this.sign(payload) !== signature) {
-      throw new Error('Invalid cursor signature')
-    }
-
-    const data = JSON.parse(payload)
-    if (data.exp < Date.now()) {
-      throw new Error('Cursor expired')
-    }
-
-    return { sortValue: data.sortValue, id: data.id }
-  }
-}
-```
+- Signed cursor: `{...}.{signature}` → visible, but not tamperable.
+- Simple base64 cursor: `{ "sortValue": "2024-08-01T10:00:00Z", "id": 123 }` → visible to the client (not recommended).
 
 ### Performance Considerations
 
