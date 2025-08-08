@@ -506,8 +506,6 @@ ON worker (scope, scope_ref, created_at DESC, id DESC)
 INCLUDE (name, description, tags);
 ```
 
-
-
 ### Monitoring and Observability
 
 #### Metrics Collection
@@ -563,6 +561,7 @@ WHERE status = 'active';
 ```
 
 **Index Creation Notes**:
+
 - The proposed indexes (`idx_worker_pagination_primary`) are superior to current basic indexes (`idx_workers_created_at`)
 - Use `CREATE INDEX CONCURRENTLY` to avoid table locks during creation
 - Monitor index creation progress on large tables - may require maintenance window
@@ -1316,18 +1315,18 @@ SELECT pg_reload_conf();
 
 ## Risks and Mitigations
 
-| Risk                                           | Impact | Probability | Mitigation Strategy                                                                                    | Owner         |
-| ---------------------------------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------------------ | ------------- |
-| **BaseRepository incompatibility**            | **High** | **High**   | **Fix BaseRepository.query() to create queryForPagination() method before implementation**            | **Backend Team** |
-| **Frontend migration coordination**            | **High** | **Medium**  | **Mandatory team coordination, daily syncs during migration, feature flags for gradual rollout**     | **API/Frontend Teams** |
-| Cursor decoding failures leading to API errors | High   | Medium      | Comprehensive input validation, Zod schema validation, graceful fallback to first page, detailed error logging | Backend Team  |
-| Database index creation causes downtime        | High   | Low         | Use `CREATE INDEX CONCURRENTLY`, schedule during maintenance windows, test on staging replicas         | DevOps Team   |
-| Performance regression during initial rollout  | Medium | Medium      | Gradual rollout with A/B testing, immediate rollback capability, comprehensive monitoring              | Backend Team  |
-| RLS policy incompatibility with new queries    | High   | Medium      | **Critical validation needed** - extensive testing in staging environment, RLS policy validation in CI/CD | Security Team |
-| Breaking changes in API response format        | High   | High        | Maintain legacy fields during transition period, backward compatibility layer                          | API Team      |
-| Memory usage increase from cursor storage      | Low    | High        | Cursor compression, TTL-based cleanup, monitoring memory usage patterns                                | DevOps Team   |
-| Client integration difficulties                | Medium | Low         | Comprehensive documentation, migration guides, backward compatibility layer                            | API Team      |
-| JWT token security vulnerabilities             | High   | Low         | Regular secret rotation, token expiration, rate limiting, security audit                               | Security Team |
+| Risk                                           | Impact   | Probability | Mitigation Strategy                                                                                            | Owner                  |
+| ---------------------------------------------- | -------- | ----------- | -------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| **BaseRepository incompatibility**             | **High** | **High**    | **Fix BaseRepository.query() to create queryForPagination() method before implementation**                     | **Backend Team**       |
+| **Frontend migration coordination**            | **High** | **Medium**  | **Mandatory team coordination, daily syncs during migration, feature flags for gradual rollout**               | **API/Frontend Teams** |
+| Cursor decoding failures leading to API errors | High     | Medium      | Comprehensive input validation, Zod schema validation, graceful fallback to first page, detailed error logging | Backend Team           |
+| Database index creation causes downtime        | High     | Low         | Use `CREATE INDEX CONCURRENTLY`, schedule during maintenance windows, test on staging replicas                 | DevOps Team            |
+| Performance regression during initial rollout  | Medium   | Medium      | Gradual rollout with A/B testing, immediate rollback capability, comprehensive monitoring                      | Backend Team           |
+| RLS policy incompatibility with new queries    | High     | Medium      | **Critical validation needed** - extensive testing in staging environment, RLS policy validation in CI/CD      | Security Team          |
+| Breaking changes in API response format        | High     | High        | Maintain legacy fields during transition period, backward compatibility layer                                  | API Team               |
+| Memory usage increase from cursor storage      | Low      | High        | Cursor compression, TTL-based cleanup, monitoring memory usage patterns                                        | DevOps Team            |
+| Client integration difficulties                | Medium   | Low         | Comprehensive documentation, migration guides, backward compatibility layer                                    | API Team               |
+| JWT token security vulnerabilities             | High     | Low         | Regular secret rotation, token expiration, rate limiting, security audit                                       | Security Team          |
 
 ## Success Metrics
 
@@ -1496,6 +1495,7 @@ interface ShardedPaginationStrategy {
 - [ ] Should we implement pagination analytics to optimize strategy selection?
 
 **Note**: These critical implementation questions must be answered before implementation to avoid rework during development.
+
 - [ ] How can we best integrate with existing monitoring and alerting systems?
 
 ### Decisions Made
