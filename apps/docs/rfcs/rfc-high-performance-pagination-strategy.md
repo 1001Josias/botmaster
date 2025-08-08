@@ -1,6 +1,6 @@
 # RFC: High-Performance Pagination Strategy for RESTful Endpoints
 
-**Status:** Draft  
+**Status:** Accepted
 **Target Application(s):** [api, orchestrator, jobmaster, shared]  
 **RFC Number:** [Assigned when merged]  
 **Created:** 2025-08-02
