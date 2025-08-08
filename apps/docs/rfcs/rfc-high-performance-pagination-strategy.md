@@ -421,7 +421,7 @@ curl "/api/workers?filters[status]=active&filters[scope]=tenant&limit=20"
 
 #### Multi-Tenancy with Row-Level Security
 
-All pagination strategies must respect existing RLS policies:
+All pagination strategies must respect existing RLS (Row-Level Security) policies:
 
 ```sql
 -- RLS policy integration in pagination queries
@@ -435,11 +435,11 @@ CREATE POLICY worker_tenant_access ON worker
   );
 ```
 
-#### Cursor Security: Recommended Approach and Options
+#### Cursor Security: Official Recommendation
 
-For cursor-based pagination, it is essential to protect internal identifiers and ensure the integrity of the navigation state. The recommended approach for Botmaster is to use **encrypted cursors (AES-256-GCM)**, which completely hide the cursor content (such as internal `id`) from API consumers, while still allowing for stable and performant pagination.
+For cursor-based pagination, it is essential to protect internal identifiers and ensure the integrity of the navigation state. **The default recommended approach for Botmaster is to use encrypted cursors (AES-256-GCM)**, which completely hide the cursor content (e.g., internal `id`) from the API consumer, while maintaining stability and performance.
 
-**Example: Encrypted cursor (AES-256-GCM)**
+**Implementation example (AES-256-GCM):**
 
 ```typescript
 import crypto from 'crypto'
@@ -466,19 +466,23 @@ function decryptCursor(cursor: string): any {
 }
 ```
 
-**Key points and recommendations:**
+**Key points:**
 
-- The `id` field should be used only internally for stable ordering and performance, and never exposed directly to the client.
+- The `id` field should be used only internally for ordering and performance, and never exposed directly to the client.
 - Whenever filters or sorting change, the previous cursor should be ignored. The backend can include filters/sorters in the cursor payload and validate them during decoding.
-- Both HMAC signature and AES encryption for small payloads (such as cursors) have negligible impact on API performance.
-- The choice between signature and encryption should be made according to the confidentiality level and endpoint requirements. For Botmaster, encrypted cursors are recommended as the default.
-- If you do not require confidentiality, a signed cursor (HMAC) is a valid alternative and can be implemented as described above.
+- AES-256-GCM encryption for small payloads (cursors) has negligible performance impact.
+- If confidentiality is not required, a signed cursor (HMAC) can be implemented as an alternative, but it is not the recommended default.
 
-**Visual example:**
+**Documented alternatives:**
 
-- Encrypted cursor: `Qk1vQ0p6b3h...` → unreadable to the client.
-- Signed cursor: `{...}.{signature}` → visible, but not tamperable.
-- Simple base64 cursor: `{ "sortValue": "2024-08-01T10:00:00Z", "id": 123 }` → visible to the client (not recommended).
+- **Signed cursor (HMAC):** Protects against tampering, but the content is visible. Useful only if there is no sensitive data in the cursor.
+- **Simple base64 cursor:** Not recommended, as it exposes internal data (e.g., `id`).
+
+**Visual summary:**
+
+- Encrypted cursor: `Qk1vQ0p6b3h...` (unintelligible to the client)
+- Signed cursor: `{...}.{signature}` (visible, but not tamperable)
+- Base64 cursor: `{ "sortValue": "2024-08-01T10:00:00Z", "id": 123 }` (visible, not recommended)
 
 ### Performance Considerations
 
