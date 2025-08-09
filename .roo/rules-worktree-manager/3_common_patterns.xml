@@ -17,7 +17,7 @@
     <description>Open the new worktree in a separate VS Code window</description>
     <example>
       <input>worktree path: ../feature/login</input>
-      <output>code --new-window ../feature/login</output>
+      <output>code ../feature/login</output>
     </example>
   </pattern>
 </common_patterns>
