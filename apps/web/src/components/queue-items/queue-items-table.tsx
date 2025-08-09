@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
@@ -13,35 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import { ChevronLeft, ChevronRight, Copy, Download, MoreHorizontal, RefreshCw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Copy, Download, MoreHorizontal, RefreshCw, Loader2 } from 'lucide-react'
 import type { QueueItem, QueueItemStatus } from '@/lib/types/queue-item'
 import { useRouter } from 'next/navigation'
 import { ExportDialog } from './export-dialog'
-
-// Dados simulados para demonstração
-const mockQueueItems: QueueItem[] = Array.from({ length: 10 }).map((_, i) => ({
-  id: `qi-${i + 1}`,
-  jobId: `job-${Math.floor(Math.random() * 5) + 1}`,
-  jobName: `Job ${Math.floor(Math.random() * 5) + 1}`,
-  workerId: `worker-${Math.floor(Math.random() * 3) + 1}`,
-  workerName: `Worker ${Math.floor(Math.random() * 3) + 1}`,
-  workerVersion: `1.${Math.floor(Math.random() * 10)}`,
-  status: ['waiting', 'processing', 'completed', 'error', 'cancelled'][
-    Math.floor(Math.random() * 5)
-  ] as QueueItemStatus,
-  createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-  startedAt: Math.random() > 0.2 ? new Date(Date.now() - Math.random() * 5000000000).toISOString() : null,
-  finishedAt: Math.random() > 0.4 ? new Date(Date.now() - Math.random() * 1000000000).toISOString() : null,
-  processingTime: Math.random() > 0.4 ? Math.floor(Math.random() * 60000) : null,
-  payload: { data: `Sample payload ${i + 1}` },
-  result: Math.random() > 0.4 ? { result: `Result ${i + 1}` } : null,
-  error: Math.random() > 0.8 ? `Error message ${i + 1}` : null,
-  attempts: Math.floor(Math.random() * 3) + 1,
-  maxAttempts: 3,
-  priority: Math.floor(Math.random() * 5) + 1,
-  tags: ['tag1', 'tag2'].slice(0, Math.floor(Math.random() * 3)),
-  metadata: { source: `Source ${i + 1}` },
-}))
+import { queueItemsApi } from '@/lib/api/queue-items'
+import { toast } from '@/components/ui/use-toast'
 
 const getStatusBadgeVariant = (status: QueueItemStatus) => {
   switch (status) {
@@ -60,14 +37,45 @@ const getStatusBadgeVariant = (status: QueueItemStatus) => {
 
 export function QueueItemsTable() {
   const router = useRouter()
+  const [queueItems, setQueueItems] = useState<QueueItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [totalItems, setTotalItems] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize] = useState(10)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
   const [showExportDialog, setShowExportDialog] = useState(false)
 
+  // Load queue items on component mount and when pagination changes
+  useEffect(() => {
+    loadQueueItems()
+  }, [currentPage])
+
+  const loadQueueItems = async () => {
+    try {
+      setLoading(true)
+      const response = await queueItemsApi.getAll({
+        page: currentPage,
+        pageSize,
+      })
+      setQueueItems(response.items)
+      setTotalItems(response.total)
+    } catch (error) {
+      console.error('Failed to load queue items:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao carregar os itens da fila. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const toggleSelectAll = () => {
-    if (selectedItems.length === mockQueueItems.length) {
+    if (selectedItems.length === queueItems.length) {
       setSelectedItems([])
     } else {
-      setSelectedItems(mockQueueItems.map((item) => item.id))
+      setSelectedItems(queueItems.map((item) => item.id))
     }
   }
 
@@ -76,6 +84,42 @@ export function QueueItemsTable() {
       setSelectedItems(selectedItems.filter((itemId) => itemId !== id))
     } else {
       setSelectedItems([...selectedItems, id])
+    }
+  }
+
+  const handleRetryItem = async (item: QueueItem) => {
+    try {
+      await queueItemsApi.retry(item.id)
+      toast({
+        title: 'Item reenviado',
+        description: `O item "${item.jobName}" foi reenviado para processamento.`,
+      })
+      await loadQueueItems()
+    } catch (error) {
+      console.error('Failed to retry item:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao reenviar o item. Tente novamente.',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const handleCancelItem = async (item: QueueItem) => {
+    try {
+      await queueItemsApi.cancel(item.id)
+      toast({
+        title: 'Item cancelado',
+        description: `O item "${item.jobName}" foi cancelado.`,
+      })
+      await loadQueueItems()
+    } catch (error) {
+      console.error('Failed to cancel item:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao cancelar o item. Tente novamente.',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -105,6 +149,19 @@ export function QueueItemsTable() {
     router.push(`/queue-items/${id}`)
   }
 
+  const totalPages = Math.ceil(totalItems / pageSize)
+
+  if (loading) {
+    return (
+      <div className="rounded-md border">
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2 text-sm text-muted-foreground">Carregando itens da fila...</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="rounded-md border">
       {selectedItems.length > 0 && (
@@ -127,7 +184,7 @@ export function QueueItemsTable() {
           <TableRow>
             <TableHead className="w-[40px]">
               <Checkbox
-                checked={selectedItems.length === mockQueueItems.length && mockQueueItems.length > 0}
+                checked={selectedItems.length === queueItems.length && queueItems.length > 0}
                 onCheckedChange={toggleSelectAll}
                 aria-label="Selecionar todos"
               />
@@ -143,22 +200,31 @@ export function QueueItemsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {mockQueueItems.map((item) => {
-            const statusBadge = getStatusBadgeVariant(item.status)
+          {queueItems.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={9} className="text-center py-8">
+                <div className="text-muted-foreground">
+                  Nenhum item encontrado na fila.
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            queueItems.map((item) => {
+              const statusBadge = getStatusBadgeVariant(item.status)
 
-            return (
-              <TableRow
-                key={item.id}
-                className="cursor-pointer"
-                onClick={(e) => {
-                  // Prevent navigation when clicking on checkbox or dropdown
-                  const target = e.target as HTMLElement
-                  if (target.closest('button') || target.closest('[role="checkbox"]') || target.closest('[data-state]'))
-                    return
+              return (
+                <TableRow
+                  key={item.id}
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    // Prevent navigation when clicking on checkbox or dropdown
+                    const target = e.target as HTMLElement
+                    if (target.closest('button') || target.closest('[role="checkbox"]') || target.closest('[data-state]'))
+                      return
 
-                  handleRowClick(item.id)
-                }}
-              >
+                    handleRowClick(item.id)
+                  }}
+                >
                 <TableCell>
                   <Checkbox
                     checked={selectedItems.includes(item.id)}
@@ -188,15 +254,18 @@ export function QueueItemsTable() {
                       <DropdownMenuLabel>Ações</DropdownMenuLabel>
                       <DropdownMenuItem onClick={() => handleRowClick(item.id)}>Ver detalhes</DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <RefreshCw className="mr-2 h-4 w-4" />
-                        Reprocessar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Download className="mr-2 h-4 w-4" />
-                        Baixar logs
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      {item.status === 'error' && (
+                        <DropdownMenuItem onClick={() => handleRetryItem(item)}>
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                          Reprocessar
+                        </DropdownMenuItem>
+                      )}
+                      {(item.status === 'waiting' || item.status === 'processing') && (
+                        <DropdownMenuItem onClick={() => handleCancelItem(item)}>
+                          Cancelar
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem onClick={() => navigator.clipboard.writeText(item.id)}>
                         <Copy className="mr-2 h-4 w-4" />
                         Copiar ID
                       </DropdownMenuItem>
@@ -210,21 +279,42 @@ export function QueueItemsTable() {
       </Table>
 
       <div className="flex items-center justify-between px-4 py-2 border-t">
-        <div className="text-sm text-muted-foreground">Mostrando 1-10 de 235 items</div>
+        <div className="text-sm text-muted-foreground">
+          Mostrando {((currentPage - 1) * pageSize) + 1}-{Math.min(currentPage * pageSize, totalItems)} de {totalItems} items
+        </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" disabled>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-            1
-          </Button>
-          <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-            2
-          </Button>
-          <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-            3
-          </Button>
-          <Button variant="outline" size="icon">
+          
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const pageNum = i + 1
+              return (
+                <Button
+                  key={pageNum}
+                  variant={currentPage === pageNum ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setCurrentPage(pageNum)}
+                >
+                  {pageNum}
+                </Button>
+              )
+            })}
+          </div>
+          
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
