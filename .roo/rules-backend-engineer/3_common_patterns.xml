@@ -1,0 +1,39 @@
+<common_patterns>
+  <pattern name="semantic_commit">
+    <description>Mandatory format for commit messages.</description>
+    <example>
+      <good>feat(api): add tenant-level webhook trigger validation</good>
+      <good>fix(db): resolve migration race condition</good>
+      <bad>update stuff</bad>
+      <bad>fixes</bad>
+    </example>
+  </pattern>
+  <pattern name="pull_request_template">
+    <description>Recommended structure for PRs opened via MCP.</description>
+    <template>
+      <![CDATA[
+Title: feat(api): implement multi-tenant webhook trigger validation
+
+Description:
+This PR adds webhook validation at the tenant level, ensuring data isolation and permission correctness across tenants.
+- Added validation middleware on webhook endpoints
+- Unit tested with scoped data
+- Updated Swagger documentation
+      ]]>
+    </template>
+  </pattern>
+  <pattern name="pre_commit_check">
+    <description>Mandatory execution before any commit.</description>
+    <steps>
+      <step>pnpm format</step>
+      <step>Review husky/lint-staged logs</step>
+    </steps>
+  </pattern>
+  <pattern name="doc_consult">
+    <description>Mandatory documentation review before making changes.</description>
+    <steps>
+      <step>Read apps/api/prompts</step>
+      <step>Read the specific resource prompts</step>
+    </steps>
+  </pattern>
+</common_patterns>

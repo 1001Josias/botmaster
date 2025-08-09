@@ -5,13 +5,29 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --config packages/eslint-config/.prettierrc --write .",
-    "format:check": "turbo format:check"
+    "lint:fix": "turbo lint:fix",
+    "lint:all": "turbo run lint",
+    "format": "prettier --config packages/eslint-config/.prettierrc.js --write .",
+    "format:check": "turbo format:check",
+    "format:all": "turbo run format",
+    "test": "turbo run test",
+    "prepare": "husky",
+    "test:affected": "turbo run test --filter='[HEAD^1]'",
+    "type-check:all": "turbo run type-check",
+    "security:scan": "turbo run security:scan",
+    "bundle:analyze": "turbo run bundle:analyze"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
     "turbo": "^2.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.1"
   },
   "packageManager": "pnpm@8.15.6",
   "engines": {

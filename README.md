@@ -1,6 +1,6 @@
 # BotMaster
 
-An ecosystem to orchestrate attended and unattended automations
+An ecosystem to orchestrate attended and unattended workers
 
 ## Arquitecture
 

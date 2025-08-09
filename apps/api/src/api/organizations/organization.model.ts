@@ -7,7 +7,7 @@ export const OrganizationSchema = z.object({
     .string()
     .regex(
       /^[a-z0-9-]+$/,
-      'Subdomain must be lowercase, without spaces, and only contain letters, numbers, and hyphens',
+      'Subdomain must be lowercase, without spaces, and only contain letters, numbers, and hyphens'
     )
     .describe('The subdomain of the organization'),
   enabled: z.boolean().describe('Whether the organization is enabled'),

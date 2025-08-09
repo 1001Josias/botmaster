@@ -40,29 +40,34 @@ Consider writing an RFC when:
 
 ### 1. Proposing an RFC
 
-1. **Copy the template**: Use [`rfc-template.md`](./rfc-template.md) as the starting point
-2. **Create a new file**: Place it in the appropriate application's `docs/rfcs/` directory (or `shared/` for cross-cutting concerns) and name it `XXXX-brief-title.md` where `XXXX` is the next available RFC number (start with `0001`)
-3. **Fill out the template**: Complete all relevant sections
-4. **Submit as Draft**: Create a Pull Request with the status set to "Draft"
+1. **Copy the template**: Use [`rfc-template.md`](./rfc-template.md) as the starting point.
+2. **Create a new file**: Place it in the appropriate application's `docs/rfcs/` directory (or `shared/` for cross-cutting concerns) and name it `XXXX-brief-title.md` where `XXXX` is the next available RFC number (start with `0001`).
+3. **Fill out the template**:
+   - Begin with an **Executive Summary** (brief and high-level) and leave the **Final Decision** section empty at first.
+   - During drafting, include all relevant sections from the template.
+   - Keep alternatives concise in the main body and move detailed exploration to **appendices** or linked resources.
 
-**Example RFC placement**: 
+4. **Submit as Draft**: Create a Pull Request with the status set to "Draft".
+
+**Example RFC placement**:
+
 - Application-specific RFC: `apps/api/docs/rfcs/0001-user-authentication-system.md`
 - Cross-application RFC: `apps/docs/rfcs/shared/0001-unified-logging-strategy.md`
 
 ### 2. Discussion Phase
 
-1. **Open Pull Request**: Submit your RFC as a PR to the main branch
-2. **Label the PR**: Add the `rfc` label to the pull request
-3. **Share widely**: Notify relevant team members and stakeholders
-4. **Engage in discussion**: Respond to comments and questions on the PR
-5. **Iterate**: Update the RFC based on feedback by pushing new commits to the PR
+1. **Open Pull Request**: Submit your RFC as a PR to the main branch.
+2. **Label the PR**: Add the `rfc` label to the pull request.
+3. **Share widely**: Notify relevant team members and stakeholders.
+4. **Engage in discussion**: Respond to comments and questions on the PR.
+5. **Iterate**: Update the RFC based on feedback by pushing new commits to the PR.
 
 **Discussion Guidelines**:
 
-- Keep discussions technical and constructive
-- Focus on the proposal's merits and potential issues
-- Consider alternative approaches and trade-offs
-- Document major decisions in the "Discussion History" section
+- Keep discussions technical and constructive.
+- Focus on the proposal's merits and potential issues.
+- Consider alternative approaches and trade-offs.
+- Document major decisions in the **Discussion History** section and reflect them in the **Final Decision** once the RFC is accepted.
 
 ### 3. Review Process
 
@@ -70,44 +75,47 @@ The RFC goes through several review stages:
 
 #### Technical Review
 
-- **Architecture review**: Ensure the proposal aligns with system architecture
-- **Security review**: Assess security implications
-- **Performance review**: Evaluate performance impact
-- **Testing strategy review**: Validate testing approach
+- **Architecture review**: Ensure the proposal aligns with system architecture.
+- **Security review**: Assess security implications.
+- **Performance review**: Evaluate performance impact.
+- **Testing strategy review**: Validate testing approach.
 
 #### Stakeholder Review
 
-- **Product review**: Ensure alignment with product goals
-- **Operations review**: Consider deployment and maintenance implications
-- **Documentation review**: Verify documentation requirements
+- **Product review**: Ensure alignment with product goals.
+- **Operations review**: Consider deployment and maintenance implications.
+- **Documentation review**: Verify documentation requirements.
 
 ### 4. Decision Making
 
 RFCs can have the following outcomes:
 
-- **Accepted**: The RFC is approved for implementation and merged
-- **Rejected**: The RFC PR is closed without merging (with reasons documented in PR comments)
-- **Deferred**: The RFC is postponed for future consideration and merged with "Deferred" status
-- **Superseded**: The RFC is replaced by a newer RFC
+- **Accepted**: The RFC is approved for implementation and merged.
+- **Rejected**: The RFC PR is closed without merging (with reasons documented in PR comments).
+- **Deferred**: The RFC is postponed for future consideration and merged with "Deferred" status.
+- **Superseded**: The RFC is replaced by a newer RFC.
+
+When an RFC is accepted, **populate the Final Decision section** in the template. This section should clearly summarize the approved approach, rationale, participants, and date. It serves as the **permanent record of the decision** for future reference.
 
 ### 5. Implementation Phase
 
 Once accepted:
 
-1. **Update status**: Change RFC status field in the document to "Accepted"
-2. **Create implementation tasks**: Break down the RFC into actionable tasks
-3. **Track progress**: Update the RFC with implementation progress
-4. **Update status**: Change status field to "Implemented" when complete
+1. **Update status**: Change RFC status field in the document to "Accepted".
+2. **Populate Final Decision**: Add the final outcome and rationale in the dedicated section.
+3. **Create implementation tasks**: Break down the RFC into actionable tasks.
+4. **Track progress**: Update the RFC with implementation progress.
+5. **Update status**: Change status field to "Implemented" when complete.
 
 ### 6. Post-Implementation
 
-- **Retrospective**: Document lessons learned
-- **Update documentation**: Ensure all documentation reflects the changes
-- **Monitor metrics**: Track success metrics defined in the RFC
+- **Retrospective**: Document lessons learned.
+- **Update documentation**: Ensure all documentation reflects the changes.
+- **Monitor metrics**: Track success metrics defined in the RFC.
 
 ## RFC Lifecycle
 
-```
+```plaintext
 Draft → In Review → [Accepted|Deferred] → Implemented
                       ↓         ↓
                   Superseded   Rejected (PR closed)
@@ -117,13 +125,14 @@ Draft → In Review → [Accepted|Deferred] → Implemented
 
 Each RFC progresses through clearly defined statuses:
 
-- **Draft**: Initial RFC proposal submitted as a Pull Request, open for discussion and iteration
-- **In Review**: RFC is undergoing formal technical and stakeholder review process
-- **Accepted**: RFC has been approved for implementation after review process
-- **Rejected**: RFC PR is closed without merging (reasons documented in PR discussion)
-- **Deferred**: RFC is postponed for future consideration and merged with this status
-- **Implemented**: Accepted RFC has been fully implemented and deployed
-- **Superseded**: RFC has been replaced by a newer, more comprehensive RFC
+- **Draft**: Initial RFC proposal submitted as a Pull Request, open for discussion and iteration.
+- **In Review**: RFC is undergoing formal technical and stakeholder review process.
+- **Accepted**: RFC has been approved for implementation after review process.
+  _(Final Decision section completed at this stage.)_
+- **Rejected**: RFC PR is closed without merging (reasons documented in PR discussion).
+- **Deferred**: RFC is postponed for future consideration and merged with this status.
+- **Implemented**: Accepted RFC has been fully implemented and deployed.
+- **Superseded**: RFC has been replaced by a newer, more comprehensive RFC.
 
 **Note**: Rejected RFCs are handled by closing the Pull Request rather than merging. This keeps RFC directories clean while preserving the discussion history in the closed PR.
 
@@ -131,16 +140,16 @@ Each RFC progresses through clearly defined statuses:
 
 RFC statuses are maintained directly within each RFC document:
 
-- Each RFC file contains a **Status** field at the top of the document
-- When an RFC's status changes, this field is updated and the change is committed to the repository
-- Status updates are tracked through Git history, providing a complete audit trail
-- The status field should be updated whenever the RFC progresses through its lifecycle
+- Each RFC file contains a **Status** field at the top of the document.
+- The **Executive Summary** and **Final Decision** provide quick access to the reasoning and outcome without reading the full document.
+- When an RFC's status changes, the **Status** and **Final Decision** fields are updated and the change is committed to the repository.
+- Status updates are tracked through Git history, providing a complete audit trail.
 
 ## Directory Structure
 
 The RFC structure is **decentralized** - each application maintains its own RFCs in their respective `docs/rfcs` directories:
 
-```
+```plaintext
 botmaster/
 ├── apps/
 │   ├── docs/rfcs/              # Central documentation and shared resources
@@ -157,57 +166,65 @@ botmaster/
 ## RFC Numbering
 
 - RFCs are numbered sequentially starting from `0001`
-- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`)  
+- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`)
 - Numbers are assigned when the RFC PR is created
 - Only merged RFCs (Accepted, Deferred, Implemented, Superseded) consume numbers
 - Rejected RFCs don't consume numbers as they are closed without merging
+- RFCs are numbered sequentially starting from `0001`.
+- Use zero-padded 4-digit numbers (e.g., `0001`, `0042`, `0123`).
+- Numbers are assigned when the RFC PR is created.
+- Only merged RFCs (Accepted, Deferred, Implemented, Superseded) consume numbers.
+- Rejected RFCs don't consume numbers as they are closed without merging.
 
 ## Writing Guidelines
 
 ### Structure
 
-- Follow the template structure closely
-- Use clear, concise language
-- Include concrete examples where helpful
-- Reference other RFCs when relevant
+- Follow the updated template structure closely.
+- **Executive Summary**: Briefly describe what is changing, why, and expected impact.
+- **Final Decision**: Completed only after acceptance; acts as the official historical record.
+- Keep the main body focused and move large alternative explorations to appendices.
+- Use clear, concise language.
+- Include concrete examples where helpful.
+- Reference other RFCs when relevant.
 
 ### Technical Details
 
-- Provide sufficient technical detail for implementation
-- Include data models, API specifications, and configuration changes
-- Consider migration paths for existing systems
-- Address security and performance implications
+- Provide sufficient technical detail for implementation.
+- Include data models, API specifications, and configuration changes.
+- Consider migration paths for existing systems.
+- Address security and performance implications.
 
 ### Scope
 
-- Keep RFCs focused on a single major change or feature
-- Break large proposals into multiple RFCs if necessary
-- Clearly define what is and isn't included in the scope
+- Keep RFCs focused on a single major change or feature.
+- Break large proposals into multiple RFCs if necessary.
+- Clearly define what is and isn't included in the scope.
 
 ## Best Practices
 
 ### For Authors
 
-- **Start with a problem statement**: Clearly articulate the problem you're solving
-- **Consider alternatives**: Document why other approaches weren't chosen
-- **Think about edge cases**: Consider how the proposal handles unusual scenarios
-- **Plan for rollback**: Consider how to undo changes if needed
-- **Engage early**: Share drafts informally before submitting formal PRs
+- **Start with a problem statement**: Clearly articulate the problem you're solving.
+- **Executive Summary first**: Ensure quick understanding for all readers.
+- **Consider alternatives**: Summarize in the body, detail in appendices.
+- **Plan for rollback**: Consider how to undo changes if needed.
+- **Engage early**: Share drafts informally before submitting formal PRs.
 
 ### For Reviewers
 
-- **Be constructive**: Provide specific, actionable feedback
-- **Ask questions**: Help clarify unclear aspects
-- **Consider broader impact**: Think about ecosystem-wide implications
-- **Suggest alternatives**: Propose different approaches when appropriate
-- **Review thoroughly**: Consider all aspects - technical, security, performance, usability
+- **Be constructive**: Provide specific, actionable feedback.
+- **Ask questions**: Help clarify unclear aspects.
+- **Consider broader impact**: Think about ecosystem-wide implications.
+- **Suggest alternatives**: Propose different approaches when appropriate.
+- **Review thoroughly**: Consider all aspects - technical, security, performance, usability.
 
 ### For Everyone
 
-- **Stay focused**: Keep discussions on-topic and relevant
-- **Be respectful**: Maintain professional and collaborative tone
-- **Document decisions**: Capture important decisions in the RFC
-- **Follow up**: Ensure implementation matches the accepted RFC
+- **Stay focused**: Keep discussions on-topic and relevant.
+- **Be respectful**: Maintain professional and collaborative tone.
+- **Document decisions**: Capture important decisions in the RFC and Final Decision section.
+- **Follow up**: Ensure implementation matches the accepted RFC.
 
 ## RFC Index
 
@@ -222,11 +239,11 @@ Browse RFCs by application:
 
 ## Getting Started
 
-1. **Identify the scope**: Determine which application(s) your proposal primarily affects
-2. **Review existing RFCs**: Check the relevant application folder(s) for related proposals
-3. **Use the template**: Copy `rfc-template.md` and fill out all sections thoroughly
-4. **Engage early**: Consider opening a draft PR or discussion issue before finalizing your RFC
-5. **Follow up**: Track implementation progress and update the RFC as needed
+1. **Identify the scope**: Determine which application(s) your proposal primarily affects.
+2. **Review existing RFCs**: Check the relevant application folder(s) for related proposals.
+3. **Use the updated template**: Copy `rfc-template.md` and fill out all sections thoroughly, starting with Executive Summary.
+4. **Engage early**: Consider opening a draft PR or discussion issue before finalizing your RFC.
+5. **Follow up**: Track implementation progress and update the RFC as needed, including the Final Decision.
 
 ## FAQ
 
@@ -252,8 +269,8 @@ A: Generally no. Wait for acceptance, but prototyping to validate assumptions is
 
 ## Resources
 
-- [RFC Template](./rfc-template.md) - Use this as your starting point
-- [GitHub PR Labels](../../../labels) - Use the `rfc` label for RFC pull requests
+- [RFC Template](./rfc-template.md) - Use this as your starting point.
+- [GitHub PR Labels](../../../labels) - Use the `rfc` label for RFC pull requests.
 
 ## Examples
 

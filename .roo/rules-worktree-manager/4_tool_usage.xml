@@ -1,0 +1,36 @@
+<tool_usage_guide>
+  <tool_priorities>
+    <priority level="1">
+      <tool>command</tool>
+      <when>For executing git and VS Code commands to automate worktree and branch creation.</when>
+      <why>Direct command execution ensures the process is fast and reliable.</why>
+    </priority>
+    <priority level="2">
+      <tool>read</tool>
+      <when>For checking existing branches and worktrees before creation.</when>
+      <why>Prevents conflicts and accidental overwrites.</why>
+    </priority>
+  </tool_priorities>
+  <tool_specific_guidance>
+    <tool name="command">
+      <best_practices>
+        <practice>Always check if the branch or worktree already exists before running commands.</practice>
+        <practice>Use clear and descriptive command outputs for user feedback.</practice>
+      </best_practices>
+      <example>
+        <scenario>Create a new worktree and open it in VS Code</scenario>
+        <code>git worktree add -b feature/login ../feature/login && code ../feature/login</code>
+      </example>
+    </tool>
+    <tool name="read">
+      <best_practices>
+        <practice>List existing branches with <code>git branch --list</code> before suggesting names.</practice>
+        <practice>Check for existing worktree directories to avoid conflicts.</practice>
+      </best_practices>
+      <example>
+        <scenario>Check if branch exists</scenario>
+        <code>git branch --list feature/login</code>
+      </example>
+    </tool>
+  </tool_specific_guidance>
+</tool_usage_guide>

@@ -1,0 +1,36 @@
+<workflow_instructions>
+  <mode_overview>
+    This mode automates the creation of Git branches and worktrees following conventions, suggesting types and names, executing commands, and opening the new environment in VS Code.
+  </mode_overview>
+  <initialization_steps>
+    <step number="1">
+      <action>Suggest branch types</action>
+      <details>
+        Present the user with options such as: feature, docs, refactor, fix, chore.
+      </details>
+    </step>
+    <step number="2">
+      <action>Generate branch name suggestions</action>
+      <details>
+        Combine the chosen type with the provided base name, suggesting three options in the format type/name.
+      </details>
+    </step>
+    <step number="3">
+      <action>Create worktree and branch</action>
+      <details>
+        Run: git worktree add -b <branch> ../<branch>
+      </details>
+    </step>
+    <step number="4">
+      <action>Open the worktree in VS Code</action>
+      <details>
+        Run: code ../<branch>
+      </details>
+    </step>
+  </initialization_steps>
+  <completion_criteria>
+    <criterion>Worktree created and opened in VS Code</criterion>
+    <criterion>Branch named according to convention</criterion>
+    <criterion>Automated and error-free flow</criterion>
+  </completion_criteria>
+</workflow_instructions>

@@ -1,0 +1,61 @@
+<tool_usage_guide>
+  <tool_priorities>
+    <priority level="1">
+      <tool>read_file</tool>
+      <when>To analyze existing implementations before modifying code.</when>
+      <why>Prevents overwriting important logic and ensures context.</why>
+    </priority>
+    <priority level="2">
+      <tool>search_files</tool>
+      <when>To quickly locate patterns, functions, or references.</when>
+      <why>Makes it easier to find all impact points.</why>
+    </priority>
+    <priority level="3">
+      <tool>execute_command</tool>
+      <when>To run linters, tests, and build commands.</when>
+      <why>Ensures code quality and functionality before committing.</why>
+    </priority>
+    <priority level="4">
+      <tool>use_mcp_tool</tool>
+      <when>To open Pull Requests automatically via GitHub MCP.</when>
+      <why>Standardizes and automates the integration flow.</why>
+    </priority>
+  </tool_priorities>
+  <tool_specific_guidance>
+    <tool name="use_mcp_tool">
+      <best_practices>
+        <practice>Always use to open PRs, filling in title and description in English.</practice>
+        <practice>Include what was done, why, and how it was tested.</practice>
+      </best_practices>
+      <example>
+        <scenario>Opening PR after push</scenario>
+        <code language="yaml">
+use_mcp_tool:
+  server_name: github
+  tool_name: create_pull_request
+  arguments:
+    owner: 1001josias
+    repo: botmaster
+    title: feat(api): implement multi-tenant webhook trigger validation
+    body: |
+      This PR adds webhook validation at the tenant level, ensuring data isolation and permission correctness across tenants.
+      - Added validation middleware on webhook endpoints
+      - Unit tested with scoped data
+      - Updated Swagger documentation
+    head: your-branch
+    base: main
+        </code>
+      </example>
+    </tool>
+    <tool name="execute_command">
+      <best_practices>
+        <practice>Run pnpm lint && pnpm test before any commit.</practice>
+        <practice>Review pre-commit hook logs (husky/lint-staged).</practice>
+      </best_practices>
+      <example>
+        <scenario>Before committing</scenario>
+        <code>pnpm lint && pnpm test</code>
+      </example>
+    </tool>
+  </tool_specific_guidance>
+</tool_usage_guide>

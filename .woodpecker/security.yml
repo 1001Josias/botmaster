@@ -1,0 +1,14 @@
+image: node:21.6.2-alpine
+
+when:
+  event:
+    - pull_request
+    - push
+    - commit
+  depends_on:
+    - install-dependencies
+
+steps:
+  - name: security-scan
+    commands:
+      - pnpm run security:scan
