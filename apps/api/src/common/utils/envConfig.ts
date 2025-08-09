@@ -23,4 +23,8 @@ export const env = cleanEnv(process.env, {
   DB_IDLE_TIMEOUT: num({ devDefault: testOnly(30000) }),
   DB_CONNECTION_TIMEOUT: num({ devDefault: testOnly(5000) }),
   KEYCLOAK_BASE_URL: str(),
+  // GitHub configuration
+  GITHUB_TOKEN: str({ desc: 'GitHub Personal Access Token for API access' }),
+  GITHUB_WEBHOOK_SECRET: str({ default: '', desc: 'GitHub webhook secret for signature verification (optional)' }),
+  GITHUB_BOT_USERNAME: str({ default: 'botmaster', desc: 'GitHub username of the bot for mention detection' }),
 })

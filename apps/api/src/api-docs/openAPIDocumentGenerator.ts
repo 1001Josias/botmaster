@@ -5,6 +5,7 @@ import { userRegistry } from '@/api/user/userRouter'
 import { workerRegistryV1 } from '@/api/workers/workerOpenAPI'
 import { env } from '@/common/utils/envConfig'
 import { workerInstallationRegistry } from '@/api/workers/installations/workerInstallationOpenAPI'
+import { githubWebhookRegistry } from '@/api/github-webhooks/githubWebhookOpenAPI'
 
 export function generateOpenAPIDocumentV1() {
   const registryV1 = new OpenAPIRegistry([
@@ -12,6 +13,7 @@ export function generateOpenAPIDocumentV1() {
     userRegistry,
     workerRegistryV1,
     workerInstallationRegistry,
+    githubWebhookRegistry,
   ])
   const generatorV1 = new OpenApiGeneratorV3(registryV1.definitions)
 
