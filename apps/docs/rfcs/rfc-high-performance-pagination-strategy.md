@@ -1,19 +1,38 @@
 # RFC: High-Performance Pagination Strategy for RESTful Endpoints
 
 **Status:** Accepted
-**Target Application(s):** [api, orchestrator, jobmaster, shared]  
-**RFC Number:** [Assigned when merged]  
+**Target Application(s):** [api, orchestrator, jobmaster, shared]
+**RFC Number:** [Assigned when merged]
 **Created:** 2025-08-02
-**Last Updated:** 2025-08-02  
+**Last Updated:** 2025-08-02
 **Author(s):** Botmaster Development Team
 
-## Overview
+---
 
-### Summary
+## Executive Summary
+
+**What changes?** Introduces a modern, high-performance pagination strategy for all RESTful endpoints in the Botmaster API, optimized for PostgreSQL and multi-tenant RLS environments.
+**Why change?** Offset-based pagination does not scale for large datasets and degrades user experience; a new approach is required for performance, consistency, and security.
+**Expected impact:** Consistent sub-100ms response times, improved scalability, and secure, future-proof API pagination for all tenants and endpoints.
+
+---
+
+## Final Decision
+
+- **Status:** Accepted on 2025-08-02
+- **Decision:** Adopt encrypted cursor-based pagination as the pagination strategy for all RESTful endpoints.
+- **Rationale:** Cursor-based pagination provides the best balance of performance, consistency, and security for our use case. Encryption ensures no internal IDs are leaked.
+- **Participants:** Josias Junior, Copilot
+
+---
+
+## 1. Overview
+
+### 1.1 Summary
 
 This RFC proposes a comprehensive high-performance pagination strategy for RESTful endpoints in the Botmaster API, optimized for PostgreSQL databases with multi-tenant architecture and Row-Level Security (RLS).
 
-### Context and Motivation
+### 1.2 Context and Motivation
 
 #### Background
 
@@ -44,7 +63,7 @@ With Botmaster's anticipated growth and expected data volumes:
 - Database CPU utilization will spike during high-offset queries as data grows
 - Proactive optimization needed before user experience deteriorates
 
-### Goals
+### 1.3 Goals
 
 - **Performance**: Achieve consistent sub-100ms response times regardless of page depth
 - **Scalability**: Support datasets with millions of records per tenant
@@ -53,22 +72,24 @@ With Botmaster's anticipated growth and expected data volumes:
 - **Security**: Maintain multi-tenant data isolation through RLS
 - **Future-Proof Design**: Implement scalable pagination from the start
 
-### Non-Goals
+### 1.4 Non-Goals
 
 - Real-time data streaming or WebSocket-based updates
 - Complex aggregation queries within pagination
 - Cross-tenant data pagination
 - GraphQL pagination patterns (focus on REST)
 
-## Scope
+---
 
-### Target Application(s)
+## 2. Scope
+
+### 2.1 Target Application(s)
 
 - **Primary**: `api` - Core REST API endpoints for all resources
 - **Secondary**: `orchestrator` - Background job result pagination
 - **Future**: `jobmaster` - Job execution history pagination
 
-### Affected Components
+### 2.2 Affected Components
 
 - All repository classes implementing pagination (`*Repository.ts`)
 - Service layer pagination logic (`*Service.ts`)
@@ -77,16 +98,18 @@ With Botmaster's anticipated growth and expected data volumes:
 - Database query files (`*.sql`)
 - Response serialization models (`*Model.ts`)
 
-### Dependencies
+### 2.3 Dependencies
 
 - PostgreSQL 12+ (current: 14+)
 - Existing RLS policies and multi-tenant architecture
 - Current authentication and authorization system
 - TypeScript/Node.js runtime environment
 
-## Proposal
+---
 
-### High-Level Design
+## 3. Proposal
+
+### 3.1 High-Level Design
 
 The proposed solution implements a **modern pagination strategy** that adapts based on use case:
 
@@ -114,9 +137,9 @@ The proposed solution implements a **modern pagination strategy** that adapts ba
                        └──────────────────┘
 ```
 
-### Detailed Design
+### 3.2 Detailed Design
 
-#### 1. Pagination Strategy Interface
+#### 3.2.1 Pagination Strategy Interface
 
 ```typescript
 interface PaginationStrategy {
@@ -149,7 +172,7 @@ interface PaginationMeta {
 }
 ```
 
-#### 2. Cursor-Based Implementation
+#### 3.2.2 Cursor-Based Implementation
 
 Cursor pagination uses encoded position markers for consistent navigation:
 
@@ -218,7 +241,7 @@ class CursorPaginationStrategy implements PaginationStrategy {
 }
 ```
 
-#### 3. Keyset Pagination Implementation
+#### 3.2.3 Keyset Pagination Implementation
 
 Keyset pagination provides optimal performance for deep pagination:
 
@@ -264,7 +287,7 @@ class KeysetPaginationStrategy implements PaginationStrategy {
 }
 ```
 
-#### 4. Token-Based Implementation (JWT)
+#### 3.2.4 Token-Based Implementation (JWT)
 
 For external API consumers requiring stateless, secure pagination:
 
@@ -304,9 +327,9 @@ class TokenPaginationStrategy implements PaginationStrategy {
 }
 ```
 
-### API Design
+### 3.3 API Design
 
-#### Query Parameters
+#### 3.3.1 Query Parameters
 
 ```typescript
 export const PaginationQuerySchema = z.object({
@@ -336,7 +359,7 @@ export const PaginationQuerySchema = z.object({
 
 **Breaking Change Mitigation**: During the transition period, the API will support both legacy (`page`) and modern (`strategy`, `cursor`, `token`) parameters to ensure compatibility with existing frontend implementations.
 
-#### Response Format
+#### 3.3.2 Response Format
 
 ```typescript
 export const PaginatedResponseSchema = z.object({
@@ -374,9 +397,9 @@ export const PaginatedResponseSchema = z.object({
 
 **Critical Breaking Change Note**: The current response format includes `totalPages`, `totalItems`, `previousPages[]`, `nextPages[]`, `firstPage`, and `lastPage` fields that are used by the existing frontend. During the transition period, these fields will be maintained alongside the new pagination metadata to prevent breaking existing implementations.
 
-### User Experience
+### 3.4 User Experience
 
-#### API Endpoint Examples
+#### 3.4.1 API Endpoint Examples
 
 ```bash
 # Cursor pagination (default, recommended)
@@ -393,7 +416,7 @@ curl "/api/workers?strategy=token&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 curl "/api/workers?filters[status]=active&filters[scope]=tenant&limit=20"
 ```
 
-#### Response Examples
+#### 3.4.2 Response Examples
 
 ```json
 {
@@ -417,9 +440,9 @@ curl "/api/workers?filters[status]=active&filters[scope]=tenant&limit=20"
 }
 ```
 
-### Security Considerations
+### 3.5 Security Considerations
 
-#### Multi-Tenancy with Row-Level Security
+#### 3.5.1 Multi-Tenancy with Row-Level Security
 
 All pagination strategies must respect existing RLS (Row-Level Security) policies:
 
@@ -435,7 +458,7 @@ CREATE POLICY worker_tenant_access ON worker
   );
 ```
 
-#### Cursor Security: Official Recommendation
+#### 3.5.2 Cursor Security: Official Recommendation
 
 For cursor-based pagination, it is essential to protect internal identifiers and ensure the integrity of the navigation state. **The default recommended approach for Botmaster is to use encrypted cursors (AES-256-GCM)**, which completely hide the cursor content (e.g., internal `id`) from the API consumer, while maintaining stability and performance.
 
@@ -484,9 +507,9 @@ function decryptCursor(cursor: string): any {
 - Signed cursor: `{...}.{signature}` (visible, but not tamperable)
 - Base64 cursor: `{ "sortValue": "2024-08-01T10:00:00Z", "id": 123 }` (visible, not recommended)
 
-### Performance Considerations
+### 3.6 Performance Considerations
 
-#### Benchmarking Results
+#### 3.6.1 Benchmarking Results
 
 Based on PostgreSQL 14+ performance testing with 1M+ records:
 
@@ -497,7 +520,7 @@ Based on PostgreSQL 14+ performance testing with 1M+ records:
 | Keyset   | 6ms    | 8ms     | 10ms     | 12ms      | Low          |
 | Token    | 10ms   | 14ms    | 17ms     | 20ms      | Low          |
 
-#### Index Optimization
+#### 3.6.2 Index Optimization
 
 Required composite indexes for optimal performance:
 
@@ -518,9 +541,9 @@ ON worker (scope, scope_ref, created_at DESC, id DESC)
 INCLUDE (name, description, tags);
 ```
 
-### Monitoring and Observability
+### 3.7 Monitoring and Observability
 
-#### Metrics Collection
+#### 3.7.1 Metrics Collection
 
 ```typescript
 interface PaginationMetrics {
@@ -542,17 +565,17 @@ class PaginationTelemetry {
 }
 ```
 
-#### Alerting Thresholds
+#### 3.7.2 Alerting Thresholds
 
 - Query time > 500ms for any pagination strategy
 - Index scan efficiency < 90%
 - High memory usage during pagination queries
 
-## Data Model
+## 4. Data Model
 
-### Database Changes
+### 4.1 Database Changes
 
-#### Enhanced Indexes
+#### 4.1.1 Enhanced Indexes
 
 ```sql
 -- Drop existing basic indexes
@@ -579,9 +602,9 @@ WHERE status = 'active';
 - Monitor index creation progress on large tables - may require maintenance window
 - Current problem: `idx_workers_created_at` is insufficient for composite queries with RLS filters
 
-### Data Structures
+### 4.2 Data Structures
 
-#### Enhanced Pagination Models
+#### 4.2.1 Enhanced Pagination Models
 
 ```typescript
 export const PaginationStrategyEnum = z.enum(['cursor', 'keyset', 'token'])
@@ -630,9 +653,9 @@ export const PaginationMetaResponseSchema = z.object({
 })
 ```
 
-### Data Flow
+### 4.3 Data Flow
 
-#### Request Processing Flow
+#### 4.3.1 Request Processing Flow
 
 ```
 ┌─────────────────┐
@@ -665,9 +688,9 @@ export const PaginationMetaResponseSchema = z.object({
 └─────────────────┘    └─────────────────┘
 ```
 
-## Migration Strategy
+## 5. Migration Strategy
 
-### Implementation Plan
+### 5.1 Implementation Plan
 
 #### Phase 1: Foundation and Critical Fixes (Weeks 1-3)
 
@@ -720,9 +743,9 @@ export const PaginationMetaResponseSchema = z.object({
   - [ ] Gradual production rollout with monitoring
 - **Success Criteria:** All endpoints migrated, legacy support maintained
 
-### Rollout Plan
+### 5.2 Rollout Plan
 
-#### Feature Flag Configuration
+#### 5.2.1 Feature Flag Configuration
 
 ```typescript
 interface PaginationFeatureFlags {
@@ -733,14 +756,14 @@ interface PaginationFeatureFlags {
 }
 ```
 
-#### Gradual Rollout
+#### 5.2.2 Gradual Rollout
 
 1. **Week 1**: Deploy with cursor pagination as default
 2. **Week 2**: Enable keyset pagination for performance-critical endpoints
 3. **Week 3**: Enable token pagination for external API access
 4. **Week 4**: Full deployment with monitoring and optimization
 
-### Implementation Steps
+### 5.3 Migration Steps
 
 1. **Preparation**
    - Install required dependencies (JWT libraries)
@@ -761,16 +784,16 @@ interface PaginationFeatureFlags {
    - Optimize database indexes based on query patterns
    - Update documentation and examples
 
-### Rollback Plan
+### 5.4 Rollback Plan
 
-#### Immediate Rollback (< 1 hour)
+#### 5.4.1 Immediate Rollback (< 1 hour)
 
 - Disable problematic pagination strategy via feature flags
 - Default to cursor pagination as the most stable strategy
 - Monitor error rates and response times
 - No data loss or corruption risk
 
-#### Full Rollback (< 24 hours)
+#### 5.4.2 Full Rollback (< 24 hours)
 
 - Revert to simple database queries
 - Disable all advanced pagination features
@@ -786,17 +809,15 @@ interface RollbackTriggers {
 }
 ```
 
-## Impact Assessment
+## 6. Impact Assessment
 
-### API Changes
-
-#### API Contract Changes
+### 6.1 Breaking Changes
 
 - **Query Parameters**: New pagination parameters for modern strategies
 - **Response Format**: Consistent pagination metadata structure
 - **Error Responses**: New error codes for invalid cursors/tokens
 
-#### Client Impact Assessment
+### 6.2 Dependencies Impact
 
 - **Web Frontend**: Implementation of modern pagination strategies
 - **Mobile Apps**: Adoption of cursor-based navigation for better UX
@@ -817,7 +838,7 @@ interface RollbackTriggers {
 - **Bundle Size**: +15KB (pagination utilities)
 - **Memory**: +5MB per process (pagination structures)
 
-### Testing Strategy
+### 6.3 Testing Strategy
 
 #### Unit Testing
 
@@ -915,7 +936,7 @@ artillery run --config pagination-load-test.yml
 # - Mixed strategy usage (cursor + offset simultaneously)
 ```
 
-### Documentation Updates
+### 6.4 Documentation Updates
 
 #### User Documentation
 
@@ -965,7 +986,7 @@ paths:
                 $ref: '#/components/schemas/PaginatedWorkersResponse'
 ```
 
-### Deployment Considerations
+### 6.5 Deployment Considerations
 
 #### Infrastructure Requirements
 
@@ -996,7 +1017,21 @@ pagination_large_result_sets_total:
   help: 'Usage of large result set pagination (performance monitoring)'
 ```
 
-## Examples
+---
+
+## 7. Alternatives Considered (Summary)
+
+- Keyset Pagination
+- Pros: Efficient for deep pagination, no performance degradation
+- Cons: Requires unique, sequential keys
+
+- Token-based Pagination
+- Pros: Simple implementation, no cursor management
+- Cons: Limited flexibility, potential for token leakage
+
+- Offset-based Pagination
+- Pros: Familiar approach, easy to implement
+- Cons: Performance issues with large datasets, potential for skipped results
 
 ### Code Examples
 
@@ -1225,7 +1260,15 @@ SELECT pg_reload_conf();
 
 ## Alternatives Considered
 
-### Alternative 1: GraphQL Relay Cursor Pagination
+- **Alternative 1: GraphQL Relay Cursor Pagination** — Rejected: Major departure from REST, high migration cost.
+- **Alternative 2: Search-Based Pagination** — Rejected: Adds infra complexity, not aligned with core needs.
+- **Alternative 3: Materialized View Pagination** — Rejected: Too rigid for dynamic filtering and real-time data.
+- **Alternative 4: NoSQL Document Database Migration** — Rejected: Major migration risk, not aligned with team expertise.
+- **Do Nothing** — Rejected: Performance degradation already impacting UX.
+
+---
+
+## 8. Risks and Mitigations
 
 **Description:** Adopt GraphQL Relay-style cursor pagination with `first`, `after`, `last`, `before` parameters.
 
