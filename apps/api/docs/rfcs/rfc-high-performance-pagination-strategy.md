@@ -119,7 +119,7 @@ The proposed solution implements a **modern pagination strategy** that adapts ba
 
 #### Architecture Overview
 
-```
+```plaintext
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   API Layer     │    │  Service Layer   │    │ Repository Layer│
 │                 │    │                  │    │                 │
@@ -657,7 +657,7 @@ export const PaginationMetaResponseSchema = z.object({
 
 #### 4.3.1 Request Processing Flow
 
-```
+```plaintext
 ┌─────────────────┐
 │   HTTP Request  │
 │   ?strategy=... │
