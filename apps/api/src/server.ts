@@ -11,6 +11,7 @@ import rateLimiter from '@/common/middleware/rateLimiter'
 import requestLogger from '@/common/middleware/requestLogger'
 import { env } from '@/common/utils/envConfig'
 import { workersRouterV1 } from './api/workers/workerRoutes'
+import { jobsRouterV1 } from './api/jobs/jobRoutes'
 const logger = pino({ name: 'server start', level: env.NODE_ENV === 'production' ? 'info' : 'debug' })
 const app: Express = express()
 const apiRouterV1 = express.Router()
@@ -31,6 +32,7 @@ app.use(requestLogger)
 // API Routes v1
 apiRouterV1.use('/health-check', healthCheckRouter)
 apiRouterV1.use('/workers', workersRouterV1)
+apiRouterV1.use('/jobs', jobsRouterV1)
 // Routes
 app.use('/api/v1', apiRouterV1)
 
