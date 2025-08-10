@@ -4,48 +4,43 @@ when:
     - push
 
 steps:
-  - name: build-image
-    image: plugins/docker
-    settings:
-      repo: botmaster-ci
-      tags: ${CI_COMMIT_SHA}
-      dockerfile: Dockerfile.pnpm
-      load: true # Carrega a imagem para o daemon Docker local do runner
-
   - name: install-dependencies
-    image: botmaster-ci:${CI_COMMIT_SHA}
-    depends_on:
-      - build-image
+    image: node:21.6.2-alpine
     commands:
+      - corepack enable
       - pnpm install
 
   - name: lint-and-format
-    image: botmaster-ci:${CI_COMMIT_SHA}
+    image: node:21.6.2-alpine
     depends_on:
       - install-dependencies
     commands:
+      - corepack enable
       - pnpm run lint:all
       - pnpm run format:all
 
   - name: testing
-    image: botmaster-ci:${CI_COMMIT_SHA}
+    image: node:21.6.2-alpine
     depends_on:
       - install-dependencies
     commands:
+      - corepack enable
       - pnpm run test
       - pnpm run test:affected
       - pnpm run test:coverage
 
   - name: security
-    image: botmaster-ci:${CI_COMMIT_SHA}
+    image: node:21.6.2-alpine
     depends_on:
       - install-dependencies
     commands:
+      - corepack enable
       - pnpm run security:scan
 
   - name: bundle-analysis
-    image: botmaster-ci:${CI_COMMIT_SHA}
+    image: node:21.6.2-alpine
     depends_on:
       - install-dependencies
     commands:
+      - corepack enable
       - pnpm run bundle:analyze
