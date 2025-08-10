@@ -1,10 +1,8 @@
 steps:
   build-image:
-    image: plugins/docker
-    settings:
-      repo: local-pnpm-image
-      tags: latest
-      dockerfile: Dockerfile.pnpm
+    image: docker:latest
+    commands:
+      - docker build -t local-pnpm-image:latest -f Dockerfile.pnpm .
     when:
       event: [ pull_request, push ]
 
