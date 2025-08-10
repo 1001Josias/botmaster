@@ -1,6 +1,12 @@
 steps:
   build-image:
     image: docker:latest
+    privileged: true
+    environment:
+      - DOCKER_HOST=tcp://docker:2375
+      - DOCKER_TLS_CERTDIR=
+    services:
+      - docker:dind
     commands:
       - docker build -t local-pnpm-image:latest -f Dockerfile.pnpm .
     when:
