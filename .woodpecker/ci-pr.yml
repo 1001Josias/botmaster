@@ -1,13 +1,14 @@
+when:
+  event:
+    - push
+    - pull_request
+
 steps:
   install-dependencies:
     image: node:21.6.2-alpine
     commands:
       - corepack enable
       - pnpm install
-    when:
-      event:
-        - push
-        - pull_request
 
   lint-and-format:
     image: node:21.6.2-alpine
@@ -17,10 +18,6 @@ steps:
       - pnpm run format:check
     depends_on:
       - install-dependencies
-    when:
-      event:
-        - push
-        - pull_request
 
   test:
     image: node:21.6.2-alpine
@@ -29,10 +26,7 @@ steps:
       - pnpm run test
     depends_on:
       - install-dependencies
-    when:
-      event:
-        - push
-        - pull_request
+
 
   security:
     image: node:21.6.2-alpine
@@ -41,10 +35,6 @@ steps:
       - pnpm run security:scan
     depends_on:
       - install-dependencies
-    when:
-      event:
-        - push
-        - pull_request
 
   bundle-analysis:
     image: node:21.6.2-alpine
@@ -53,7 +43,4 @@ steps:
       - pnpm run bundle:analyze
     depends_on:
       - install-dependencies
-    when:
-      event:
-        - push
-        - pull_request
+
