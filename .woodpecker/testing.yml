@@ -1,5 +1,3 @@
-image: node:21.6.2-alpine
-
 when:
   event:
     - pull_request
@@ -10,13 +8,16 @@ when:
 
 steps:
   - name: test
+    image: node:21.6.2-alpine
     commands:
       - pnpm run test
 
   - name: test-affected
+    image: node:21.6.2-alpine
     commands:
       - pnpm run test:affected
 
   - name: test-coverage
+    image: node:21.6.2-alpine
     commands:
       - pnpm run test:coverage

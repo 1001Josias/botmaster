@@ -1,5 +1,3 @@
-image: node:21.6.2-alpine
-
 when:
   event:
     - pull_request
@@ -10,5 +8,6 @@ when:
 
 steps:
   - name: security-scan
+    image: node:21.6.2-alpine
     commands:
       - pnpm run security:scan

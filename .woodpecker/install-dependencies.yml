@@ -1,5 +1,3 @@
-image: node:21.6.2-alpine
-
 when:
   event:
     - pull_request
@@ -8,6 +6,7 @@ when:
 
 steps:
   - name: install-dependencies
+    image: node:21.6.2-alpine
     commands:
       - npm i -g pnpm@8.15.6
       - pnpm install
