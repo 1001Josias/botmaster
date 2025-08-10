@@ -1,18 +1,17 @@
-when:
-  event:
-    - pull_request
-    - push
-    - commit
-
 steps:
-  - name: lint
-    depends_on: [ install-dependencies ]
-    image: node:21.6.2-alpine
+  lint:
+    image: node:20
     commands:
-      - pnpm run lint:all
-
-  - name: format-check
-    depends_on: [ install-dependencies ]
-    image: node:21.6.2-alpine
+      - pnpm lint
+    depends_on:
+      - install-dependencies
+    when:
+      event: [ pull_request, push ]
+  format-check:
+    image: node:20
     commands:
-      - pnpm run format:check
+      - pnpm format:check
+    depends_on:
+      - install-dependencies
+    when:
+      event: [ pull_request, push ]

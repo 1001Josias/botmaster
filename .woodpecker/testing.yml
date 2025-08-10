@@ -1,24 +1,25 @@
-when:
-  event:
-    - pull_request
-    - push
-    - commit
-
 steps:
-  - name: test
-    depends_on: [ install-dependencies ]
-    image: node:21.6.2-alpine
+  test:
+    image: node:20
     commands:
-      - pnpm run test
-
-  - name: test-affected
-    depends_on: [ install-dependencies ]
-    image: node:21.6.2-alpine
+      - pnpm test
+    depends_on:
+      - install-dependencies
+    when:
+      event: [ pull_request, push ]
+  test-affected:
+    image: node:20
     commands:
-      - pnpm run test:affected
-
-  - name: test-coverage
-    depends_on: [ install-dependencies ]
-    image: node:21.6.2-alpine
+      - pnpm test:affected
+    depends_on:
+      - install-dependencies
+    when:
+      event: [ pull_request, push ]
+  test-coverage:
+    image: node:20
     commands:
-      - pnpm run test:coverage
+      - pnpm test:coverage
+    depends_on:
+      - install-dependencies
+    when:
+      event: [ pull_request, push ]

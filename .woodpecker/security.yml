@@ -1,12 +1,9 @@
-when:
-  event:
-    - pull_request
-    - push
-    - commit
-
 steps:
-  - name: security-scan
-    depends_on: [ install-dependencies ]
-    image: node:21.6.2-alpine
+  security-scan:
+    image: node:20
     commands:
-      - pnpm run security:scan
+      - pnpm audit
+    depends_on:
+      - install-dependencies
+    when:
+      event: [ pull_request, push ]
