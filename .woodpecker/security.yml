@@ -6,3 +6,4 @@ steps:
     commands:
       - corepack enable
       - pnpm run security:scan
+      
