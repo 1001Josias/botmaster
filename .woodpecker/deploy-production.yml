@@ -14,8 +14,8 @@ steps:
     image: node:21.6.2-alpine
     commands:
       - corepack enable
-      - pnpm run lint:all
-      - pnpm run format:all
+      - pnpm run lint
+      - pnpm run format:check
     depends_on:
       - install-dependencies
     when:
