@@ -8,7 +8,6 @@ steps:
       branch: main
       event:
         - push
-        - pull_request
 
   lint-and-format:
     image: node:21.6.2-alpine
