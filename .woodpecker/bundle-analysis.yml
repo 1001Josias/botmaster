@@ -1,6 +1,8 @@
 steps:
   - name: bundle-analysis
     image: node:21.6.2-alpine
+    depends_on:
+      - install-dependencies
     commands:
       - corepack enable
       - pnpm run bundle:analyze

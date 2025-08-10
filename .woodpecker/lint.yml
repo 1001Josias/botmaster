@@ -1,6 +1,8 @@
 steps:
   - name: lint-and-format
     image: node:21.6.2-alpine
+    depends_on:
+      - install-dependencies
     commands:
       - corepack enable
       - pnpm run lint:all

@@ -10,8 +10,37 @@ steps:
       - corepack enable
       - pnpm install
 
-include:
-  - .woodpecker/lint.yml
-  - .woodpecker/test.yml
-  - .woodpecker/security.yml
-  - .woodpecker/bundle-analysis.yml
+  - name: lint-and-format
+    image: node:21.6.2-alpine
+    depends_on:
+      - install-dependencies
+    commands:
+      - corepack enable
+      - pnpm run lint:all
+      - pnpm run format:all
+
+  - name: testing
+    image: node:21.6.2-alpine
+    depends_on:
+      - install-dependencies
+    commands:
+      - corepack enable
+      - pnpm run test
+      - pnpm run test:affected
+      - pnpm run test:coverage
+
+  - name: security
+    image: node:21.6.2-alpine
+    depends_on:
+      - install-dependencies
+    commands:
+      - corepack enable
+      - pnpm run security:scan
+
+  - name: bundle-analysis
+    image: node:21.6.2-alpine
+    depends_on:
+      - install-dependencies
+    commands:
+      - corepack enable
+      - pnpm run bundle:analyze
