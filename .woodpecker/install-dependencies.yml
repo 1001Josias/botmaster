@@ -1,11 +1,16 @@
-pipeline:
-  install-dependencies:
-    image: node:21.6.2-alpine
-    commands:
-      - npm i -g pnpm@8.15.6
-      - pnpm install
-    when:
-      event:
-        - pull_request
-        - push
-        - commit
+install-dependencies:
+  image: node:20
+  commands:
+    - npm i -g pnpm
+    - pnpm i
+  when:
+    event: [ pull_request, push ]
+
+# Exemplo de como outros jobs devem depender da instalação
+# lint:
+#   image: node:20
+#   depends_on: [ install-dependencies ]
+#   commands:
+#     - pnpm lint
+#   when:
+#     event: [ pull_request, push ]
