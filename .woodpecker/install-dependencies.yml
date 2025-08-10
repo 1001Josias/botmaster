@@ -1,16 +1,17 @@
-install-dependencies:
-  image: node:20
-  commands:
-    - npm i -g pnpm
-    - pnpm i
-  when:
-    event: [ pull_request, push ]
+steps:
+  install-dependencies:
+    image: node:20
+    commands:
+      - npm i -g pnpm
+      - pnpm i
+    when:
+      event: [ pull_request, push ]
 
-# Exemplo de como outros jobs devem depender da instalação
-# lint:
-#   image: node:20
-#   depends_on: [ install-dependencies ]
-#   commands:
-#     - pnpm lint
-#   when:
-#     event: [ pull_request, push ]
+  # Exemplo de como outros jobs devem depender da instalação
+  # lint:
+  #   image: node:20
+  #   depends_on: [ install-dependencies ]
+  #   commands:
+  #     - pnpm lint
+  #   when:
+  #     event: [ pull_request, push ]
