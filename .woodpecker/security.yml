@@ -8,6 +8,7 @@ when:
 
 steps:
   - name: security-scan
+    depends_on: [ install-dependencies ]
     image: node:21.6.2-alpine
     commands:
       - pnpm run security:scan

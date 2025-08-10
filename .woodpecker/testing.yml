@@ -8,16 +8,19 @@ when:
 
 steps:
   - name: test
+    depends_on: [ install-dependencies ]
     image: node:21.6.2-alpine
     commands:
       - pnpm run test
 
   - name: test-affected
+    depends_on: [ install-dependencies ]
     image: node:21.6.2-alpine
     commands:
       - pnpm run test:affected
 
   - name: test-coverage
+    depends_on: [ install-dependencies ]
     image: node:21.6.2-alpine
     commands:
       - pnpm run test:coverage
