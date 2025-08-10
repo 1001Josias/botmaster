@@ -1,4 +1,4 @@
-pipeline:
+steps:
   install-dependencies:
     image: node:21.6.2-alpine
     commands:
