@@ -15,4 +15,4 @@ steps:
 
   - name: format-check
     commands:
-      - pnpm run format:all
+      - pnpm run format:check
