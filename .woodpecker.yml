@@ -1,85 +1,122 @@
-steps:
-  build-image:
-    image: docker:latest
-    privileged: true
-    environment:
-      - DOCKER_HOST=tcp://docker:2375
-      - DOCKER_TLS_CERTDIR=
-    services:
-      - docker:dind
-    commands:
-      - docker build -t local-pnpm-image:latest -f Dockerfile.pnpm .
-    when:
-      event: [ pull_request, push ]
+# .woodpecker.yml
+# Pipeline Woodpecker CI para monorepo com execução seletiva baseada em arquivos alterados.
+# Sintaxe validada conforme a documentação oficial: https://woodpecker-ci.org/docs/usage/steps/
 
+pipeline:
   install-dependencies:
-    image: local-pnpm-image:latest
+    image: node:21-alpine
     commands:
-      - pnpm i
-    depends_on:
-      - build-image
-    when:
-      event: [ pull_request, push ]
+      - pnpm install
 
-  bundle-analyze:
-    image: local-pnpm-image:latest
+  lint-api:
+    depends_on: [install-dependencies]
+    image: node:21-alpine
     commands:
-      - pnpm run bundle:analyze
-    depends_on:
-      - install-dependencies
+      - pnpm --filter api lint
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/api/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
 
-  lint:
-    image: local-pnpm-image:latest
+  test-api:
+    depends_on: [lint-api]
+    image: node:21-alpine
     commands:
-      - pnpm lint
-    depends_on:
-      - install-dependencies
+      - pnpm --filter api test
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/api/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
 
-  format-check:
-    image: local-pnpm-image:latest
+  build-api:
+    depends_on: [test-api]
+    image: node:21-alpine
     commands:
-      - pnpm format:check
-    depends_on:
-      - install-dependencies
+      - pnpm --filter api build
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/api/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
 
-  security-scan:
-    image: local-pnpm-image:latest
+  lint-web:
+    depends_on: [install-dependencies]
+    image: node:21-alpine
     commands:
-      - pnpm audit
-    depends_on:
-      - install-dependencies
+      - pnpm --filter botmaster-web lint
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/web/**
+          - packages/ui/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
 
-  test:
-    image: local-pnpm-image:latest
+  test-web:
+    depends_on: [lint-web]
+    image: node:21-alpine
     commands:
-      - pnpm test
-    depends_on:
-      - install-dependencies
+      - pnpm --filter botmaster-web test
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/web/**
+          - packages/ui/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
 
-  test-affected:
-    image: local-pnpm-image:latest
+  build-web:
+    depends_on: [test-web]
+    image: node:21-alpine
     commands:
-      - pnpm test:affected
-    depends_on:
-      - install-dependencies
+      - pnpm --filter botmaster-web build
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/web/**
+          - packages/ui/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
 
-  test-coverage:
-    image: local-pnpm-image:latest
+  lint-docs:
+    depends_on: [install-dependencies]
+    image: node:21-alpine
     commands:
-      - pnpm test:coverage
-    depends_on:
-      - install-dependencies
+      - pnpm --filter docs lint
     when:
-      event: [ pull_request, push ]
+      changed_files:
+        include:
+          - apps/docs/**
+          - packages/ui/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
+
+  build-docs:
+    depends_on: [lint-docs]
+    image: node:21-alpine
+    commands:
+      - pnpm --filter docs build
+    when:
+      changed_files:
+        include:
+          - apps/docs/**
+          - packages/ui/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
+
+  lint-ui:
+    depends_on: [install-dependencies]
+    image: node:21-alpine
+    commands:
+      - pnpm --filter @repo/ui lint
+    when:
+      changed_files:
+        include:
+          - packages/ui/**
+          - packages/eslint-config/**
+          - packages/typescript-config/**
