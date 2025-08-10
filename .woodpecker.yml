@@ -1,14 +1,24 @@
 steps:
+  build-image:
+    image: plugins/docker
+    settings:
+      repo: local-pnpm-image
+      tags: latest
+      dockerfile: Dockerfile.pnpm
+    when:
+      event: [ pull_request, push ]
+
   install-dependencies:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
-      - npm i -g pnpm
       - pnpm i
+    depends_on:
+      - build-image
     when:
       event: [ pull_request, push ]
 
   bundle-analyze:
-    image: node:21.6.2-alpine
+    image: local-pnpm-image:latest
     commands:
       - pnpm run bundle:analyze
     depends_on:
@@ -17,7 +27,7 @@ steps:
       event: [ pull_request, push ]
 
   lint:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
       - pnpm lint
     depends_on:
@@ -26,7 +36,7 @@ steps:
       event: [ pull_request, push ]
 
   format-check:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
       - pnpm format:check
     depends_on:
@@ -35,7 +45,7 @@ steps:
       event: [ pull_request, push ]
 
   security-scan:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
       - pnpm audit
     depends_on:
@@ -44,7 +54,7 @@ steps:
       event: [ pull_request, push ]
 
   test:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
       - pnpm test
     depends_on:
@@ -53,7 +63,7 @@ steps:
       event: [ pull_request, push ]
 
   test-affected:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
       - pnpm test:affected
     depends_on:
@@ -62,7 +72,7 @@ steps:
       event: [ pull_request, push ]
 
   test-coverage:
-    image: node:20
+    image: local-pnpm-image:latest
     commands:
       - pnpm test:coverage
     depends_on:

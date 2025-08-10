@@ -1,0 +1,14 @@
+# syntax=docker/dockerfile:1
+
+FROM node:20-alpine
+
+# Instala pnpm globalmente
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+WORKDIR /app
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile
+
+CMD ["pnpm", "start"]
