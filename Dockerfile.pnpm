@@ -1,4 +1,5 @@
 FROM node:21.6.2-alpine
 
 # Enable corepack and pre-install the pnpm version from package.json
+RUN echo "testing 123"
 RUN corepack enable
