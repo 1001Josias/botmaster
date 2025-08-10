@@ -1,9 +1,0 @@
-steps:
-  bundle-analyze:
-    image: node:21.6.2-alpine
-    commands:
-      - pnpm run bundle:analyze
-    depends_on:
-      - install-dependencies
-    when:
-      event: [ pull_request, push ]

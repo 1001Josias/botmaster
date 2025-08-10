@@ -1,8 +1,0 @@
-steps:
-  install-dependencies:
-    image: node:20
-    commands:
-      - npm i -g pnpm
-      - pnpm i
-    when:
-      event: [ pull_request, push ]

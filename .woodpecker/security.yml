@@ -1,9 +1,0 @@
-steps:
-  security-scan:
-    image: node:20
-    commands:
-      - pnpm audit
-    depends_on:
-      - install-dependencies
-    when:
-      event: [ pull_request, push ]
