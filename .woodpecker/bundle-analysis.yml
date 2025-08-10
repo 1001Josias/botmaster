@@ -6,3 +6,7 @@ steps:
     commands:
       - corepack enable
       - pnpm run bundle:analyze
+    when:
+      event:
+        - pull_request
+        - push

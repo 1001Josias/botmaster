@@ -7,3 +7,7 @@ steps:
       - corepack enable
       - pnpm run lint:all
       - pnpm run format:all
+    when:
+      event:
+        - pull_request
+        - push

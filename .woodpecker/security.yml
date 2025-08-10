@@ -6,4 +6,8 @@ steps:
     commands:
       - corepack enable
       - pnpm run security:scan
+    when:
+      event:
+        - pull_request
+        - push
       

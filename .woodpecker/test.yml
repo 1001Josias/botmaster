@@ -8,3 +8,7 @@ steps:
       - pnpm run test
       - pnpm run test:affected
       - pnpm run test:coverage
+    when:
+      event:
+        - pull_request
+        - push
