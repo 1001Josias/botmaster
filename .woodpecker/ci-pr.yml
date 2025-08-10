@@ -3,7 +3,7 @@ steps:
     image: node:21.6.2-alpine
     commands:
       - corepack enable
-      - pnpm install --frozen-lockfile
+      - pnpm install
     when:
       event:
         - push
