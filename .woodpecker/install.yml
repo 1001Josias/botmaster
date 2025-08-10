@@ -4,3 +4,7 @@ steps:
     commands:
       - corepack enable
       - pnpm install
+    when:
+      event:
+        - pull_request
+        - push
