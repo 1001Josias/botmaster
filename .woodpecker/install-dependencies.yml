@@ -1,12 +1,20 @@
+pipeline:
+  install-dependencies:
+    image: node:21.6.2-alpine
+    commands:
+      - npm i -g pnpm@8.15.6
+      - pnpm install
+
+  # Exemplo de job que depende da instalação das dependências
+  # outros-jobs:
+  #   image: node:21.6.2-alpine
+  #   depends_on:
+  #     - install-dependencies
+  #   commands:
+  #     - pnpm run build
+
 when:
   event:
     - pull_request
     - push
     - commit
-
-steps:
-  - name: install-dependencies
-    image: node:21.6.2-alpine
-    commands:
-      - npm i -g pnpm@8.15.6
-      - pnpm install
