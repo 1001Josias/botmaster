@@ -43,4 +43,3 @@ steps:
       - pnpm run bundle:analyze
     depends_on:
       - install-dependencies
-
