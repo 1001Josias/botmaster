@@ -1,0 +1,1 @@
+DELETE FROM tenant WHERE id = $1;
