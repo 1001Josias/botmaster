@@ -9,6 +9,7 @@ This directory contains prompts that can be used as guides for implementing new 
 - [OpenAPI Documentation](./openapi-documentation.prompt.md): How to document endpoints using OpenAPI/Swagger
 - [Error Handling for Endpoints](./error-handling-endpoints.prompt.md): Patterns for error handling
 - [Testing and Validation of Endpoints](./testing-validation-endpoints.prompt.md): Strategies for testing and validating endpoints
+- [Paginated Endpoints](./paginated-endpoints.prompt.md): Patterns, parameters, response, SQL, security, and best practices for implementing paginated endpoints in the API.
 
 ## How to Use the Prompts
 

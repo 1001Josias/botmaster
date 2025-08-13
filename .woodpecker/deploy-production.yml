@@ -1,0 +1,44 @@
+when:
+  branch: main
+  event:
+    - push
+
+steps:
+  install-dependencies:
+    image: node:21.6.2-alpine
+    commands:
+      - corepack enable
+      - pnpm install --frozen-lockfile
+
+  lint-and-format:
+    image: node:21.6.2-alpine
+    commands:
+      - corepack enable
+      - pnpm run lint
+      - pnpm run format:check
+    depends_on:
+      - install-dependencies
+
+  test:
+    image: node:21.6.2-alpine
+    commands:
+      - corepack enable
+      - pnpm run test
+    depends_on:
+      - install-dependencies
+
+  security:
+    image: node:21.6.2-alpine
+    commands:
+      - corepack enable
+      - pnpm run security:scan
+    depends_on:
+      - install-dependencies
+
+  bundle-analysis:
+    image: node:21.6.2-alpine
+    commands:
+      - corepack enable
+      - pnpm run bundle:analyze
+    depends_on:
+      - install-dependencies
