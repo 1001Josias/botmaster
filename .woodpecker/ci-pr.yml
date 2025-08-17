@@ -27,7 +27,6 @@ steps:
     depends_on:
       - install-dependencies
 
-
   security:
     image: node:21.6.2-alpine
     commands:
