@@ -2,6 +2,7 @@ import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-open
 
 import { healthCheckRegistry } from '@/api/healthCheck/healthCheckRouter'
 import { userRegistry } from '@/api/user/userRouter'
+import { triggerRegistry } from '@/api/triggers/triggerRouter'
 import { workerRegistryV1 } from '@/api/workers/workerOpenAPI'
 import { env } from '@/common/utils/envConfig'
 import { workerInstallationRegistry } from '@/api/workers/installations/workerInstallationOpenAPI'
@@ -10,6 +11,7 @@ export function generateOpenAPIDocumentV1() {
   const registryV1 = new OpenAPIRegistry([
     healthCheckRegistry,
     userRegistry,
+    triggerRegistry,
     workerRegistryV1,
     workerInstallationRegistry,
   ])

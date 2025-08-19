@@ -1,9 +1,29 @@
+'use client'
+
+import { useState } from 'react'
 import { PlusCircle, RefreshCw, Filter, Search } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/Button'
 
-export function TriggersHeader() {
+interface TriggersHeaderProps {
+  onSearch?: (search: string) => void
+  onFilterType?: (type: string) => void
+  onRefresh?: () => void
+}
+
+export function TriggersHeader({ onSearch, onFilterType, onRefresh }: TriggersHeaderProps) {
+  const [searchValue, setSearchValue] = useState('')
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value)
+    onSearch?.(value)
+  }
+
+  const handleFilterChange = (value: string) => {
+    onFilterType?.(value === 'all' ? '' : value)
+  }
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -13,9 +33,14 @@ export function TriggersHeader() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Buscar triggers..." className="pl-8 w-full sm:w-[250px]" />
+          <Input 
+            placeholder="Buscar triggers..." 
+            className="pl-8 w-full sm:w-[250px]" 
+            value={searchValue}
+            onChange={(e) => handleSearchChange(e.target.value)}
+          />
         </div>
-        <Select defaultValue="all">
+        <Select defaultValue="all" onValueChange={handleFilterChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filtrar por tipo" />
           </SelectTrigger>
@@ -30,7 +55,7 @@ export function TriggersHeader() {
         <Button variant="outline" size="icon">
           <Filter className="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={onRefresh}>
           <RefreshCw className="h-4 w-4" />
         </Button>
         <Button>
