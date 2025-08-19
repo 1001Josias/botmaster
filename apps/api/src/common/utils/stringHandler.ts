@@ -8,3 +8,7 @@ export function convertSnakeToPascalCase(str: string): string {
 export function firstLetterToUpperCase(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
+
+export function generateRandomId(): string {
+  return crypto.randomUUID()
+}
