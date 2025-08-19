@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { MoreVertical, Edit, Trash2, BarChart, Pause, Play } from 'lucide-react'
+import { MoreVertical, Edit, Trash2, BarChart, Pause, Play, Loader2 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import { QueueFormDialog } from './queue-form-dialog'
 import {
@@ -20,80 +20,41 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { toast } from '@/components/ui/use-toast'
+import { queuesApi, type Queue } from '@/lib/api/queues'
 
-// Dados de exemplo
-const queues = [
-  {
-    id: 'Q-001',
-    name: 'Processamento de Emails',
-    folder: 'Produção',
-    status: 'active',
-    pending: 12,
-    processed: 4582,
-    failed: 8,
-    load: 25,
-    description: 'Processa emails recebidos e envia notificações',
-    concurrency: 5,
-    retryLimit: 3,
-    retryDelay: 60000,
-    isActive: true,
-    priority: 5,
-  },
-  {
-    id: 'Q-002',
-    name: 'Notificações Push',
-    folder: 'Produção',
-    status: 'active',
-    pending: 45,
-    processed: 12450,
-    failed: 21,
-    load: 65,
-    description: 'Envia notificações push para dispositivos móveis',
-    concurrency: 10,
-    retryLimit: 5,
-    retryDelay: 30000,
-    isActive: true,
-    priority: 7,
-  },
-  {
-    id: 'Q-003',
-    name: 'Processamento de Pagamentos',
-    folder: 'Produção',
-    status: 'paused',
-    pending: 0,
-    processed: 3254,
-    failed: 5,
-    load: 0,
-    description: 'Processa transações de pagamento',
-    concurrency: 3,
-    retryLimit: 5,
-    retryDelay: 120000,
-    isActive: false,
-    priority: 10,
-  },
-  {
-    id: 'Q-004',
-    name: 'Importação de Dados',
-    folder: 'Desenvolvimento',
-    status: 'error',
-    pending: 156,
-    processed: 4235,
-    failed: 8,
-    load: 85,
-    description: 'Importa dados de sistemas externos',
-    concurrency: 2,
-    retryLimit: 2,
-    retryDelay: 300000,
-    isActive: true,
-    priority: 3,
-  },
-]
+interface QueuesTableProps {
+  refreshTrigger?: number
+}
 
-export function QueuesTable() {
-  const [editQueue, setEditQueue] = useState<any | null>(null)
+export function QueuesTable({ refreshTrigger }: QueuesTableProps) {
+  const [queues, setQueues] = useState<Queue[]>([])
+  const [loading, setLoading] = useState(true)
+  const [editQueue, setEditQueue] = useState<Queue | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [deleteQueue, setDeleteQueue] = useState<any | null>(null)
+  const [deleteQueue, setDeleteQueue] = useState<Queue | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  // Load queues on component mount and when refresh trigger changes
+  useEffect(() => {
+    loadQueues()
+  }, [refreshTrigger])
+
+  const loadQueues = async () => {
+    try {
+      setLoading(true)
+      const response = await queuesApi.getAll()
+      setQueues(response.queues)
+    } catch (error) {
+      console.error('Failed to load queues:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao carregar as filas. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -126,7 +87,7 @@ export function QueuesTable() {
     return 'bg-red-500'
   }
 
-  const getActionButton = (status: string, queue: any) => {
+  const getActionButton = (status: string, queue: Queue) => {
     if (status === 'active') {
       return (
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handlePauseQueue(queue)}>
@@ -141,47 +102,108 @@ export function QueuesTable() {
     )
   }
 
-  const handleEditQueue = (queue: any) => {
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Filas de Processamento</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <span className="ml-2 text-sm text-muted-foreground">Carregando filas...</span>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const handleEditQueue = (queue: Queue) => {
     setEditQueue(queue)
     setIsEditDialogOpen(true)
   }
 
-  const handleUpdateQueue = (data: any) => {
-    console.log('Queue atualizada:', data)
-    // Aqui você implementaria a lógica para atualizar a queue no backend
+  const handleUpdateQueue = async (data: any) => {
+    if (!editQueue) return
+    
+    try {
+      await queuesApi.update(editQueue.id, data)
+      toast({
+        title: 'Fila atualizada',
+        description: `A fila "${editQueue.name}" foi atualizada com sucesso.`,
+      })
+      await loadQueues()
+      setIsEditDialogOpen(false)
+    } catch (error) {
+      console.error('Failed to update queue:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao atualizar a fila. Tente novamente.',
+        variant: 'destructive',
+      })
+    }
   }
 
-  const handleDeleteClick = (queue: any) => {
+  const handleDeleteClick = (queue: Queue) => {
     setDeleteQueue(queue)
     setIsDeleteDialogOpen(true)
   }
 
-  const handleDeleteConfirm = () => {
-    console.log('Queue excluída:', deleteQueue)
-    // Aqui você implementaria a lógica para excluir a queue no backend
-    toast({
-      title: 'Queue excluída',
-      description: `A queue "${deleteQueue.name}" foi excluída com sucesso.`,
-    })
-    setIsDeleteDialogOpen(false)
+  const handleDeleteConfirm = async () => {
+    if (!deleteQueue) return
+    
+    try {
+      await queuesApi.delete(deleteQueue.id)
+      toast({
+        title: 'Fila excluída',
+        description: `A fila "${deleteQueue.name}" foi excluída com sucesso.`,
+      })
+      await loadQueues()
+      setIsDeleteDialogOpen(false)
+    } catch (error) {
+      console.error('Failed to delete queue:', error)
+      toast({
+        title: 'Erro', 
+        description: 'Falha ao excluir a fila. Tente novamente.',
+        variant: 'destructive',
+      })
+    }
   }
 
-  const handlePauseQueue = (queue: any) => {
-    console.log('Queue pausada:', queue)
-    toast({
-      title: 'Queue pausada',
-      description: `A queue "${queue.name}" foi pausada com sucesso.`,
-    })
-    // Aqui você implementaria a lógica para pausar a queue no backend
+  const handlePauseQueue = async (queue: Queue) => {
+    try {
+      await queuesApi.pause(queue.id)
+      toast({
+        title: 'Fila pausada',
+        description: `A fila "${queue.name}" foi pausada com sucesso.`,
+      })
+      await loadQueues()
+    } catch (error) {
+      console.error('Failed to pause queue:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao pausar a fila. Tente novamente.',
+        variant: 'destructive',
+      })
+    }
   }
 
-  const handleResumeQueue = (queue: any) => {
-    console.log('Queue retomada:', queue)
-    toast({
-      title: 'Queue retomada',
-      description: `A queue "${queue.name}" foi retomada com sucesso.`,
-    })
-    // Aqui você implementaria a lógica para retomar a queue no backend
+  const handleResumeQueue = async (queue: Queue) => {
+    try {
+      await queuesApi.resume(queue.id)
+      toast({
+        title: 'Fila retomada',
+        description: `A fila "${queue.name}" foi retomada com sucesso.`,
+      })
+      await loadQueues()
+    } catch (error) {
+      console.error('Failed to resume queue:', error)
+      toast({
+        title: 'Erro',
+        description: 'Falha ao retomar a fila. Tente novamente.',
+        variant: 'destructive',
+      })
+    }
   }
 
   return (
@@ -205,47 +227,57 @@ export function QueuesTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {queues.map((queue) => (
-                <TableRow key={queue.id}>
-                  <TableCell className="font-medium">{queue.name}</TableCell>
-                  <TableCell>{queue.folder}</TableCell>
-                  <TableCell>{getStatusBadge(queue.status)}</TableCell>
-                  <TableCell className="text-right">{queue.pending}</TableCell>
-                  <TableCell className="text-right">{queue.processed.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{queue.failed}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Progress value={queue.load} className={getLoadColor(queue.load)} />
-                      <span className="text-xs">{queue.load}%</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      {getActionButton(queue.status, queue)}
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <BarChart className="h-4 w-4" />
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEditQueue(queue)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteClick(queue)}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+              {queues.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center py-8">
+                    <div className="text-muted-foreground">
+                      Nenhuma fila encontrada.
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                queues.map((queue) => (
+                  <TableRow key={queue.id}>
+                    <TableCell className="font-medium">{queue.name}</TableCell>
+                    <TableCell>{queue.folderKey}</TableCell>
+                    <TableCell>{getStatusBadge(queue.status)}</TableCell>
+                    <TableCell className="text-right">-</TableCell> {/* TODO: Add pending count from stats */}
+                    <TableCell className="text-right">-</TableCell> {/* TODO: Add processed count from stats */}
+                    <TableCell className="text-right">-</TableCell> {/* TODO: Add failed count from stats */}
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Progress value={0} className="bg-gray-200" /> {/* TODO: Calculate load percentage */}
+                        <span className="text-xs">0%</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        {getActionButton(queue.status, queue)}
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <BarChart className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditQueue(queue)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteClick(queue)}>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
@@ -257,7 +289,7 @@ export function QueuesTable() {
           open={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
           initialData={editQueue}
-          onSubmit={handleUpdateQueue}
+          onSubmit={loadQueues}
         />
       )}
 

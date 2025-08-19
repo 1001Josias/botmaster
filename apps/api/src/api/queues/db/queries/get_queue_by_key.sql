@@ -1,0 +1,1 @@
+SELECT * FROM queues WHERE key = $1;
