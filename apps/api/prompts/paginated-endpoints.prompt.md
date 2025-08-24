@@ -22,13 +22,13 @@ Paginated endpoints must accept the following parameters, with strict validation
 
 ### 2.2. API Response Format
 
-The response must be standardized, containing a `items` array with the page's items and a `pagination` object with pagination metadata.
+The response must be standardized, containing a `data` array with the page's items and a `pagination` object with pagination metadata.
 
 **Response Structure:**
 
 ```json
 {
-  "items": [
+  "data": [
     {
       "id": 123,
       "name": "Sample Item 1",
