@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-To ensure the performance, data consistency, and scalability of our API, the implementation of pagination in all RESTful endpoints that return lists must **exclusively** follow the `cursor-based pagination` strategy with an encrypted cursor, as defined in the pagination RFC.
+To ensure the performance, data consistency, and scalability of our API, the implementation of pagination in all RESTful endpoints that return lists must **exclusively** follow the `cursor-based pagination` strategy with an encrypted cursor.
 
 The goal is to provide consistent and fast responses (under 100ms) and to protect the implementation through opaque, encrypted cursors using **AES-256-GCM**.
 
@@ -22,13 +22,13 @@ Paginated endpoints must accept the following parameters, with strict validation
 
 ### 2.2. API Response Format
 
-The response must be standardized, containing a `data` array with the page's items and a `pagination` object with pagination metadata.
+The response must be standardized, containing a `items` array with the page's items and a `pagination` object with pagination metadata.
 
 **Response Structure:**
 
 ```json
 {
-  "data": [
+  "items": [
     {
       "id": 123,
       "name": "Sample Item 1",
@@ -40,8 +40,7 @@ The response must be standardized, containing a `data` array with the page's ite
     "hasNextPage": true,
     "hasPreviousPage": false,
     "nextCursor": "OPAQUE_AND_ENCRYPTED_CURSOR_FOR_NEXT_PAGE",
-    "previousCursor": "OPAQUE_AND_ENCRYPTED_CURSOR_FOR_PREVIOUS_PAGE",
-    "queryTime": 15
+    "previousCursor": "OPAQUE_AND_ENCRYPTED_CURSOR_FOR_PREVIOUS_PAGE"
   }
 }
 ```
@@ -67,10 +66,13 @@ The response must be standardized, containing a `data` array with the page's ite
 
 - **Mandatory Encryption (AES-256-GCM):** The cursor must be a completely opaque value to the client. Its payload **must** be encrypted using **AES-256-GCM**. The payload must contain, at a minimum, the value of the sorting field and the ID of the last item.
   ```json
-  // Cursor payload (before encryption)
+  // Example of cursor payload (before encryption)
   {
-    "sortValue": "2024-08-12T10:00:00Z",
-    "id": 123
+    "sortValue": "2024-08-12T10:00:00Z", // value of the sorting field
+    "id": 123, // used only internally, never exposed to the client
+    "filters": { "status": "active" }, // filters applied to the query
+    "sortBy": "created_at", // sorting field
+    "sortOrder": "desc" // sorting direction
   }
   ```
 - **Cursor Validation:** The cursor received in the request must be decrypted and its payload validated (using Zod) before being used in the query. Invalid, malformed, or incorrectly signed cursors must result in a `400 Bad Request` error.
@@ -91,10 +93,11 @@ The response must be standardized, containing a `data` array with the page's ite
 
 ## 3. Best Practices and Considerations
 
-- **Cursor Invalidation:** The client must discard the current cursor if any of the `sortBy`, `sortOrder`, or `filters` parameters are changed. A new search should be initiated without the `cursor` parameter.
-- **Error Handling:** Implement specific error handling for invalid or expired cursors.
-- **Compatibility with `BaseRepository`:** The `BaseRepository.query()` method currently throws an error if `rowCount === 0`. This is incompatible with pagination logic, which can legitimately return zero results. Create a specific method, such as `queryForPagination()`, or adjust the behavior of the existing method to handle this case.
-- **Documentation (OpenAPI):** The API documentation (Swagger/OpenAPI) must be updated to reflect the pagination parameters and response format.
+- **`id` field never exposed:** The `id` field present in the cursor payload is used only internally for ordering and performance, and must never be exposed directly to the client.
+- **Cursor includes filters and sorting:** Always include the current filters and sorting parameters in the cursor payload. When decoding, validate that they match the current request; otherwise, ignore the cursor and start a new search.
+- **Automatic cursor invalidation:** The cursor must be ignored if any filter or sorting parameter changes. The backend should validate this when decoding the cursor.
+- **Error handling:** Implement specific error handling for invalid cursors.
+- **Documentation (OpenAPI):** Create the API documentation with the pagination parameters and response format.
 
 ---
 
@@ -107,5 +110,4 @@ The response must be standardized, containing a `data` array with the page's ite
 - [ ] SQL queries are optimized and use composite indexes.
 - [ ] RLS policies for multi-tenancy are respected.
 - [ ] The `limit + 1` optimization is used to determine `hasNextPage`.
-- [ ] The endpoint's OpenAPI documentation is updated.
-- [ ] The issue with `BaseRepository.query()` is resolved.
+- [ ] The endpoint's OpenAPI documentation is created.
